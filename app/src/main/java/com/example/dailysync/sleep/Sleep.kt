@@ -1,4 +1,4 @@
-package com.example.dailysync.Exercise
+package com.example.dailysync.sleep
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -24,24 +24,35 @@ import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 
 @Composable
-fun Exercise(navController: NavController, resultShow: Int = 1 , modifier: Modifier =
+fun Sleep(navController: NavController, resultShow: Int = 3, modifier: Modifier =
     Modifier.fillMaxSize().wrapContentSize(
         Alignment.Center)) {
 
     var result by remember { mutableStateOf(resultShow) }
-    val imageResource = when (result) {
-        1 -> R.drawable.dice_1
-        2 -> R.drawable.dice_2
-        else -> R.drawable.dice_3
-    }
+
     Column (
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val imageResource = when (result) {
+            1 -> R.drawable.dice_1
+            2 -> R.drawable.dice_2
+            else -> R.drawable.dice_3
+        }
+
         Image(painter = painterResource(id = imageResource), contentDescription = result.toString())
         Spacer(modifier = Modifier.height(16.dp))
         Button(
-            onClick = { navController.navigate(Screens.Home.route.replace(
+            onClick = {
+                result = (result % 3) + 1
+            },
+        ) {
+            Text(text = (stringResource(R.string.increment)), fontSize = 24.sp)
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = { navController.navigate(
+                Screens.Home.route.replace(
                 oldValue = "{result}",
                 newValue = result.toString()
             ))},

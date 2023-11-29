@@ -1,4 +1,4 @@
-package com.example.dailysync.Read
+package com.example.dailysync.read
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
