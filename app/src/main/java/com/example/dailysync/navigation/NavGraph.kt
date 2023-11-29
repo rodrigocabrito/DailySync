@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.dailysync.Read
-import com.example.dailysync.Exercise
-import com.example.dailysync.Sleep
+import com.example.dailysync.Read.Read
+import com.example.dailysync.Exercise.Exercise
+import com.example.dailysync.Sleep.Sleep
 import com.example.dailysync.Home
 
 @Composable

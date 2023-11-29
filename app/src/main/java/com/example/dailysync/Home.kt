@@ -30,10 +30,7 @@ fun Home(navController: NavController, resultShow: Int = 1, modifier: Modifier =
     val imageResource = when (result) {
         1 -> R.drawable.dice_1
         2 -> R.drawable.dice_2
-        3 -> R.drawable.dice_3
-        4 -> R.drawable.dice_4
-        5 -> R.drawable.dice_5
-        else -> R.drawable.dice_6
+        else -> R.drawable.dice_3
     }
 
     Column(
@@ -43,7 +40,7 @@ fun Home(navController: NavController, resultShow: Int = 1, modifier: Modifier =
         Image(painter = painterResource(id = imageResource), contentDescription = result.toString())
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
-            result = (1..6).random()
+            result = (1..3).random()
             if (result == 1) {
                 navController.navigate(Screens.Read.route)
             }
@@ -58,25 +55,6 @@ fun Home(navController: NavController, resultShow: Int = 1, modifier: Modifier =
             if (result == 3) {
                 navController.navigate(
                     Screens.Sleep.route.replace(
-                        oldValue = "{result}",
-                        newValue = result.toString()
-                    )
-                )
-            }
-            if (result == 4) {
-                navController.navigate(Screens.SixButton.route)
-            }
-            if (result == 5) {
-                navController.navigate(
-                    Screens.FieldText.route.replace(
-                        oldValue = "{result}",
-                        newValue = result.toString()
-                    )
-                )
-            }
-            if (result == 6) {
-                navController.navigate(
-                    Screens.DiceSix.route.replace(
                         oldValue = "{result}",
                         newValue = result.toString()
                     )

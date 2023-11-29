@@ -1,4 +1,4 @@
-package com.example.dailysync
+package com.example.dailysync.Read
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 
 
