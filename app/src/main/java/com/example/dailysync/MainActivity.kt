@@ -21,6 +21,7 @@ class MainActivity : ComponentActivity() {
             DailySyncTheme {
                 val navController = rememberNavController()
                 NavGraph(navController = navController)
+                //TODO teste
             }
         }
     }
