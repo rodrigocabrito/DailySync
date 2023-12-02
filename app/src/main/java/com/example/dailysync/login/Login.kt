@@ -7,17 +7,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
+fun Login(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -42,6 +40,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
+            visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done,
             )
@@ -51,21 +50,15 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
 
         Button(
             onClick = {
-                // Perform registration
+                // Perform login
                 isLoading = true
-                auth.createUserWithEmailAndPassword(email, password)
+                auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         isLoading = false
                         if (task.isSuccessful) {
-                            // User registration successful
-                            val userId = auth.currentUser?.uid
-                            userId?.let { uid ->
-                                val user = User(email, password)
-                                writeUserToDatabase(uid, user)
-                            }
                             navController.navigate(Screens.Home.route)
                         } else {
-                            // Handle registration failure
+                            // Handle login failure
                         }
                     }
             },
@@ -73,19 +66,13 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                 .fillMaxWidth()
                 .height(48.dp)
         ) {
-            Text("Register")
+            Text("Login")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { navController.navigate(Screens.Login.route) }) {
-            Text("Already have an account? Login here.")
+        TextButton(onClick = { navController.navigate(Screens.SignUp.route) }) {
+            Text("Don't have an account? Register here.")
         }
     }
-}
-
-private fun writeUserToDatabase(userId: String, user: User) {
-    val database = Firebase.database
-    val usersRef = database.getReference("users")
-    usersRef.child(userId).setValue(user)
 }

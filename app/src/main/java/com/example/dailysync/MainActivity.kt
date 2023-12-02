@@ -3,25 +3,29 @@ package com.example.dailysync
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
 import com.example.dailysync.navigation.NavGraph
 import com.example.dailysync.ui.theme.DailySyncTheme
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+
+    // Firebase instance variables
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        auth = Firebase.auth
         setContent {
             DailySyncTheme {
                 val navController = rememberNavController()
-                NavGraph(navController = navController)
-                //TODO teste
+                NavGraph(navController = navController, auth)
             }
         }
     }

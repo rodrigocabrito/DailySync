@@ -8,18 +8,28 @@ import com.example.dailysync.home.read.Read
 import com.example.dailysync.home.exercise.Exercise
 import com.example.dailysync.home.sleep.Sleep
 import com.example.dailysync.home.Home
+import com.example.dailysync.login.Login
+import com.example.dailysync.login.SignUp
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun NavGraph (navController: NavHostController){
+fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
     NavHost(
         navController = navController,
-        startDestination = Screens.Home.route) //TODO change to login
+        startDestination = Screens.LoginScreen.route)
     {
-        composable(route = Screens.Home.route+ "?result={result}"){ navBackStack ->
-            var resultShow: Int = navBackStack.arguments?.getString("result")?.toIntOrNull()?:1
-            Home(navController = navController, resultShow = resultShow)
+        composable(route = Screens.Login.route){
+            Login(navController = navController, auth = auth)
         }
-        composable(route = Screens.Exercise.route+ "?result={result}"){ navBackStack ->
+        composable(route = Screens.SignUp.route){
+            SignUp(navController = navController, auth = auth)
+        }
+        composable(route = Screens.Home.route){
+            Home(navController = navController, auth = auth)
+        }
+
+
+        composable(route = Screens.Exercise.route + "?result={result}"){ navBackStack ->
             //extracting the argument
             var resultShow: Int = navBackStack.arguments?.getString("result")?.toIntOrNull()?:1
             Exercise(navController = navController, resultShow = resultShow)
@@ -29,7 +39,7 @@ fun NavGraph (navController: NavHostController){
             Read(navController = navController)
         }
 
-        composable(route = Screens.Sleep.route+ "?result={result}"){ navBackStack ->
+        composable(route = Screens.Sleep.route + "?result={result}"){ navBackStack ->
             //extracting the argument
             var resultShow: Int = navBackStack.arguments?.getString("result")?.toIntOrNull()?:1
             Sleep(navController = navController, resultShow = resultShow)
