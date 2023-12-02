@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.dailysync.read.Read
-import com.example.dailysync.exercise.Exercise
-import com.example.dailysync.sleep.Sleep
-import com.example.dailysync.Home
+import com.example.dailysync.home.read.Read
+import com.example.dailysync.home.exercise.Exercise
+import com.example.dailysync.home.sleep.Sleep
+import com.example.dailysync.home.Home
 
 @Composable
 fun NavGraph (navController: NavHostController){
