@@ -4,19 +4,22 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.dailysync.community.Community
 import com.example.dailysync.home.read.Read
 import com.example.dailysync.home.exercise.Exercise
 import com.example.dailysync.home.sleep.Sleep
 import com.example.dailysync.home.Home
 import com.example.dailysync.login.Login
 import com.example.dailysync.login.SignUp
+import com.example.dailysync.profile.Profile
+import com.example.dailysync.report.Reports
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
     NavHost(
         navController = navController,
-        startDestination = Screens.LoginScreen.route)
+        startDestination = Screens.Profile.route)
     {
         composable(route = Screens.Login.route){
             Login(navController = navController, auth = auth)
@@ -27,6 +30,16 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         composable(route = Screens.Home.route){
             Home(navController = navController, auth = auth)
         }
+        composable(route = Screens.Reports.route){
+            Reports(navController = navController, auth = auth)
+        }
+        composable(route = Screens.Community.route){
+            Community(navController = navController, auth = auth)
+        }
+        composable(route = Screens.Profile.route){
+            Profile(navController = navController, auth = auth)
+        }
+
 
 
         composable(route = Screens.Exercise.route + "?result={result}"){ navBackStack ->
