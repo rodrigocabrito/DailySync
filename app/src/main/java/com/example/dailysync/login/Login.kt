@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -19,6 +20,7 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var loginFail = false
 
     Column(
         modifier = Modifier
@@ -46,6 +48,15 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             )
         )
 
+        Spacer(modifier = Modifier.height(10.dp))
+
+        TextButton( modifier = Modifier
+            .align(Alignment.End),
+            onClick = {}
+        ) {
+            Text("Forgot password?")
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
@@ -58,7 +69,7 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                         if (task.isSuccessful) {
                             navController.navigate(Screens.Home.route)
                         } else {
-                            // Handle login failure
+                            loginFail = true
                         }
                     }
             },
@@ -67,6 +78,13 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                 .height(48.dp)
         ) {
             Text("Login")
+        }
+
+        if (loginFail) {
+           Text(
+               text = "Login Failed: Your email or password is incorrect!",
+               color = Color.Red
+           )
         }
 
         Spacer(modifier = Modifier.height(16.dp))

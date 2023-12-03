@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -21,6 +22,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
+    var signupFail = false
 
     Column(
         modifier = Modifier
@@ -65,7 +67,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                             }
                             navController.navigate(Screens.Home.route)
                         } else {
-                            // Handle registration failure
+                            signupFail = true
                         }
                     }
             },
@@ -74,6 +76,13 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                 .height(48.dp)
         ) {
             Text("Register")
+        }
+
+        if (signupFail) {
+            Text(
+                text = "Signup failed: Email already registered!",
+                color = Color.Red
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
