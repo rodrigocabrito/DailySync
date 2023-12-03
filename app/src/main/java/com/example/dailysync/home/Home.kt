@@ -1,6 +1,7 @@
 package com.example.dailysync.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
@@ -76,19 +78,37 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
         // Exercise
         if (!showExerciseOptions) {
-            Button(
-                onClick = {
-                    showExerciseOptions = true
-                    showSleepOptions = false
-                    showReadOptions = false
-                          },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                    .weight(1f)
                     .height(175.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp)),
+                    .background(Color(android.graphics.Color.parseColor("#47E285")), shape = RoundedCornerShape(8.dp))
+                    .clickable {
+                        showExerciseOptions = true
+                        showSleepOptions = false
+                        showReadOptions = false
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text("Exercise")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.exercise_icon),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                    text = "Start Exercise",
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                    )
+                }
             }
         }
 
@@ -310,6 +330,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                     .clickable {
                         navController.navigate(Screens.Home.route)
                     }
+                    .border(1.dp, Color.Black)
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -320,42 +341,89 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                         painter = painterResource(id = R.drawable.home_icon),
                         contentDescription = null,
                         tint = Color.Black,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally)
                     )
                 }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Reports.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Black)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Reports.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Report")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.report_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Community.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Gray)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Community.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Community",
-                    fontSize = 9.sp,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.community_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(60.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Profile.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Black)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Profile.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Profile")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.profile_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(45.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                }
             }
         }
     }
