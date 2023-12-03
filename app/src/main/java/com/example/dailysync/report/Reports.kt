@@ -1,4 +1,4 @@
-package com.example.dailysync.community
+package com.example.dailysync.report
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,9 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,7 +27,11 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Community(navController: NavController, auth: FirebaseAuth) {
+fun Reports(navController: NavController, auth: FirebaseAuth) {
+
+    var reportPeriodDaily by remember { mutableStateOf(false) }
+    var reportPeriodWeekly by remember { mutableStateOf(true) }
+    var reportPeriodMonthly by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -55,13 +64,65 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
             )
         }
 
-        Text(text = "Community")
+        Text(text = "Your Weekly Report")
 
         Spacer(modifier = Modifier.height(20.dp))
 
         // body
 
-        // TODO
+        // period filter
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp)
+                .padding(end = 16.dp)
+        ) {
+            Button(
+                onClick = {
+                    reportPeriodDaily = true
+                    reportPeriodWeekly = false
+                    reportPeriodMonthly = false
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
+                    .padding(end = 16.dp)
+                    .background(Color.Black, shape = RoundedCornerShape(8.dp))
+            ) {
+                Text(text = "Daily")
+            }
+
+            Button(
+                onClick = {
+                    reportPeriodDaily = false
+                    reportPeriodWeekly = true
+                    reportPeriodMonthly = false
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
+                    .padding(end = 16.dp)
+                    .background(Color.Black, shape = RoundedCornerShape(8.dp))
+            ) {
+                Text(text = "Weekly")
+            }
+
+            Button(
+                onClick = {
+                    reportPeriodDaily = false
+                    reportPeriodWeekly = false
+                    reportPeriodMonthly = true
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
+                    .background(Color.Black, shape = RoundedCornerShape(8.dp))
+            ) {
+                Text(text = "Monthly")
+            }
+        }
+
+        // graphs
 
         Spacer(modifier = Modifier.height(16.dp))
 
