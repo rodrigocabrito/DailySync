@@ -103,7 +103,11 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     // Button 1
                     Button(
-                        onClick = { /* Handle button click */ },
+                        onClick = { navController.navigate(Screens.StartExercise.route
+                            .replace(
+                                oldValue = "{category}",
+                                newValue = "1"
+                            )) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
@@ -115,7 +119,11 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     // Button 2
                     Button(
-                        onClick = { /* Handle button click */ },
+                        onClick = { navController.navigate(Screens.StartExercise.route
+                            .replace(
+                                oldValue = "{category}",
+                                newValue = "2"
+                            )) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
@@ -127,7 +135,11 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     // Button 3
                     Button(
-                        onClick = { /* Handle button click */ },
+                        onClick = { navController.navigate(Screens.StartExercise.route
+                            .replace(
+                                oldValue = "{category}",
+                                newValue = "3"
+                            )) },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
