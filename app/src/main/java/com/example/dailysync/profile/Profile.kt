@@ -97,9 +97,12 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier
-                            .size(50.dp)
+                            .size(35.dp)
                             .align(Alignment.CenterHorizontally)
                     )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text( "Home")
+
                 }
             }
 
@@ -123,9 +126,12 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier
-                            .size(40.dp)
+                            .size(35.dp)
                             .align(Alignment.CenterHorizontally)
+                            .padding(top = 10.dp)
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text( text ="Report")
                 }
             }
 
@@ -149,9 +155,11 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier
-                            .size(60.dp)
+                            .size(45.dp)
                             .align(Alignment.CenterHorizontally)
                     )
+                    Text( text = "Community",
+                        fontSize = 14.sp)
                 }
             }
 
@@ -166,7 +174,9 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                     .border(1.dp, Color.Black)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top=10.dp),
                     verticalArrangement = Arrangement.Center, // Center vertically
                     horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
                 ) {
@@ -175,9 +185,11 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                         contentDescription = null,
                         tint = Color.Black,
                         modifier = Modifier
-                            .size(45.dp)
+                            .size(30.dp)
                             .align(Alignment.CenterHorizontally)
                     )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text( "Profile")
                 }
             }
         }
