@@ -17,6 +17,10 @@ sealed class Screens(val route: String) {
     object DuringExercise : Screens("during_exercise_screen/{category}")
     object SaveExercise : Screens("save_exercise_screen/{category}")
 
+    // Sleep
+    object RegisterSleep : Screens("register_sleep_screen")
+    object DefineSleepSchedule : Screens("define_sleep_schedule_screen")
+
     object Exercise : Screens("exercise/{result}")
     object Read : Screens("read_screen")
     object Sleep : Screens("sleep_screen/{result}")
