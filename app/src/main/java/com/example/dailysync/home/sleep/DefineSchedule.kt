@@ -44,12 +44,12 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth) {
+fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTimeShow: String, awakeTimeShow: String) {
 
     var targetValue by remember { mutableIntStateOf(0) }
 
-    var showDialogSave by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+    var bedTime by remember { mutableStateOf(bedTimeShow) }
+    var awakeTime by remember { mutableStateOf(awakeTimeShow) }
 
     // Function to format hours and minutes
     fun formatHoursAndMinutes(valueInHalfHours: Int): String {
@@ -59,23 +59,6 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth) {
             return "$hours" + "h00"
         }
         return "$hours" + "h" + "$minutes"
-    }
-
-    // Press Cancel (Pop Up)
-    val cancelAction: () -> Unit = {
-        showDialog = false
-    }
-
-    // Press OK (Pop Up)
-    val confirmAction: () -> Unit = {
-        showDialogSave = true
-        showDialog = false
-    }
-
-    // Press OK (Pop Up)
-    val confirmActionSaved: () -> Unit = {
-        showDialogSave = false
-        navController.navigate(Screens.Home.route)
     }
 
     Column(
@@ -202,16 +185,28 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth) {
                     Text(text = "Awake Time", fontSize = 12.sp)
                 }
 
-                // TODO GET THIS FROM EDIT BUTTON BELOW
                 Row {
-                    Text(text = "22:30", fontSize = 25.sp)
+                    if (bedTime == "1") {
+                        Text(text = "$bedTime:00", fontSize = 25.sp)
+                    } else {
+                        Text(text = bedTime, fontSize = 25.sp)
+                    }
                     Spacer(modifier = Modifier.width(130.dp))
-                    Text(text = "6:30", fontSize = 25.sp)
+
+                    if (awakeTime == "1") {
+                        Text(text = "$awakeTime:00", fontSize = 25.sp)
+                    } else {
+                        Text(text = awakeTime, fontSize = 25.sp)
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                TextButton(onClick = { /*TODO*/ }) {
+                TextButton(onClick = { navController.navigate(Screens.EditSleepSchedule.route
+                    .replace(
+                        oldValue = "{target}",      // TODO HANDLE IF TARGET HAS MINUTES
+                        newValue = "$targetValue"
+                    )) }) {
                     Text(
                         text = "Edit",
                         fontSize = 22.sp,
@@ -223,54 +218,6 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth) {
         }
         
         Spacer(modifier = Modifier.height(150.dp))
-
-        Button(
-            onClick = { showDialog = true },
-            modifier = Modifier
-                .height(50.dp)
-                .background(Color.Gray, shape = RoundedCornerShape(8.dp))
-        ) {
-            Text(text = "Save")
-        }
-
-        // Show the AlertDialog Pop Up
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = {
-                    // Handle dialog dismiss (e.g., when tapping outside the dialog)
-                    showDialog = false
-                },
-                text = { Text("Do you want to save this sleep schedule?") },
-                confirmButton = {
-                    TextButton(onClick = confirmAction) {
-                        Text("Yes")
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = cancelAction) {
-                        Text("Cancel")
-                    }
-                }
-            )
-        }
-
-        // Show the AlertDialog Pop Up
-        if (showDialogSave) {
-            AlertDialog(
-                onDismissRequest = {
-                    // Handle dialog dismiss (e.g., when tapping outside the dialog)
-                    showDialogSave = false
-                },
-                text = { Text("Your sleep schedule was saved successfully!") },
-                confirmButton = {
-                    TextButton(onClick = confirmActionSaved) {
-                        Text("Ok")
-                    }
-                }
-            )
-        }
-        
-        Spacer(modifier = Modifier.height(20.dp))
 
         // footer
         Row(
