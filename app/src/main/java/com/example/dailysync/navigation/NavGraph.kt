@@ -13,6 +13,7 @@ import com.example.dailysync.home.exercise.DuringExercise
 import com.example.dailysync.home.exercise.SaveExercise
 import com.example.dailysync.home.exercise.StartExercise
 import com.example.dailysync.home.sleep.DefineSleepSchedule
+import com.example.dailysync.home.sleep.EditSleepSchedule
 import com.example.dailysync.home.sleep.RegisterSleep
 import com.example.dailysync.login.Login
 import com.example.dailysync.login.SignUp
@@ -24,7 +25,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.route)
+        startDestination = Screens.Home.route)
     {
         // Start
         composable(route = Screens.Login.route){
@@ -69,8 +70,20 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         composable(route = Screens.RegisterSleep.route){
             RegisterSleep(navController = navController, auth = auth)
         }
-        composable(route = Screens.DefineSleepSchedule.route){
-            DefineSleepSchedule(navController = navController, auth = auth)
+        composable(route = Screens.DefineSleepSchedule.route + "?bedTime={bedTime}&awakeTime={awakeTime}") { navBackStack ->
+            // Extracting the arguments
+            val bedTime: String? = navBackStack.arguments?.getString("bedTime")
+            val awakeTime: String? = navBackStack.arguments?.getString("awakeTime")
+
+            val bedTimeShow: String = (bedTime?.toIntOrNull() ?: 1).toString()
+            val awakeTimeShow: String = (awakeTime?.toIntOrNull() ?: 1).toString()
+
+            DefineSleepSchedule(navController = navController, auth = auth, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow)
+        }
+
+        composable(route = Screens.EditSleepSchedule.route + "?target={target}"){navBackStack ->
+            var targetShow: Double = (navBackStack.arguments?.getString("target")?.toIntOrNull()?:1).toDouble()
+            EditSleepSchedule(navController = navController, auth = auth, targetShow = targetShow)
         }
 
 
