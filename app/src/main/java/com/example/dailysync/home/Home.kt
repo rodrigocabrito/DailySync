@@ -1,18 +1,27 @@
 package com.example.dailysync.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.example.dailysync.ui.theme.DailySyncTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -47,8 +58,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
     var showReadOptions by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -68,19 +78,40 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
         // Exercise
         if (!showExerciseOptions) {
-            Button(
-                onClick = {
-                    showExerciseOptions = true
-                    showSleepOptions = false
-                    showReadOptions = false
-                          },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                    .weight(1f)
                     .height(175.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp)),
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showExerciseOptions = true
+                        showSleepOptions = false
+                        showReadOptions = false
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text("Exercise")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.exercise_icon),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                    text = "Start Exercise",
+                    modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
             }
         }
 
@@ -88,63 +119,136 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
         if (showExerciseOptions) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
-                    .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                    .weight(1f)
                     .height(175.dp)
+                    .background(Color.Transparent)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                    modifier = Modifier.fillMaxWidth()
                 ) {
 
                     Spacer(modifier = Modifier.height(4.dp))
 
                     // Button 1
-                    Button(
-                        onClick = { navController.navigate(Screens.StartExercise.route
-                            .replace(
-                                oldValue = "{category}",
-                                newValue = "1"
-                            )) },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#47E285")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    Screens.StartExercise.route
+                                        .replace(
+                                            oldValue = "{category}",
+                                            newValue = "1"
+                                        )
+                                )
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Walk")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Walk",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(180.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.walk_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Button 2
-                    Button(
-                        onClick = { navController.navigate(Screens.StartExercise.route
-                            .replace(
-                                oldValue = "{category}",
-                                newValue = "2"
-                            )) },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#47E285")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    Screens.StartExercise.route
+                                        .replace(
+                                            oldValue = "{category}",
+                                            newValue = "2"
+                                        )
+                                )
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Run")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Run",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(180.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.run_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Button 3
-                    Button(
-                        onClick = { navController.navigate(Screens.StartExercise.route
-                            .replace(
-                                oldValue = "{category}",
-                                newValue = "3"
-                            )) },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#47E285")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                navController.navigate(
+                                    Screens.StartExercise.route
+                                        .replace(
+                                            oldValue = "{category}",
+                                            newValue = "3"
+                                        )
+                                )
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Cycle")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Cycle",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(180.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.cycle_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -154,19 +258,41 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
         // Sleep
         if (!showSleepOptions) {
-            Button(
-                onClick = {
-                    showExerciseOptions = false
-                    showSleepOptions = true
-                    showReadOptions = false
-                          },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                    .weight(1f)
                     .height(175.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#A17FEB")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showExerciseOptions = false
+                        showSleepOptions = true
+                        showReadOptions = false
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text("Sleep")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.sleep_icon),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        text = "Sleep",
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                    )
+                }
             }
         }
 
@@ -176,37 +302,81 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
-                    .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                    .background(Color.Transparent)
                     .height(175.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                    modifier = Modifier.fillMaxWidth()
                 ) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Button 1
-                    Button(
-                        onClick = { /* Handle button click */ },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(75.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#A17FEB")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                /* Handle button click */
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Register Today's Sleep")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Register Today's Sleep",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(100.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.register_sleep_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Button 2
-                    Button(
-                        onClick = { /* Handle button click */ },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(75.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#A17FEB")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                /* Handle button click */
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Define Sleep Schedule")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Define Sleep Schedule",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(100.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.schedule_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(50.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -216,19 +386,41 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
         // Read
         if (!showReadOptions) {
-            Button(
-                onClick = {
-                    showExerciseOptions = false
-                    showSleepOptions = false
-                    showReadOptions = true
-                          },
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                    .weight(1f)
                     .height(175.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#E5AE5A")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showExerciseOptions = false
+                        showSleepOptions = false
+                        showReadOptions = true
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text("Read")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.read_icon),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .size(50.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text(
+                        text = "Read",
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                    )
+                }
             }
         }
 
@@ -238,49 +430,116 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp, start = 10.dp, end = 10.dp)
-                    .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                    .background(Color.Transparent)
                     .height(175.dp)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Green, shape = RoundedCornerShape(8.dp))
+                    modifier = Modifier.fillMaxWidth()
                 ) {
 
                     Spacer(modifier = Modifier.height(4.dp))
 
                     // Button 1
-                    Button(
-                        onClick = { /* Handle button click */ },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#E5AE5A")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                /* Handle button click */
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Find Books")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Find Books",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(170.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.search_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Button 2
-                    Button(
-                        onClick = { /* Handle button click */ },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#E5AE5A")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                /* Handle button click */
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Currently Reading")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Currently Reading",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(100.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.reading_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // Button 3
-                    Button(
-                        onClick = { /* Handle button click */ },
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp)
+                            .background(
+                                Color(android.graphics.Color.parseColor("#E5AE5A")),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .clickable {
+                                /* Handle button click */
+                            }
+                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
-                        Text("Wishlist")
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(
+                                text = "Wishlist",
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                            Spacer(modifier = Modifier.width(190.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.wishlist_icon),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -294,47 +553,120 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                 .padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
-            Button(
-                onClick = { navController.navigate(Screens.Home.route)},
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Gray)
+                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
+                    .clickable {
+                        navController.navigate(Screens.Home.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Home")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.home_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text( "Home")
+
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Reports.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Black)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Reports.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Report")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.report_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 10.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text( text ="Report")
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Community.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Gray)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Community.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Community",
-                    fontSize = 9.sp,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.community_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(45.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text( text = "Community",
+                        fontSize = 14.sp)
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Profile.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Black)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Profile.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Profile")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top=10.dp),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.profile_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text( "Profile")
+                }
             }
         }
     }

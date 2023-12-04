@@ -24,7 +24,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
     NavHost(
         navController = navController,
-        startDestination = Screens.DefineSleepSchedule.route)
+        startDestination = Screens.Login.route)
     {
         // Start
         composable(route = Screens.Login.route){

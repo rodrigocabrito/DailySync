@@ -1,6 +1,9 @@
 package com.example.dailysync.home.exercise
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -11,12 +14,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -31,11 +37,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
@@ -112,7 +120,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .weight(3f)
                 .width(350.dp)
                 .padding(start = 20.dp, end = 20.dp, bottom = 15.dp)
-                .background(Color.Gray, shape = RoundedCornerShape(8.dp)), // Set background color or other styling as needed
+                .background(Color(android.graphics.Color.parseColor("#A2F0C1")), shape = RoundedCornerShape(8.dp))
+                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             // TODO: Add real time info for the Exercise Info Box
@@ -130,25 +139,51 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
-            Button(
-                onClick = { //TODO STOP CLOCK
-                    },
+            Box(
                 modifier = Modifier
+                    .width(110.dp)
                     .height(50.dp)
-                    .padding(end = 10.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        //TODO STOP CLOCK
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text(text = "Pause")
+                Text(
+                    "Pause",
+                    modifier = Modifier
+                        .padding(horizontal = 28.dp) // Adjust the padding as needed
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(110.dp)
+                    .height(50.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showDialog = true
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+            ) {
+                Text(
+                    "Finish",
+                    modifier = Modifier
+                        .padding(horizontal = 28.dp) // Adjust the padding as needed
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                )
             }
 
-            Button(
-                onClick = { showDialog = true },
-                modifier = Modifier
-                    .height(50.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
-            ) {
-                Text(text = "Finish")
-            }
         }
 
         // Show the AlertDialog Pop Up
@@ -178,47 +213,120 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .padding(top = 10.dp)
                 .fillMaxWidth()
         ) {
-            Button(
-                onClick = { navController.navigate(Screens.Home.route)},
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Gray)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Home.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Home")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.home_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text( "Home")
+
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Reports.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Black)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Reports.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Report")
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.report_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(35.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 10.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text( text ="Report")
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Community.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Gray)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Community.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Community",
-                    fontSize = 9.sp,
-                    textAlign = TextAlign.Center
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.community_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(45.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Text( text = "Community",
+                        fontSize = 14.sp)
+                }
             }
 
-            Button(
-                onClick = { navController.navigate(Screens.Profile.route) },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color.Black)
+                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .clickable {
+                        navController.navigate(Screens.Profile.route)
+                    }
+                    .border(1.dp, Color.Black)
             ) {
-                Text("Profile")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top=10.dp),
+                    verticalArrangement = Arrangement.Center, // Center vertically
+                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.profile_icon),
+                        contentDescription = null,
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text( "Profile")
+                }
             }
         }
 

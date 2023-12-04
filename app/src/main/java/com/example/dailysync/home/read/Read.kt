@@ -61,7 +61,7 @@ fun CenteredBusinessCard(elements: Elements, navController: NavController) {
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.back),
+            painter = painterResource(id = R.drawable.home_icon),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
@@ -108,7 +108,7 @@ fun TopSection(elements: Elements) {
                     .border(2.dp, Color.DarkGray, CircleShape)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.foto),
+                    painter = painterResource(id = R.drawable.home_icon),
                     contentDescription = "Profile Image",
                     modifier = Modifier
                         .fillMaxSize()

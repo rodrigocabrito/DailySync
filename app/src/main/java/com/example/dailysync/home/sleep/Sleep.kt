@@ -35,9 +35,9 @@ fun Sleep(navController: NavController, resultShow: Int = 3, modifier: Modifier 
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val imageResource = when (result) {
-            1 -> R.drawable.dice_1
-            2 -> R.drawable.dice_2
-            else -> R.drawable.dice_3
+            1 -> R.drawable.home_icon
+            2 -> R.drawable.home_icon
+            else -> R.drawable.home_icon
         }
 
         Image(painter = painterResource(id = imageResource), contentDescription = result.toString())
