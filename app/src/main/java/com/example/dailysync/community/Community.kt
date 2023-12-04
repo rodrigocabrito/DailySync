@@ -141,7 +141,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
                 modifier = Modifier
                     .weight(1f)
                     .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
+                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
                     .clickable {
                         navController.navigate(Screens.Community.route)
                     }
