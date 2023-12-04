@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -119,7 +120,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .weight(3f)
                 .width(350.dp)
                 .padding(start = 20.dp, end = 20.dp, bottom = 15.dp)
-                .background(Color.Gray, shape = RoundedCornerShape(8.dp)), // Set background color or other styling as needed
+                .background(Color(android.graphics.Color.parseColor("#A2F0C1")), shape = RoundedCornerShape(8.dp))
+                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             // TODO: Add real time info for the Exercise Info Box
@@ -137,25 +139,51 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
-            Button(
-                onClick = { //TODO STOP CLOCK
-                    },
+            Box(
                 modifier = Modifier
+                    .width(110.dp)
                     .height(50.dp)
-                    .padding(end = 10.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        //TODO STOP CLOCK
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text(text = "Pause")
+                Text(
+                    "Pause",
+                    modifier = Modifier
+                        .padding(horizontal = 28.dp) // Adjust the padding as needed
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(110.dp)
+                    .height(50.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showDialog = true
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+            ) {
+                Text(
+                    "Finish",
+                    modifier = Modifier
+                        .padding(horizontal = 28.dp) // Adjust the padding as needed
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                )
             }
 
-            Button(
-                onClick = { showDialog = true },
-                modifier = Modifier
-                    .height(50.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
-            ) {
-                Text(text = "Finish")
-            }
         }
 
         // Show the AlertDialog Pop Up

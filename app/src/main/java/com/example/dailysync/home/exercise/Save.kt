@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
@@ -23,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -32,9 +36,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -118,24 +128,30 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             onValueChange = {
                 textValue = it
             },
-            label = { Text("Give a name to your $title") },
+
+            label = { Text("Give a name to your $title", color = Color.Black) },
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color(android.graphics.Color.parseColor("#A2F0C1"))),
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
+
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
+
         )
+
 
         TextField(
             value = textValue,
             onValueChange = {
                 textValue = it
             },
-            label = { Text("How did it went? Share some details...") },
+            label = { Text("How did it went? Share some details...", color = Color.Black) },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
+            colors = TextFieldDefaults.textFieldColors(containerColor = Color(android.graphics.Color.parseColor("#A2F0C1"))),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -143,15 +159,16 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
         // TODO GPS IMAGE
 
-        Spacer(modifier = Modifier.height(240.dp))
+        Spacer(modifier = Modifier.height(180.dp))
 
         Row {
             Box(
                 modifier = Modifier
                     .weight(3f)
-                    .height(105.dp)
+                    .height(110.dp)
                     .padding(start = 16.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp)), // Set background color or other styling as needed
+                    .background(Color(android.graphics.Color.parseColor("#A2F0C1")), shape = RoundedCornerShape(8.dp))
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 // TODO: Add content for the Exercise Info Box
@@ -170,55 +187,138 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                     .weight(2f)
                     .padding(start = 8.dp, end = 16.dp) // Add padding as needed
             ) {
-                Button(
-                    onClick = {
-                        /*TODO*/
-                    },
+
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
-                        .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                        .height(50.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#A2F0C1")),
+
+                        )
+                        .clickable {
+                            /*TODO*/
+                        }
+                        .drawBehind {
+                            drawRoundRect(color = Color.Black, style = Stroke(width = 2f,
+                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                            )
+                            )
+                        }
                 ) {
-                    Text(text = "Add Photos")
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                    Text(
+                        "Add Photos",
+                        modifier = Modifier
+                            .padding(horizontal = 5.dp) // Adjust the padding as needed
+                            .fillMaxHeight()
+                            .wrapContentSize(Alignment.Center)
+                    )
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_image_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(end = 5.dp)
+                                .size(40.dp)
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp)) // Adjust spacing between buttons if needed
+                Spacer(modifier = Modifier.height(10.dp)) // Adjust spacing between buttons if needed
 
-                Button(
-                    onClick = {
-                        /*TODO*/
-                    },
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
-                        .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                        .height(50.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#A2F0C1"))
+                        )
+                        .clickable {
+                            /*TODO*/
+                        }
+                        .drawBehind {
+                            drawRoundRect(color = Color.Black, style = Stroke(width = 2f,
+                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                            )
+                            )
+                        }
                 ) {
-                    Text(text = "Take Photo")
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            "Take Photo",
+                            modifier = Modifier
+                                .padding(horizontal = 5.dp) // Adjust the padding as needed
+                                .fillMaxHeight()
+                                .wrapContentSize(Alignment.Center)
+                        )
+                        Icon(
+                            painter = painterResource(id = R.drawable.add_photo_icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(end = 5.dp)
+                                .size(40.dp)
+                        )
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(60.dp))
 
         Row {
-            Button(
-                onClick = { showDialogCancel = true },
+            Box(
                 modifier = Modifier
+                    .width(110.dp)
                     .height(50.dp)
-                    .padding(end = 10.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#A2F0C1")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showDialogCancel = true
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
-                Text(text = "Cancel")
+                Text(
+                    "Cancel",
+                    modifier = Modifier
+                        .padding(horizontal = 25.dp) // Adjust the padding as needed
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                )
+            }
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .width(110.dp)
+                    .height(50.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        showDialogSave = true
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+            ) {
+                Text(
+                    "Save",
+                    modifier = Modifier
+                        .padding(horizontal = 33.dp) // Adjust the padding as needed
+                        .fillMaxHeight()
+                        .wrapContentSize(Alignment.Center)
+                )
             }
 
-            Button(
-                onClick = { showDialogSave = true },
-                modifier = Modifier
-                    .height(50.dp)
-                    .background(Color.Gray, shape = RoundedCornerShape(8.dp))
-            ) {
-                Text(text = "Save")
-            }
         }
 
         // Show the AlertDialog Pop Up
