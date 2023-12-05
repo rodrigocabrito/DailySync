@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -44,7 +43,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun StartExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
 
-    var category by remember { mutableIntStateOf(categoryShow) }
+    val category by remember { mutableIntStateOf(categoryShow) }
 
     val title = when (category) {
         1 -> "Walk"
@@ -107,8 +106,6 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
         Spacer(modifier = Modifier.height(16.dp))
 
         // TODO GPS IMAGE
-
-        // TODO EXERCISE INFO BOX
 
 
         Box(

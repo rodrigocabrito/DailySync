@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,7 +47,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
         ) {
             // Align text to the left
             Text(
-                text = "IDK",
+                text = "IDK",     // TODO BACK BUTTON
                 textAlign = TextAlign.Start,
                 modifier = Modifier
                     .weight(1f)
@@ -56,7 +55,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
 
             // Align text to the right
             Text(
-                text = "Notification Icon",
+                text = "Notification Icon",         // TODO NOTIFICATION ICON
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .weight(1f)

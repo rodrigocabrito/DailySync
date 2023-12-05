@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -417,18 +416,6 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             )
         }
     }
-}
-
-// check if target has half hours
-private fun hasDecimalPartFive(value: Double): Boolean {
-    val stringValue = value.toString()
-    val decimalIndex = stringValue.indexOf('.')
-
-    if (decimalIndex != -1 && decimalIndex < stringValue.length - 1) {
-        val decimalPart = stringValue.substring(decimalIndex + 1)
-        return decimalPart == "5"
-    }
-    return false
 }
 
 private fun getHourFromTarget(target: String) : Int {

@@ -5,9 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.dailysync.community.Community
-import com.example.dailysync.home.read.Read
-import com.example.dailysync.home.exercise.Exercise
-import com.example.dailysync.home.sleep.Sleep
 import com.example.dailysync.home.Home
 import com.example.dailysync.home.exercise.DuringExercise
 import com.example.dailysync.home.exercise.SaveExercise
@@ -56,17 +53,17 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         // Exercise
         composable(route = Screens.StartExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
-            var categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
+            val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
             StartExercise(navController = navController, categoryShow = categoryShow, auth = auth)
         }
         composable(route = Screens.DuringExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
-            var categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
+            val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
             DuringExercise(navController = navController, categoryShow = categoryShow, auth = auth)
         }
         composable(route = Screens.SaveExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
-            var categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
+            val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
             SaveExercise(navController = navController, categoryShow = categoryShow, auth = auth)
         }
 
@@ -99,24 +96,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
 
         // ##################################################################################################################################################################################
 
-
-
-
-
-        composable(route = Screens.Exercise.route + "?result={result}"){ navBackStack ->
-            //extracting the argument
-            var resultShow: Int = navBackStack.arguments?.getString("result")?.toIntOrNull()?:1
-            Exercise(navController = navController, resultShow = resultShow)
-        }
-
-        composable(route = Screens.Read.route){
-            Read(navController = navController)
-        }
-
-        composable(route = Screens.Sleep.route + "?result={result}"){ navBackStack ->
-            //extracting the argument
-            var resultShow: Int = navBackStack.arguments?.getString("result")?.toIntOrNull()?:1
-            Sleep(navController = navController, resultShow = resultShow)
-        }
+        // Read
+        // TODO ALL READ PAGES
     }
 }

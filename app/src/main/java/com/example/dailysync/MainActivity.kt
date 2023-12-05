@@ -3,11 +3,9 @@ package com.example.dailysync
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
 import com.example.dailysync.navigation.NavGraph
 import com.example.dailysync.ui.theme.DailySyncTheme
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
@@ -25,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DailySyncTheme {
                 val navController = rememberNavController()
-                NavGraph(navController = navController, auth)
+                NavGraph(navController = navController, auth)           // TODO PASS 'db' AS ARG?
             }
         }
     }

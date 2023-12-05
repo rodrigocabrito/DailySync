@@ -3,24 +3,18 @@ package com.example.dailysync.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,23 +24,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
-import com.example.dailysync.ui.theme.DailySyncTheme
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 @Composable
 fun Home(navController: NavController, auth: FirebaseAuth) {
@@ -130,7 +115,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Button 1
+                    // Walk
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -171,7 +156,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Button 2
+                    // Run
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -212,7 +197,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Button 3
+                    // Cycle
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -311,7 +296,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Button 1
+                    // Register Sleep Schedule
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -321,7 +306,9 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                /* Handle button click */
+                                navController.navigate(
+                                    Screens.RegisterSleep.route // TODO CHANGE ARGS
+                                )
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
@@ -346,7 +333,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Button 2
+                    // Define Sleep Schedule
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -356,7 +343,21 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                /* Handle button click */
+                                navController.navigate(
+                                    Screens.DefineSleepSchedule.route
+                                        .replace(
+                                            oldValue = "{bedTime}",
+                                            newValue = "1"
+                                        )
+                                        .replace(
+                                            oldValue = "{awakeTime}",
+                                            newValue = "1"
+                                        )
+                                        .replace(
+                                            oldValue = "{target}",
+                                            newValue = "16"                     // TODO GET FROM DATABASE?
+                                        )
+                                )
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
@@ -439,7 +440,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Button 1
+                    // Find Books
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -449,7 +450,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                /* Handle button click */
+                                // TODO ADD NAVIGATION & ARGS
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
@@ -474,7 +475,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Button 2
+                    // Currently Reading
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -484,7 +485,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                /* Handle button click */
+                                // TODO ADD NAVIGATION & ARGS
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
@@ -509,7 +510,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Button 3
+                    // Wishlist
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -519,7 +520,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                /* Handle button click */
+                                // TODO ADD NAVIGATION & ARGS
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {

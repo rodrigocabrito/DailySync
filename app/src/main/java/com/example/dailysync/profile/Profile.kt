@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,17 +45,9 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Align text to the left
-            Text(
-                text = "IDK",
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .weight(1f)
-            )
-
             // Align text to the right
             Text(
-                text = "Notification Icon",
+                text = "Notification Icon",                 // TODO NOTIFICATION ICON
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .weight(1f)
@@ -66,8 +57,8 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
         Spacer(modifier = Modifier.height(20.dp))
 
         // body
-
-        // TODO
+        // TODO PROFILE IMAGE (GALLERY OR CAMERA)
+        // TODO OPTIONS (SETTINGS, ACHIEVEMENTS, ...)
 
         Spacer(modifier = Modifier.height(16.dp))
 

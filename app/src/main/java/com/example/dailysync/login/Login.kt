@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(navController: NavHostController, auth: FirebaseAuth) {
+fun Login(navController: NavHostController, auth: FirebaseAuth) {               // TODO COLORS?
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }

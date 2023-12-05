@@ -55,17 +55,9 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // Align text to the left
-            Text(
-                text = "IDK",
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .weight(1f)
-            )
-
             // Align text to the right
             Text(
-                text = "Notification Icon",
+                text = "Notification Icon",                     // TODO NOTIFICATION ICON
                 textAlign = TextAlign.End,
                 modifier = Modifier
                     .weight(1f)
@@ -130,7 +122,10 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
         // graphs
+        // TODO STATS FROM DATABASE
 
         Spacer(modifier = Modifier.height(16.dp))
 

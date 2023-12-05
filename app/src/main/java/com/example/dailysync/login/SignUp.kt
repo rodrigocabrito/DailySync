@@ -18,7 +18,7 @@ import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
+fun SignUp(navController: NavHostController, auth: FirebaseAuth) {              // TODO COLORS?
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }

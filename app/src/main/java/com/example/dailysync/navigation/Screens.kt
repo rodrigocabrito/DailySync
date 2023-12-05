@@ -22,7 +22,6 @@ sealed class Screens(val route: String) {
     object DefineSleepSchedule : Screens("define_sleep_schedule_screen/{bedTime}/{awakeTime}/{target}")
     object EditSleepSchedule : Screens("edit_sleep_schedule_screen/{target}")
 
-    object Exercise : Screens("exercise/{result}")
-    object Read : Screens("read_screen")
-    object Sleep : Screens("sleep_screen/{result}")
+    // Read
+    // TODO ALL READ ROUTES
 }
