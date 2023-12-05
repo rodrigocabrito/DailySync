@@ -35,6 +35,8 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
             SignUp(navController = navController, auth = auth)
         }
 
+        // ##################################################################################################################################################################################
+
         // Footer
         composable(route = Screens.Home.route){
             Home(navController = navController, auth = auth)
@@ -49,43 +51,53 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
             Profile(navController = navController, auth = auth)
         }
 
+        // ##################################################################################################################################################################################
+
         // Exercise
         composable(route = Screens.StartExercise.route + "?category={category}"){ navBackStack ->
-            //extracting the argument
+            // extracting the argument
             var categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
             StartExercise(navController = navController, categoryShow = categoryShow, auth = auth)
         }
         composable(route = Screens.DuringExercise.route + "?category={category}"){ navBackStack ->
-            //extracting the argument
+            // extracting the argument
             var categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
             DuringExercise(navController = navController, categoryShow = categoryShow, auth = auth)
         }
         composable(route = Screens.SaveExercise.route + "?category={category}"){ navBackStack ->
-            //extracting the argument
+            // extracting the argument
             var categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
             SaveExercise(navController = navController, categoryShow = categoryShow, auth = auth)
         }
+
+        // ##################################################################################################################################################################################
 
         // Sleep
         composable(route = Screens.RegisterSleep.route){
             RegisterSleep(navController = navController, auth = auth)
         }
-        composable(route = Screens.DefineSleepSchedule.route + "?bedTime={bedTime}&awakeTime={awakeTime}") { navBackStack ->
-            // Extracting the arguments
-            val bedTime: String? = navBackStack.arguments?.getString("bedTime")
-            val awakeTime: String? = navBackStack.arguments?.getString("awakeTime")
-
-            val bedTimeShow: String = (bedTime?.toIntOrNull() ?: 1).toString()
-            val awakeTimeShow: String = (awakeTime?.toIntOrNull() ?: 1).toString()
-
-            DefineSleepSchedule(navController = navController, auth = auth, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow)
+        composable(route = Screens.DefineSleepSchedule.route + "?bedTime={bedTime}&awakeTime={awakeTime}&target={target}") { navBackStack ->
+            // extracting the arguments
+            val bedTimeShow: String = (navBackStack.arguments?.getString("bedTime")?.toIntOrNull() ?: 1).toString()
+            val awakeTimeShow: String = (navBackStack.arguments?.getString("awakeTime")?.toIntOrNull() ?: 1).toString()
+            val targetShow: Int = navBackStack.arguments?.getString("target")?.toIntOrNull() ?: 0
+            DefineSleepSchedule(navController = navController, auth = auth, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow, targetShow = targetShow)
         }
-
         composable(route = Screens.EditSleepSchedule.route + "?target={target}"){navBackStack ->
-            var targetShow: Double = (navBackStack.arguments?.getString("target")?.toIntOrNull()?:1).toDouble()
+            // extracting the argument
+            val targetString: String? = navBackStack.arguments?.getString("target")
+            val regexResult = Regex("""(\d+)h(\d+)""").find(targetString ?: "")
+            val (hours, minutes) = if (regexResult != null) {
+                val (hoursGroup, minutesGroup) = regexResult.destructured
+                Pair(hoursGroup.toInt(), minutesGroup.toInt())
+            } else {
+                Pair(0, 0) // Default values if the format is not as expected
+            }
+            val targetShow: String = "$hours" + "h" + "$minutes"
             EditSleepSchedule(navController = navController, auth = auth, targetShow = targetShow)
         }
 
+        // ##################################################################################################################################################################################
 
 
 
