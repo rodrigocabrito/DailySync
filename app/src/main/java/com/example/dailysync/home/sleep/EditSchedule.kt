@@ -37,9 +37,13 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetShow: Double = 8.5) {
+fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetShow: String) {
 
-    val target by remember { mutableDoubleStateOf(targetShow) }
+    val hours = getHourFromTarget(targetShow)
+    val minutes = getMinuteFromTarget(targetShow)
+
+    val targetHours by remember { mutableIntStateOf(hours) }
+    val targetMinutes by remember { mutableIntStateOf(minutes) }
 
     var selectedHourBedTime by remember { mutableIntStateOf(0) }
     var selectedMinBedTime by remember { mutableIntStateOf(0) }
@@ -47,9 +51,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
     var showDialogSave by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val targetMinutes = if (hasDecimalPartFive(target)) 30 else 0
-
-    var selectedHourAwakeTime by remember { mutableIntStateOf((selectedHourBedTime + target).toInt()) }
+    var selectedHourAwakeTime by remember { mutableIntStateOf(selectedHourBedTime + targetHours) }
     var selectedMinAwakeTime by remember { mutableIntStateOf(selectedMinBedTime + targetMinutes) }
 
     // Press Cancel (Pop Up)
@@ -66,6 +68,9 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
     // Press OK (Pop Up)
     val confirmActionSaved: () -> Unit = {
         showDialogSave = false
+
+        val targetToPassBack = formatTarget(targetHours, targetMinutes)
+
         navController.navigate(Screens.DefineSleepSchedule.route
             .replace(
                 oldValue = "{bedTime}",
@@ -74,6 +79,10 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             .replace(
                 oldValue = "{awakeTime}",
                 newValue = "$selectedHourAwakeTime:$selectedMinAwakeTime"
+            )
+            .replace(
+                oldValue = "{target}",
+                newValue = "$targetToPassBack"
             ))
     }
 
@@ -246,7 +255,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
 
         // awake time
 
-        Text(text = "Bed Time",
+        Text(text = "Awake Time",
             Modifier
                 .align(Alignment.Start)
                 .padding(start = 16.dp))
@@ -402,7 +411,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 text = { Text("Your sleep schedule was saved successfully!") },
                 confirmButton = {
                     TextButton(onClick = confirmActionSaved) {
-                        Text("Ok")
+                        Text("OK")
                     }
                 }
             )
@@ -422,6 +431,21 @@ private fun hasDecimalPartFive(value: Double): Boolean {
     return false
 }
 
+private fun getHourFromTarget(target: String) : Int {
+    val decimalIndex = target.indexOf('h')
+    if (decimalIndex != -1) {
+        return target.substring(0, decimalIndex).toInt()
+    }
+    return 0
+}
+private fun getMinuteFromTarget(target: String) : Int {
+    val decimalIndex = target.indexOf('h')
+    if (decimalIndex != -1) {
+        return target.substring(decimalIndex + 1, target.length).toInt()
+    }
+    return 0
+}
+
 // Function to format hours
 private fun formatHour(hour: Int): String {
     val formattedHour = (hour % 24 + 24) % 24
@@ -438,4 +462,8 @@ private fun formatMinute(minute: Int): String {
         return "0$formattedMinute"
     }
     return "$formattedMinute"
+}
+
+private fun formatTarget(targetHours: Int, targetMinutes: Int) : Int {
+    return (targetHours * 2) + (if (targetMinutes == 30) 1 else 0)
 }
