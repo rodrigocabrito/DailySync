@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,9 +45,10 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTimeShow: String, awakeTimeShow: String) {
+fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTimeShow: String, awakeTimeShow: String, targetShow: Int) {
 
-    var targetValue by remember { mutableIntStateOf(0) }
+    var targetValue by remember { mutableIntStateOf(targetShow) }
+    val targetMinutes by remember { mutableDoubleStateOf(0.0) }
 
     var bedTime by remember { mutableStateOf(bedTimeShow) }
     var awakeTime by remember { mutableStateOf(awakeTimeShow) }
@@ -202,11 +204,14 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                TextButton(onClick = { navController.navigate(Screens.EditSleepSchedule.route
-                    .replace(
-                        oldValue = "{target}",      // TODO HANDLE IF TARGET HAS MINUTES
-                        newValue = "$targetValue"
-                    )) }) {
+                TextButton(onClick = {
+                    navController.navigate(Screens.EditSleepSchedule.route
+                        .replace(
+                            oldValue = "{target}",
+                            newValue = formatHoursAndMinutes(targetValue)
+                        )
+                    )
+                }) {
                     Text(
                         text = "Edit",
                         fontSize = 22.sp,
