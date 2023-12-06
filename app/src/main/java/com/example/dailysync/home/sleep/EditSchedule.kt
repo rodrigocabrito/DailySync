@@ -70,19 +70,32 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
 
         val targetToPassBack = formatTarget(targetHours, targetMinutes)
 
-        navController.navigate(Screens.DefineSleepSchedule.route
-            .replace(
-                oldValue = "{bedTime}",
-                newValue = "$selectedHourBedTime:$selectedMinBedTime"
-            )
+        val minBedTime = if (selectedMinBedTime == 0) {
+            "00"
+        } else {
+            selectedMinBedTime.toString()
+        }
+
+        val minAwakeTime = if (selectedMinAwakeTime == 0) {
+            "00"
+        } else {
+            selectedMinAwakeTime.toString()
+        }
+
+        val route = Screens.DefineSleepSchedule.route.replace(
+            oldValue = "{bedTime}",
+            newValue = "$selectedHourBedTime:$minBedTime"
+        )
             .replace(
                 oldValue = "{awakeTime}",
-                newValue = "$selectedHourAwakeTime:$selectedMinAwakeTime"
+                newValue = "$selectedHourAwakeTime:$minAwakeTime"
             )
             .replace(
                 oldValue = "{target}",
                 newValue = "$targetToPassBack"
-            ))
+            )
+        println("Navigate to: $route")
+        navController.navigate(route)
     }
 
     // header
