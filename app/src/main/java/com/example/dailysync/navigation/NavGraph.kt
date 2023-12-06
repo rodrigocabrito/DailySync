@@ -75,9 +75,32 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         }
         composable(route = Screens.DefineSleepSchedule.route + "?bedTime={bedTime}&awakeTime={awakeTime}&target={target}") { navBackStack ->
             // extracting the arguments
-            val bedTimeShow: String = (navBackStack.arguments?.getString("bedTime")?.toIntOrNull() ?: 1).toString()
-            val awakeTimeShow: String = (navBackStack.arguments?.getString("awakeTime")?.toIntOrNull() ?: 1).toString()
+            val bedTime: String? = navBackStack.arguments?.getString("bedTime")
+            val awakeTime: String? = navBackStack.arguments?.getString("awakeTime")
             val targetShow: Int = navBackStack.arguments?.getString("target")?.toIntOrNull() ?: 0
+
+            val bedTimeShow: String = bedTime?.let {
+                val parts = it.split(":")
+                if (parts.size == 2) {
+                    val hours = parts[0].toIntOrNull() ?: 1
+                    val minutes = parts[1].toIntOrNull() ?: 0
+                    "$hours:${String.format("%02d", minutes)}"
+                } else {
+                    "1:00" // Default value if the format is not as expected
+                }
+            } ?: "1:00" // Default value if bedTime is null
+
+            val awakeTimeShow: String = awakeTime?.let {
+                val parts = it.split(":")
+                if (parts.size == 2) {
+                    val hours = parts[0].toIntOrNull() ?: 1
+                    val minutes = parts[1].toIntOrNull() ?: 0
+                    "$hours:${String.format("%02d", minutes)}"
+                } else {
+                    "1:00" // Default value if the format is not as expected
+                }
+            } ?: "1:00" // Default value if awakeTime is null
+
             DefineSleepSchedule(navController = navController, auth = auth, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow, targetShow = targetShow)
         }
         composable(route = Screens.EditSleepSchedule.route + "?target={target}"){navBackStack ->
