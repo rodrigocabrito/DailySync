@@ -27,7 +27,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,13 +48,17 @@ import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
+fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, timeShow: Long, averagePaceShow: Float, distanceShow: Float) {
 
     val category by remember { mutableIntStateOf(categoryShow) }
     var textValue by remember { mutableStateOf("") }
+    val time by remember { mutableLongStateOf (timeShow) }
+    val averagePace by remember { mutableFloatStateOf (averagePaceShow) }
+    val distance by remember { mutableFloatStateOf (distanceShow) }
 
 
     val title = when (category) {
@@ -70,6 +76,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         showDialogSave = false
         showDialogCancelConfirmed = false
         navController.navigate(Screens.Home.route)
+        // TODO SAVE DATA ON THE DATABASE
     }
 
     // Press OK (Pop Up)
@@ -160,17 +167,20 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                     .weight(3f)
                     .height(110.dp)
                     .padding(start = 16.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2F0C1")), shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#A2F0C1")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
                     .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                // TODO: GET INFO FROM 'DURING' PAGE
+                // TODO: FORMAT DISTANCE
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
-                    Text("Time:")
-                    Text("Average Pace:")
-                    Text("Distance:")
+                    Text("Time: ${formatTime(time)}")
+                    Text("Average Pace: ${formatAveragePace(averagePace)}")
+                    Text("Distance: $distance")
                 }
             }
 
@@ -188,14 +198,19 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                         .background(
                             Color(android.graphics.Color.parseColor("#A2F0C1")),
 
-                        )
+                            )
                         .clickable {
                             // TODO ACCESS PHONE GALLERY
                         }
                         .drawBehind {
-                            drawRoundRect(color = Color.Black, style = Stroke(width = 2f,
-                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                            )
+                            drawRoundRect(
+                                color = Color.Black, style = Stroke(
+                                    width = 2f,
+                                    pathEffect = PathEffect.dashPathEffect(
+                                        floatArrayOf(10f, 10f),
+                                        0f
+                                    )
+                                )
                             )
                         }
                 ) {
@@ -234,9 +249,14 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                             // TODO ACCESS PHONE CAMERA
                         }
                         .drawBehind {
-                            drawRoundRect(color = Color.Black, style = Stroke(width = 2f,
-                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                            )
+                            drawRoundRect(
+                                color = Color.Black, style = Stroke(
+                                    width = 2f,
+                                    pathEffect = PathEffect.dashPathEffect(
+                                        floatArrayOf(10f, 10f),
+                                        0f
+                                    )
+                                )
                             )
                         }
                 ) {
@@ -471,7 +491,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top=10.dp),
+                        .padding(top = 10.dp),
                     verticalArrangement = Arrangement.Center, // Center vertically
                     horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
                 ) {
@@ -490,4 +510,17 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         }
 
     }
+}
+
+private fun formatTime(elapsedTime: Long): String {
+    val totalSeconds = elapsedTime / 1000
+    val hours = totalSeconds / 3600
+    val remainingSeconds = totalSeconds % 3600
+    val minutes = remainingSeconds / 60
+    val seconds = remainingSeconds % 60
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+private fun formatAveragePace(averagePace: Float): String {
+    return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
 }
