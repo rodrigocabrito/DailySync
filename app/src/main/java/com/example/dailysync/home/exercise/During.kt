@@ -1,5 +1,6 @@
 package com.example.dailysync.home.exercise
 
+import android.text.format.DateUtils.formatElapsedTime
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,10 +23,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,11 +43,26 @@ import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun DuringExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
 
     val category by remember { mutableIntStateOf(categoryShow) }
+    var elapsedTime by remember { mutableLongStateOf(0L) }
+    var isChronometerRunning by remember { mutableStateOf(true) }
+    var averagePace by remember { mutableFloatStateOf(0.0f) }
+
+    Chronometer(isRunning = isChronometerRunning) { elapsedMillis ->
+        elapsedTime = elapsedMillis
+        averagePace = calculateAveragePace(2.3f, elapsedTime)                       // TODO GET DISTANCE FROM GPS LOCATION
+    }
 
     val title = when (category) {
         1 -> "Walk"
@@ -117,9 +137,9 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             Column (
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Text("Time:")                               // TODO LIVE CLOCK
+                Text("Time: ${formatTime(elapsedTime)}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Average Pace:")                       // TODO LIVE AVG PACE (DISTANCE/TIME)
+                Text("Average Pace: ${formatAveragePace(averagePace)}")
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Distance:")                           // TODO LIVE DISTANCE
             }
@@ -128,25 +148,26 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         Spacer(modifier = Modifier.height(8.dp))
 
         Row {
-            // TODO SWAP BETWEEN PAUSE/RESUME
+            val buttonName = if (isChronometerRunning) "Pause" else "Resume"
             Box(
                 modifier = Modifier
-                    .width(110.dp)
+                    .width(120.dp)
                     .height(50.dp)
                     .background(
                         Color(android.graphics.Color.parseColor("#47E285")),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
-                        // TODO STOP CLOCK
+                        isChronometerRunning = !isChronometerRunning
                     }
                     .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
                 Text(
-                    "Pause",
+                    buttonName,
                     modifier = Modifier
                         .padding(horizontal = 28.dp) // Adjust the padding as needed
                         .fillMaxHeight()
+                        .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
                 )
             }
@@ -320,4 +341,53 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             }
         }
     }
+}
+
+@Composable
+private fun Chronometer(
+    isRunning: Boolean,
+    onTick: (Long) -> Unit
+) {
+    var elapsedTime by remember { mutableLongStateOf(0L) }
+
+    LaunchedEffect(isRunning) {
+        if (isRunning) {
+            // Flow to emit elapsed time every second
+            val timeFlow: Flow<Long> = flow {
+                while (true) {
+                    delay(1000)
+                    elapsedTime += 1000
+                    emit(elapsedTime)
+                }
+            }
+
+            // Collect the elapsed time from the flow and update the UI
+            launch {
+                timeFlow.collect { elapsedMillis ->
+                    onTick(elapsedMillis)
+                }
+            }
+        }
+    }
+}
+
+private fun formatTime(elapsedTime: Long): String {
+    val totalSeconds = elapsedTime / 1000
+    val hours = totalSeconds / 3600
+    val remainingSeconds = totalSeconds % 3600
+    val minutes = remainingSeconds / 60
+    val seconds = remainingSeconds % 60
+    return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+}
+
+// Function to calculate average pace
+private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float {
+    // Convert elapsed time to minutes
+    val elapsedMinutes = elapsedTime / 1000f / 60f
+    // Calculate average pace in km/min
+    return if (elapsedMinutes > 0) distance / elapsedMinutes else 0.0f
+}
+
+private fun formatAveragePace(averagePace: Float): String {
+    return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
 }
