@@ -58,10 +58,11 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
     var elapsedTime by remember { mutableLongStateOf(0L) }
     var isChronometerRunning by remember { mutableStateOf(true) }
     var averagePace by remember { mutableFloatStateOf(0.0f) }
+    var distance by remember { mutableFloatStateOf(0.0f) }          // TODO GET DISTANCE FROM GPS LOCATION
 
     Chronometer(isRunning = isChronometerRunning) { elapsedMillis ->
         elapsedTime = elapsedMillis
-        averagePace = calculateAveragePace(2.3f, elapsedTime)                       // TODO GET DISTANCE FROM GPS LOCATION
+        averagePace = calculateAveragePace(distance, elapsedTime)
     }
 
     val title = when (category) {
@@ -79,6 +80,18 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             .replace(
                 oldValue = "{category}",
                 newValue = categoryShow.toString()
+            )
+            .replace(
+                oldValue = "{time}",
+                newValue = "$elapsedTime"
+            )
+            .replace(
+                oldValue = "{averagePace}",
+                newValue = "$averagePace"
+            )
+            .replace(
+                oldValue = "{distance}",
+                newValue = "$distance"
             ))
     }
 
@@ -141,7 +154,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Average Pace: ${formatAveragePace(averagePace)}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Distance:")                           // TODO LIVE DISTANCE
+                Text("Distance: $distance")                           // TODO LIVE DISTANCE
             }
         }
 
