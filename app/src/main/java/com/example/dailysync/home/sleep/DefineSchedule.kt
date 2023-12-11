@@ -45,8 +45,8 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
 
     var targetValue by remember { mutableIntStateOf(targetShow) }
 
-    val bedTime by remember { mutableStateOf(bedTimeShow) }             // TODO SHOW INFO FROM THE 'EditSleepSchedule' PAGE
-    val awakeTime by remember { mutableStateOf(awakeTimeShow) }         // TODO SHOW INFO FROM THE 'EditSleepSchedule' PAGE
+    val bedTime by remember { mutableStateOf(bedTimeShow) }
+    val awakeTime by remember { mutableStateOf(awakeTimeShow) }
 
     // Function to format hours and minutes
     fun formatHoursAndMinutes(valueInHalfHours: Int): String {
@@ -217,7 +217,7 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
             }
         }
         
-        Spacer(modifier = Modifier.height(150.dp))
+        Spacer(modifier = Modifier.height(220.dp))
 
         // footer
         Row(
