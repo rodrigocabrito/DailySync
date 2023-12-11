@@ -1,5 +1,6 @@
 package com.example.dailysync.home.exercise
 
+import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -34,9 +35,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.maps.MapView
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -44,6 +47,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun StartExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
 
     val category by remember { mutableIntStateOf(categoryShow) }
+    var mapView: MapView? by remember { mutableStateOf(null) }
 
     val title = when (category) {
         1 -> "Walk"
@@ -101,12 +105,26 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
 
         // body
 
-        Text(text = title)
+        Text(text = title, fontSize = 30.sp)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(26.dp))
 
-        // TODO GPS IMAGE
+        // TODO GPS IMAGE STARTING AT CURRENT LOCATION
 
+        // Initialize Google Map when the view is first composed
+        AndroidView(
+            factory = { context ->
+                MapView(context).apply {
+                    mapView = this
+                    this.onCreate(Bundle())
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(450.dp)
+        )
+
+        Spacer(modifier = Modifier.height(35.dp))
 
         Box(
             modifier = Modifier
@@ -151,7 +169,7 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         // footer
         Row(
