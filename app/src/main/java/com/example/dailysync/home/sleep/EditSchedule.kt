@@ -82,13 +82,25 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             selectedMinAwakeTime.toString()
         }
 
+        val hourBedTime = if (selectedHourBedTime < 0) {
+            (24 + selectedHourBedTime).toString()
+        } else {
+            selectedHourBedTime.toString()
+        }
+
+        val hourAwakeTime = if (selectedHourAwakeTime < 0) {
+            (24 + selectedHourAwakeTime).toString()
+        } else {
+            selectedHourAwakeTime.toString()
+        }
+
         val route = Screens.DefineSleepSchedule.route.replace(
             oldValue = "{bedTime}",
-            newValue = "$selectedHourBedTime:$minBedTime"
+            newValue = "$hourBedTime:$minBedTime"
         )
             .replace(
                 oldValue = "{awakeTime}",
-                newValue = "$selectedHourAwakeTime:$minAwakeTime"
+                newValue = "$hourAwakeTime:$minAwakeTime"
             )
             .replace(
                 oldValue = "{target}",
@@ -347,7 +359,10 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     verticalAlignment = Alignment.CenterVertically,
                 ){
                     IconButton(
-                        onClick = { selectedMinAwakeTime = (selectedMinAwakeTime - 10 + 60) % 60 },
+                        onClick = {
+                            selectedMinAwakeTime = (selectedMinAwakeTime - 10 + 60) % 60
+                            selectedMinBedTime = (selectedMinBedTime - 10 + 60) % 60
+                                  },
                         modifier = Modifier
                             .background(Color.LightGray)
                             .fillMaxWidth()
@@ -373,7 +388,10 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
 
                     // Button to increase value
                     IconButton(
-                        onClick = { selectedMinAwakeTime = (selectedMinAwakeTime + 10) % 60 },
+                        onClick = {
+                            selectedMinAwakeTime = (selectedMinAwakeTime + 10) % 60
+                            selectedMinBedTime = (selectedMinBedTime + 10) % 60
+                                  },
                         modifier = Modifier
                             .background(Color.LightGray)
                             .fillMaxWidth()
