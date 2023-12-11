@@ -64,7 +64,10 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         composable(route = Screens.SaveExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
             val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
-            SaveExercise(navController = navController, categoryShow = categoryShow, auth = auth)
+            val timeShow: Long = navBackStack.arguments?.getString("time")?.toLongOrNull()?:1L
+            val averagePaceShow: Float = navBackStack.arguments?.getString("averagePace")?.toFloatOrNull()?:1.0f
+            val distanceShow: Float = navBackStack.arguments?.getString("distance")?.toFloatOrNull()?:1.0f
+            SaveExercise(navController = navController, categoryShow = categoryShow, auth = auth, timeShow = timeShow, averagePaceShow = averagePaceShow, distanceShow = distanceShow)
         }
 
         // ##################################################################################################################################################################################
