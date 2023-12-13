@@ -168,7 +168,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Color(android.graphics.Color.parseColor("#CCBCEE")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
         ) {
             Text(
                 "\uD83D\uDECF Bed Time",
@@ -221,7 +221,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatHour(selectedHourBedTime + 1), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourBedTime) + "H", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Text(text = formatHour(selectedHourBedTime) + "h", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatHour(selectedHourBedTime - 1), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
@@ -318,7 +318,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Color(android.graphics.Color.parseColor("#CCBCEE")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
         ) {
             Text(
                 "⏰ Awake Time",
@@ -373,7 +373,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatHour(selectedHourAwakeTime + 1), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourAwakeTime) + "H", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Text(text = formatHour(selectedHourAwakeTime) + "h", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatHour(selectedHourAwakeTime - 1), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
