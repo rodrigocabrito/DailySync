@@ -1,6 +1,7 @@
 package com.example.dailysync.home.exercise
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -63,12 +64,12 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
     var mapView: MapView? by remember { mutableStateOf(null) }
     val category by remember { mutableIntStateOf(categoryShow) }
-    var textValue1 by remember { mutableStateOf("") }
-    var textValue2 by remember { mutableStateOf("") }
+    var workoutName by remember { mutableStateOf("") }
+    var workoutDescription by remember { mutableStateOf("") }
     val time by remember { mutableLongStateOf (timeShow) }
     val averagePace by remember { mutableFloatStateOf (averagePaceShow) }
     val distance by remember { mutableFloatStateOf (distanceShow) }
-
+    val userId = auth.currentUser?.uid
 
     val title = when (category) {
         1 -> "Walk"
@@ -85,9 +86,10 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         showDialogSave = false
         showDialogCancelConfirmed = false
 
-        val exercise = Exercise("","", time, averagePace, distance)
-        writeToDatabase("idk", exercise, title)                 // TODO USER_ID
-
+        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance)
+        if (userId != null) {
+            writeToDatabase(userId, exercise, title)
+        }
         navController.navigate(Screens.Home.route)
     }
 
@@ -136,9 +138,9 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         Spacer(modifier = Modifier.height(20.dp))
 
         TextField(
-            value = textValue1,
+            value = workoutName,
             onValueChange = {
-                textValue1 = it
+                workoutName = it
             },
 
             label = { Text("*Give a name to your $title") },
@@ -159,9 +161,9 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         )
 
         TextField(
-            value = textValue2,
+            value = workoutDescription,
             onValueChange = {
-                textValue2 = it
+                workoutDescription = it
             },
             label = { Text("How did it go? Share some details...") },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -564,6 +566,10 @@ private fun formatAveragePace(averagePace: Float): String {
 
 private fun writeToDatabase(userId: String, exercise: Exercise, category: String) {
     val database = Firebase.database
-    val usersRef = database.getReference("users")
-    usersRef.child(userId).child(category).setValue(exercise)
+    val exerciseRef = database.getReference("users").child(userId).child(category)
+
+    // Create a new unique ID for the workout
+    val workoutId = exerciseRef.push().key
+
+    exerciseRef.child(workoutId!!).setValue(exercise)
 }
