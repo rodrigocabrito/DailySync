@@ -45,9 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailysync.Exercise
 import com.example.dailysync.R
+import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +59,8 @@ import java.util.Locale
 fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, timeShow: Long, averagePaceShow: Float, distanceShow: Float) {
 
     val category by remember { mutableIntStateOf(categoryShow) }
-    var textValue by remember { mutableStateOf("") }
+    var textValue1 by remember { mutableStateOf("") }
+    var textValue2 by remember { mutableStateOf("") }
     val time by remember { mutableLongStateOf (timeShow) }
     val averagePace by remember { mutableFloatStateOf (averagePaceShow) }
     val distance by remember { mutableFloatStateOf (distanceShow) }
@@ -75,8 +80,11 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
     val confirmAction: () -> Unit = {
         showDialogSave = false
         showDialogCancelConfirmed = false
+
+        val exercise = Exercise("","", time, averagePace, distance)
+        writeToDatabase("idk", exercise, title)                 // TODO USER_ID
+
         navController.navigate(Screens.Home.route)
-        // TODO SAVE DATA ON THE DATABASE
     }
 
     // Press OK (Pop Up)
@@ -124,9 +132,9 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         Spacer(modifier = Modifier.height(36.dp))
 
         TextField(
-            value = textValue,
+            value = textValue1,
             onValueChange = {
-                textValue = it
+                textValue1 = it
             },
 
             label = { Text("Give a name to your $title", color = Color.Black) },
@@ -143,9 +151,9 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
 
         TextField(
-            value = textValue,
+            value = textValue2,
             onValueChange = {
-                textValue = it
+                textValue2 = it
             },
             label = { Text("How did it went? Share some details...", color = Color.Black) },
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -523,4 +531,10 @@ private fun formatTime(elapsedTime: Long): String {
 
 private fun formatAveragePace(averagePace: Float): String {
     return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
+}
+
+private fun writeToDatabase(userId: String, exercise: Exercise, category: String) {
+    val database = Firebase.database
+    val usersRef = database.getReference("users")
+    usersRef.child(userId).child(category).setValue(exercise)
 }
