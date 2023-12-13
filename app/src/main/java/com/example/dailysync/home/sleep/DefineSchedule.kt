@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -99,7 +100,11 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
-                .background(Color.Gray, RoundedCornerShape(8.dp)),
+                .background(
+                    Color(android.graphics.Color.parseColor("#F3F3F3")),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -120,23 +125,6 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Button to decrease value
-                    IconButton(
-                        onClick = {
-                            if (targetValue >= 1) {
-                                targetValue--
-                            }
-                        }
-                    ) {
-                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
-                    }
-
-                    // Editable int value
-                    Text(
-                        text = formatHoursAndMinutes(targetValue),
-                        fontSize = 20.sp,
-                        color = Color.White
-                    )
 
                     // Button to increase value
                     IconButton(
@@ -147,6 +135,24 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                         }
                     ) {
                         Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Increase")
+                    }
+
+                    // Editable int value
+                    Text(
+                        text = formatHoursAndMinutes(targetValue),
+                        fontSize = 20.sp,
+                        color = Color(0xFF5931B0)
+                    )
+
+                    // Button to decrease value
+                    IconButton(
+                        onClick = {
+                            if (targetValue >= 1) {
+                                targetValue--
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Decrease")
                     }
                 }
             }
@@ -167,9 +173,13 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
 
         Box(
             modifier = Modifier
-                .background(Color.Gray, RoundedCornerShape(8.dp))
                 .height(130.dp)
                 .width(356.dp)
+                .background(
+                    Color(android.graphics.Color.parseColor("#F3F3F3")),
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp)),
         ) {
             Column(
                 modifier = Modifier
@@ -177,9 +187,9 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                     .padding(start = 35.dp, top = 20.dp)
             ) {
                 Row {
-                    Text(text = "Bed Time", fontSize = 12.sp)
-                    Spacer(modifier = Modifier.width(140.dp))
-                    Text(text = "Awake Time", fontSize = 12.sp)
+                    Text(text = "\uD83D\uDECF️Bed Time", fontSize = 12.sp)
+                    Spacer(modifier = Modifier.width(110.dp))
+                    Text(text = "⏰Awake Time", fontSize = 12.sp)
                 }
 
                 Row {
@@ -199,6 +209,8 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
 
                 Spacer(modifier = Modifier.height(5.dp))
 
+                Divider(color = Color(0xFFDDDDDD), thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+
                 TextButton(onClick = {
                     navController.navigate(Screens.EditSleepSchedule.route
                         .replace(
@@ -211,7 +223,7 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                         text = "Edit",
                         fontSize = 22.sp,
                         textAlign = TextAlign.Start,
-                        color = Color.Blue
+                        color = Color(0xFF5931B0)
                     )
                 }
             }
