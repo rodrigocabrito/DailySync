@@ -193,7 +193,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 Text(
                     buttonName,
                     modifier = Modifier
-                        .padding(horizontal = 28.dp) // Adjust the padding as needed
+                        .align(Alignment.Center)
                         .fillMaxHeight()
                         .fillMaxWidth()
                         .wrapContentSize(Alignment.Center)
@@ -217,7 +217,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 Text(
                     "Finish",
                     modifier = Modifier
-                        .padding(horizontal = 28.dp) // Adjust the padding as needed
+                        .align(Alignment.Center)
                         .fillMaxHeight()
                         .wrapContentSize(Alignment.Center)
                 )

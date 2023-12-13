@@ -142,7 +142,7 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             Text(
                 "Start",
                 modifier = Modifier
-                    .padding(horizontal = 28.dp) // Adjust the padding as needed
+                    .align(Alignment.Center)
                     .fillMaxHeight()
                     .wrapContentSize(Alignment.Center)
             )
