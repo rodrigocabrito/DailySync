@@ -55,7 +55,8 @@ import java.util.Locale
 fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, timeShow: Long, averagePaceShow: Float, distanceShow: Float) {
 
     val category by remember { mutableIntStateOf(categoryShow) }
-    var textValue by remember { mutableStateOf("") }
+    var textValue1 by remember { mutableStateOf("") }
+    var textValue2 by remember { mutableStateOf("") }
     val time by remember { mutableLongStateOf (timeShow) }
     val averagePace by remember { mutableFloatStateOf (averagePaceShow) }
     val distance by remember { mutableFloatStateOf (distanceShow) }
@@ -124,13 +125,19 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         Spacer(modifier = Modifier.height(36.dp))
 
         TextField(
-            value = textValue,
+            value = textValue1,
             onValueChange = {
-                textValue = it
+                textValue1 = it
             },
 
-            label = { Text("Give a name to your $title", color = Color.Black) },
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color(android.graphics.Color.parseColor("#A2F0C1"))),
+            label = { Text("Give a name to your $title", color = Color.Gray) },
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.Black,
+                containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
+                cursorColor = Color.Black,
+                focusedIndicatorColor = Color.Black,
+                unfocusedIndicatorColor = Color.Black
+            ),
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
@@ -143,15 +150,21 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
 
         TextField(
-            value = textValue,
+            value = textValue2,
             onValueChange = {
-                textValue = it
+                textValue2 = it
             },
-            label = { Text("How did it went? Share some details...", color = Color.Black) },
+            label = { Text("How did it go? Share some details...", color = Color.Gray) },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color(android.graphics.Color.parseColor("#A2F0C1"))),
+            colors = TextFieldDefaults.textFieldColors(
+                textColor = Color.Black,
+                containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
+                cursorColor = Color.Black,
+                focusedIndicatorColor = Color.Black,
+                unfocusedIndicatorColor = Color.Black
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -176,7 +189,8 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             ) {
                 // TODO: FORMAT DISTANCE
                 Column (
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(start = 8.dp)
                 ){
                     Text("Time: ${formatTime(time)}")
                     Text("Average Pace: ${formatAveragePace(averagePace)}")
@@ -303,7 +317,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 Text(
                     "Cancel",
                     modifier = Modifier
-                        .padding(horizontal = 25.dp)
+                        .align(Alignment.Center)
                         .fillMaxHeight()
                         .wrapContentSize(Alignment.Center)
                 )
@@ -326,7 +340,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 Text(
                     "Save",
                     modifier = Modifier
-                        .padding(horizontal = 33.dp)
+                        .align(Alignment.Center)
                         .fillMaxHeight()
                         .wrapContentSize(Alignment.Center)
                 )
