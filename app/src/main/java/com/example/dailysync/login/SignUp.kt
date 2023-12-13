@@ -51,7 +51,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
         TextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email", color = Color.DarkGray) },
+            label = { Text("Email", color = Color.Gray) },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.DarkGray,
                 containerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
@@ -67,7 +67,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
         TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password", color = Color.DarkGray) },
+            label = { Text("Password", color = Color.Gray) },
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.DarkGray,
