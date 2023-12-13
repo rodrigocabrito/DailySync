@@ -45,9 +45,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailysync.Exercise
 import com.example.dailysync.R
+import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,8 +80,11 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
     val confirmAction: () -> Unit = {
         showDialogSave = false
         showDialogCancelConfirmed = false
+
+        val exercise = Exercise("","", time, averagePace, distance)
+        writeToDatabase("idk", exercise, title)                 // TODO USER_ID
+
         navController.navigate(Screens.Home.route)
-        // TODO SAVE DATA ON THE DATABASE
     }
 
     // Press OK (Pop Up)
@@ -358,7 +365,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 text = { Text("Your $title was saved successfully!") },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Ok")
+                        Text("OK")
                     }
                 }
             )
@@ -394,7 +401,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 text = { Text("Your $title was cancelled!") },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Ok")
+                        Text("OK")
                     }
                 }
             )
@@ -537,4 +544,10 @@ private fun formatTime(elapsedTime: Long): String {
 
 private fun formatAveragePace(averagePace: Float): String {
     return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
+}
+
+private fun writeToDatabase(userId: String, exercise: Exercise, category: String) {
+    val database = Firebase.database
+    val usersRef = database.getReference("users")
+    usersRef.child(userId).child(category).setValue(exercise)
 }

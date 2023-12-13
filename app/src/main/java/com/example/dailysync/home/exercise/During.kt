@@ -1,5 +1,6 @@
 package com.example.dailysync.home.exercise
 
+import android.os.Bundle
 import android.text.format.DateUtils.formatElapsedTime
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,9 +40,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.maps.MapView
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -54,6 +57,7 @@ import java.util.Locale
 @Composable
 fun DuringExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
 
+    var mapView: MapView? by remember { mutableStateOf(null) }
     val category by remember { mutableIntStateOf(categoryShow) }
     var elapsedTime by remember { mutableLongStateOf(0L) }
     var isChronometerRunning by remember { mutableStateOf(true) }
@@ -135,8 +139,19 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         Spacer(modifier = Modifier.height(36.dp))
 
         // TODO GPS IMAGE
+        AndroidView(
+            factory = { context ->
+                MapView(context).apply {
+                    mapView = this
+                    this.onCreate(Bundle())
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(330.dp)
+        )
 
-        Spacer(modifier = Modifier.height(380.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Box(
             modifier = Modifier
