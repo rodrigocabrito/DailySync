@@ -82,13 +82,17 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
 
         val minBedTime = if (selectedMinBedTime == 0) {
             "00"
+        } else  if (selectedMinBedTime < 0) {
+            (60 + selectedMinBedTime).toString()
         } else {
             selectedMinBedTime.toString()
         }
 
         val minAwakeTime = if (selectedMinAwakeTime == 0) {
             "00"
-        } else {
+        } else  if (selectedMinAwakeTime < 0) {
+            (60 + selectedMinAwakeTime).toString()
+        }else {
             selectedMinAwakeTime.toString()
         }
 
@@ -203,7 +207,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourBedTime++
-
+                            selectedHourAwakeTime++
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -232,7 +236,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourBedTime--
-
+                            selectedHourAwakeTime--
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -262,7 +266,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinBedTime = (selectedMinBedTime + 10) % 60
-
+                            selectedMinAwakeTime = (selectedMinAwakeTime + 10) % 60
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -291,7 +295,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinBedTime = (selectedMinBedTime - 10 + 60) % 60
-
+                            selectedMinAwakeTime = (selectedMinAwakeTime - 10) % 60
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -355,7 +359,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourAwakeTime++
-
+                            selectedHourBedTime++
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -384,6 +388,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourAwakeTime--
+                            selectedHourBedTime--
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -413,7 +418,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinAwakeTime = (selectedMinAwakeTime + 10) % 60
-
+                            selectedMinBedTime = (selectedMinBedTime + 10) % 60
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -442,7 +447,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinAwakeTime = (selectedMinAwakeTime - 10 + 60) % 60
-
+                            selectedMinBedTime = (selectedMinBedTime - 10) % 60
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
