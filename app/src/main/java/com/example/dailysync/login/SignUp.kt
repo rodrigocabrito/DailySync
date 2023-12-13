@@ -133,7 +133,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
 
         TextButton(onClick = { navController.navigate(Screens.Login.route) }) {
             Text("Already have an account?", color = Color.DarkGray)
-            Text(" Login here.", color = Color(0xFF0455BF))
+            Text(" Login here", color = Color(0xFF0455BF))
         }
     }
 }
