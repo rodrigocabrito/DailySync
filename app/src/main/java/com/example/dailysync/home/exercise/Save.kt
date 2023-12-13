@@ -1,5 +1,6 @@
 package com.example.dailysync.home.exercise
 
+import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,11 +45,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.dailysync.Exercise
 import com.example.dailysync.R
 import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.maps.MapView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
@@ -58,6 +61,7 @@ import java.util.Locale
 @Composable
 fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, timeShow: Long, averagePaceShow: Float, distanceShow: Float) {
 
+    var mapView: MapView? by remember { mutableStateOf(null) }
     val category by remember { mutableIntStateOf(categoryShow) }
     var textValue1 by remember { mutableStateOf("") }
     var textValue2 by remember { mutableStateOf("") }
@@ -129,7 +133,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
         Text(text = "Save $title")
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         TextField(
             value = textValue1,
@@ -137,7 +141,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 textValue1 = it
             },
 
-            label = { Text("Give a name to your $title", color = Color.Gray) },
+            label = { Text("*Give a name to your $title") },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.Black,
                 containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
@@ -151,17 +155,15 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-
+                .padding(start = 16.dp, end = 16.dp, bottom = 5.dp)
         )
-
 
         TextField(
             value = textValue2,
             onValueChange = {
                 textValue2 = it
             },
-            label = { Text("How did it go? Share some details...", color = Color.Gray) },
+            label = { Text("How did it go? Share some details...") },
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
@@ -174,12 +176,25 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             ),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp),
         )
 
-        // TODO GPS IMAGE
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(180.dp))
+        AndroidView(
+            factory = { context ->
+                MapView(context).apply {
+                    mapView = this
+                    this.onCreate(Bundle())
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(275.dp)
+                .padding(start = 16.dp, end = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row {
             Box(
@@ -217,9 +232,8 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                         .fillMaxWidth()
                         .height(50.dp)
                         .background(
-                            Color(android.graphics.Color.parseColor("#A2F0C1")),
-
-                            )
+                            Color(android.graphics.Color.parseColor("#A2F0C1"))
+                        )
                         .clickable {
                             // TODO ACCESS PHONE GALLERY
                         }
@@ -305,7 +319,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             }
         }
 
-        Spacer(modifier = Modifier.height(60.dp))
+        Spacer(modifier = Modifier.height(18.dp))
 
         Row {
             Box(
@@ -329,6 +343,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                         .wrapContentSize(Alignment.Center)
                 )
             }
+
             Spacer(modifier = Modifier.width(10.dp))
 
             Box(
@@ -352,7 +367,6 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                         .wrapContentSize(Alignment.Center)
                 )
             }
-
         }
 
         // Show the AlertDialog Pop Up
@@ -406,6 +420,8 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 }
             )
         }
+
+
 
         // footer
         Row(
