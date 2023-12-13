@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.dailysync.R
 import com.example.dailysync.User
@@ -30,7 +31,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
-    var signupFail = false
+    var signupFail by remember { mutableStateOf (false)}
 
     Image(
         painter = painterResource(id = R.drawable.fulllogo),
@@ -84,7 +85,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .width(280.dp)
                 .height(48.dp)
                 .background(
                     Color(android.graphics.Color.parseColor("#A2D6F0")),
@@ -92,10 +93,8 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                 )
                 .clickable {
                     // Perform registration
-                    isLoading = true
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
-                            isLoading = false
                             if (task.isSuccessful) {
                                 // User registration successful
                                 val userId = auth.currentUser?.uid
@@ -121,8 +120,11 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
         }
 
         if (signupFail) {
+            Spacer(modifier = Modifier.height(4.dp))
+
             Text(
                 text = "Signup failed: Email already registered!",
+                fontSize = 11.sp,
                 color = Color.Red
             )
         }

@@ -1,5 +1,6 @@
 package com.example.dailysync.login
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
@@ -26,8 +28,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun Login(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isLoading by remember { mutableStateOf(false) }
-    var loginFail = false
+    var loginFail by remember {mutableStateOf(false)}
 
     Image(
         painter = painterResource(id = R.drawable.fulllogo),
@@ -77,20 +78,21 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             )
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         TextButton( modifier = Modifier
-            .align(Alignment.End),
+            .align(Alignment.End)
+            .padding(end = 30.dp),
             onClick = {}
         ) {
             Text("Forgot password?", color = Color(0xFF0455BF))
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(4.dp))
 
         Box(
             modifier = Modifier
-                .fillMaxWidth()
+                .width(280.dp)
                 .height(48.dp)
                 .background(
                     Color(android.graphics.Color.parseColor("#A2D6F0")),
@@ -98,10 +100,8 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                 )
                 .clickable {
                     // Perform login
-                    isLoading = true
                     auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener { task ->
-                            isLoading = false
                             if (task.isSuccessful) {
                                 navController.navigate(Screens.Home.route)
                             } else {
@@ -121,17 +121,20 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
         }
 
         if (loginFail) {
-           Text(
-               text = "Login Failed: Your email or password is incorrect!",
-               color = Color.Red
-           )
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Login Failed: Your email or password is incorrect!",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         TextButton(onClick = { navController.navigate(Screens.SignUp.route) }) {
             Text("Don't have an account?", color = Color.DarkGray)
-                    Text("Register here.", color = Color(0xFF0455BF))
+                    Text(" Register here.", color = Color(0xFF0455BF))
         }
     }
 }
