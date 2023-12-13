@@ -138,7 +138,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
         Spacer(modifier = Modifier.height(36.dp))
 
-        // TODO GPS IMAGE
         AndroidView(
             factory = { context ->
                 MapView(context).apply {
@@ -149,6 +148,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             modifier = Modifier
                 .fillMaxWidth()
                 .height(330.dp)
+                .padding(start = 16.dp, end = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -172,8 +172,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 Text("Distance: $distance")                           // TODO LIVE DISTANCE
             }
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Row {
             val buttonName = if (isChronometerRunning) "Pause" else "Resume"
@@ -199,6 +197,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                         .wrapContentSize(Alignment.Center)
                 )
             }
+
             Spacer(modifier = Modifier.width(10.dp))
 
             Box(
