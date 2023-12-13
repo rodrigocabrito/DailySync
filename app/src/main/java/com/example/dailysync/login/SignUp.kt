@@ -65,7 +65,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {              
                                 val user = User(email, password)
                                 writeUserToDatabase(uid, user)
                             }
-                            navController.navigate(Screens.Home.route)
+                            navController.navigate(Screens.Home.route)          // TODO PASS USER_ID AS ARG??
                         } else {
                             signupFail = true
                         }
