@@ -365,7 +365,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 text = { Text("Your $title was saved successfully!") },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Ok")
+                        Text("OK")
                     }
                 }
             )
@@ -401,7 +401,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 text = { Text("Your $title was cancelled!") },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Ok")
+                        Text("OK")
                     }
                 }
             )
