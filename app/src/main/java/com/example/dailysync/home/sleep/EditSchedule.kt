@@ -217,15 +217,15 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        Text(text = formatHour(selectedHourBedTime - 2), Modifier.alpha(0.2f), fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourBedTime - 1), Modifier.alpha(0.5f), fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourBedTime) + "H", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Text(text = formatHour(selectedHourBedTime + 2), Modifier.alpha(0.2f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatHour(selectedHourBedTime + 1), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourBedTime + 2), Modifier.alpha(0.2f), fontSize = 20.sp)
+                        Text(text = formatHour(selectedHourBedTime) + "H", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(text = formatHour(selectedHourBedTime - 1), Modifier.alpha(0.5f), fontSize = 20.sp)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(text = formatHour(selectedHourBedTime - 2), Modifier.alpha(0.2f), fontSize = 20.sp)
                     }
 
 
@@ -276,15 +276,15 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text(text = formatMinute((selectedMinBedTime - 20 + 60) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatMinute((selectedMinBedTime - 10 + 60) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatMinute(selectedMinBedTime) + "m", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Text(text = formatMinute((selectedMinBedTime + 20) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatMinute((selectedMinBedTime + 10) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatMinute((selectedMinBedTime + 20) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
+                        Text(text = formatMinute(selectedMinBedTime) + "m", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(text = formatMinute((selectedMinBedTime - 10 + 60) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(text = formatMinute((selectedMinBedTime - 20 + 60) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
                     }
 
 
@@ -369,15 +369,15 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally
                     ){
-                        Text(text = formatHour(selectedHourAwakeTime - 2), Modifier.alpha(0.2f), fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourAwakeTime - 1), Modifier.alpha(0.5f), fontSize = 20.sp)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourAwakeTime) + "H", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Text(text = formatHour(selectedHourAwakeTime + 2), Modifier.alpha(0.2f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatHour(selectedHourAwakeTime + 1), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatHour(selectedHourAwakeTime + 2), Modifier.alpha(0.2f), fontSize = 20.sp)
+                        Text(text = formatHour(selectedHourAwakeTime) + "H", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(text = formatHour(selectedHourAwakeTime - 1), Modifier.alpha(0.5f), fontSize = 20.sp)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Text(text = formatHour(selectedHourAwakeTime - 2), Modifier.alpha(0.2f), fontSize = 20.sp)
                     }
 
 
@@ -427,15 +427,15 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text(text = formatMinute((selectedMinAwakeTime - 20 + 60) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
+                        Text(text = formatMinute((selectedMinAwakeTime + 20 ) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatMinute((selectedMinAwakeTime - 10 + 60) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
+                        Text(text = formatMinute((selectedMinAwakeTime + 10 ) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         Text(text = formatMinute(selectedMinAwakeTime) + "m", Modifier.background(Color(0xFFF3F3F3)), fontSize = 20.sp, color = Color(0xFF5931B0), fontWeight = FontWeight.Bold) //selected
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatMinute((selectedMinAwakeTime + 10) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
+                        Text(text = formatMinute((selectedMinAwakeTime - 10 + 60) % 60), Modifier.alpha(0.5f), fontSize = 20.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = formatMinute((selectedMinAwakeTime + 20) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
+                        Text(text = formatMinute((selectedMinAwakeTime - 20 + 60) % 60), Modifier.alpha(0.2f), fontSize = 20.sp)
                     }
 
 
