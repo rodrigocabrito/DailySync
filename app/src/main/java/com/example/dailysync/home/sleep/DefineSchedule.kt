@@ -184,12 +184,12 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 35.dp, top = 20.dp)
+                    .padding(start = 25.dp, top = 20.dp, end = 10.dp)
             ) {
                 Row {
-                    Text(text = "\uD83D\uDECF️Bed Time", fontSize = 12.sp)
-                    Spacer(modifier = Modifier.width(110.dp))
-                    Text(text = "⏰Awake Time", fontSize = 12.sp)
+                    Text(text = "\uD83D\uDECF ️Bed Time", fontSize = 12.sp)
+                    Spacer(modifier = Modifier.width(100.dp))
+                    Text(text = "⏰ Awake Time", fontSize = 12.sp)
                 }
 
                 Row {
