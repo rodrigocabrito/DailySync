@@ -122,6 +122,7 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             modifier = Modifier
                 .fillMaxWidth()
                 .height(450.dp)
+                .padding(start = 16.dp, end = 16.dp)
         )
 
         Spacer(modifier = Modifier.height(35.dp))
