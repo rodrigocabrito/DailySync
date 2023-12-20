@@ -127,7 +127,8 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
         // graphs
         // TODO STATS FROM DATABASE
 
-        Spacer(modifier = Modifier.height(16.dp))
+        //fix footer in the bottom
+        Spacer(modifier = Modifier.weight(1f))
 
         // footer
         Row(

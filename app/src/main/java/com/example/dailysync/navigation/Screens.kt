@@ -24,4 +24,7 @@ sealed class Screens(val route: String) {
 
     // Read
     // TODO ALL READ ROUTES
+
+    //Profile
+    object EditProfile : Screens ("edit_profile_screen")
 }
