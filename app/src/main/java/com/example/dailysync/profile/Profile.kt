@@ -1,5 +1,13 @@
 package com.example.dailysync.profile
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.MediaStore
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -39,10 +50,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.example.dailysync.R
+import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +67,37 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
     var showNameChange by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf(auth.currentUser?.displayName)}
+    val context = LocalContext.current
+
+    val storage = FirebaseStorage.getInstance()
+    val storageRef: StorageReference = storage.reference.child("profile_images")
+
+
+    val imageUrlState = remember { mutableStateOf<String?>(null) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                uploadImageToFirebaseStorage(auth.currentUser?.uid, uri, storageRef)
+                imageUrlState.value = uri.toString()
+            }
+        }
+    }
+
+    LaunchedEffect(auth.currentUser?.uid) {
+        auth.currentUser?.uid?.let { userId ->
+            try {
+                val uri = storageRef.child("$userId.jpg").downloadUrl.await()
+                imageUrlState.value = uri.toString()
+            } catch (e: Exception) {
+                // Handle the failure case, e.g., show an error message
+                Toast.makeText(context, "Failed to get image URL: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
 
     Column(
         modifier = Modifier
@@ -84,21 +132,23 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
         // body
         Image(
-            painter = painterResource(id = R.drawable.default_profile),
+            painter = imageUrlState.value?.let { rememberImagePainter(data = it) }
+                ?: rememberImagePainter(data = R.drawable.default_profile),
+            contentScale = ContentScale.Crop,
             contentDescription = "Profile Image",
             modifier = Modifier
                 .size(120.dp)
                 .clip(CircleShape)
+
                 .clickable {
-                    // Handle click on the profile image
-                    // TODO open gallery or camera
+                    openGallery(launcher)
                 }
         )
         Spacer(modifier = Modifier.height(8.dp))
         Box(
             modifier = Modifier
                 .clickable {
-                    //TODO open gallery
+                    openGallery(launcher)
                 }
                 .border(1.dp, Color.Black, shape = RoundedCornerShape(15.dp))
                 .align(Alignment.CenterHorizontally)
@@ -172,6 +222,8 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 )
             }
         }
+
+        //TODO Add change email and password
 
         // TODO OPTIONS (SETTINGS, ACHIEVEMENTS, ...)
 
@@ -299,5 +351,25 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 }
             }
         }
+    }
+}
+
+private fun openGallery(pickImage: ActivityResultLauncher<Intent>) {
+    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+    pickImage.launch(intent)
+}
+
+private fun uploadImageToFirebaseStorage(userId: String?, imageUri: Uri, storageRef: StorageReference) {
+    if (userId != null) {
+        val userImageRef = storageRef.child("$userId.jpg")
+
+        // Upload file to Firebase Storage
+        userImageRef.putFile(imageUri)
+            .addOnSuccessListener { taskSnapshot ->
+                // Image uploaded successfully, you can get the download URL if needed
+                val downloadUrl = taskSnapshot.storage.downloadUrl
+                // TODO: Handle the download URL as needed (e.g., update user profile)
+            }
+
     }
 }

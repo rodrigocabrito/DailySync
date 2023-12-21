@@ -14,6 +14,7 @@ import com.example.dailysync.home.sleep.EditSleepSchedule
 import com.example.dailysync.home.sleep.RegisterSleep
 import com.example.dailysync.login.Login
 import com.example.dailysync.login.SignUp
+import com.example.dailysync.profile.EditProfile
 import com.example.dailysync.profile.Profile
 import com.example.dailysync.report.Reports
 import com.google.firebase.auth.FirebaseAuth
@@ -22,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.route)
+        startDestination = Screens.SignUp.route)
     {
         // Start
         composable(route = Screens.Login.route){
@@ -124,5 +125,12 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
 
         // Read
         // TODO ALL READ PAGES
+
+        // ##################################################################################################################################################################################
+
+        // Profile
+        composable(route = Screens.EditProfile.route){
+            EditProfile(navController = navController, auth = auth)
+        }
     }
 }
