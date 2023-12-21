@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,7 +130,7 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+
 
         // body
         Image(
@@ -143,17 +145,23 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 .clickable {
                     openGallery(launcher)
                 }
+                .border(
+                    width = 2.dp, // Adjust the width of the border as needed
+                    color = Color(0xFFA2D6F0), // Adjust the color of the border as needed
+                    shape = CircleShape
+                )
         )
         Spacer(modifier = Modifier.height(8.dp))
         Box(
             modifier = Modifier
+                .height(25.dp)
                 .clickable {
                     openGallery(launcher)
                 }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(15.dp))
+                .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(15.dp))
                 .align(Alignment.CenterHorizontally)
-        ) { Text(text = " Change Profile picture ", fontSize = 15.sp)}
-        Spacer(modifier = Modifier.height(20.dp))
+        ) { Text(text = "  Change Profile picture  ", fontSize = 15.sp)}
+        Spacer(modifier = Modifier.height(8.dp))
 
 
         //name
@@ -168,6 +176,7 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 Icon(
                     painter = painterResource(id = R.drawable.pencil_icon),
                     contentDescription = "Edit Icon",
+                    tint = Color(0xFF0455BF),
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.CenterVertically)
@@ -202,21 +211,27 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 Icon(
                     painter = painterResource(id = R.drawable.complete_icon),
                     contentDescription = "Edit Icon",
+                    tint = Color.Unspecified,
                     modifier = Modifier
                         .size(24.dp)
                         .align(Alignment.CenterVertically)
                         .clickable {
-                            auth.currentUser?.updateProfile(
-                                UserProfileChangeRequest.Builder().setDisplayName(name).build()
+                            auth.currentUser
+                                ?.updateProfile(
+                                    UserProfileChangeRequest
+                                        .Builder()
+                                        .setDisplayName(name)
+                                        .build()
 
-                            )?.addOnCompleteListener { updateTask ->
-                                if (updateTask.isSuccessful) {
-                                    showNameChange = false
-                                } else {
-                                    // Name Update failed
-                                    // Handle the error, log, or notify the user
+                                )
+                                ?.addOnCompleteListener { updateTask ->
+                                    if (updateTask.isSuccessful) {
+                                        showNameChange = false
+                                    } else {
+                                        // Name Update failed
+                                        // Handle the error, log, or notify the user
+                                    }
                                 }
-                            }
 
                         }
                 )
@@ -225,10 +240,212 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
         //TODO Add change email and password
 
-        // TODO OPTIONS (SETTINGS, ACHIEVEMENTS, ...)
+        Column{
+            // SETTINGS, ACHIEVEMENTS
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,){
+                //Settings
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                        .weight(1f)
+                        .height(115.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //TODO Settings menu
+                        }
+                        .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
+                ) {
+                        Text(text = "Settings",
+                            fontSize = 30.sp,
+                            modifier = Modifier.padding(start = 8.dp, top = 15.dp),
+
+                            )
+                        Icon(
+                            painter = painterResource(id = R.drawable.settings_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(50.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 10.dp, end = 10.dp)
+
+                        )
+
+                }
+                //Achievements
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                        .weight(1f)
+                        .height(115.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //TODO Change menu
+                        }
+                        .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
+                ) {
+                        Text(text = "Change Email & Password",
+                            fontSize = 22.sp,
+                            modifier = Modifier.padding(start = 8.dp, top = 15.dp),
+
+                            )
+                        Icon(
+                            painter = painterResource(id = R.drawable.change_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(45.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 10.dp, end = 10.dp)
+                        )
+
+                }
+            }
+
+            // faqs, contact us
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,){
+                //Settings
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                        .weight(1f)
+                        .height(115.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //TODO FAQs menu
+                        }
+                        .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
+                ) {
+                        Text(text = "FAQs",
+                            fontSize = 30.sp,
+                            modifier = Modifier.padding(start = 8.dp, top = 15.dp),
+
+                            )
+                        Icon(
+                            painter = painterResource(id = R.drawable.faqs_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(80.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 10.dp, end = 10.dp)
+                        )
+                }
+                //Achievements
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                        .weight(1f)
+                        .height(115.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //TODO Contact us menu
+                        }
+                        .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
+                ) {
+                        Text(text = "Contact Us",
+                            fontSize = 30.sp,
+                            modifier = Modifier.padding(start = 8.dp, top = 15.dp),
+
+                            )
+                        Icon(
+                            painter = painterResource(id = R.drawable.headset_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(65.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 10.dp, end = 10.dp)
+                        )
+                }
+            }
+
+            // Feedback, Rate the app
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,){
+                //Feedback
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                        .weight(1f)
+                        .height(115.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //TODO Give FeedBack redirections
+                        }
+                        .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
+                ) {
+                        Text(text = "Give FeedBack",
+                            fontSize = 22.sp,
+                            modifier = Modifier.padding(start = 8.dp, top = 15.dp),
+
+                            )
+                        Icon(
+                            painter = painterResource(id = R.drawable.feedback_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(45.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 10.dp, end = 10.dp)
+                        )
+                }
+                //Rate the app
+                Box(
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 10.dp, end = 10.dp)
+                        .weight(1f)
+                        .height(115.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //TODO Rate the app redirection
+                        }
+                        .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
+                ) {
+                        Text(text = "Rate the app",
+                            fontSize = 30.sp,
+                            modifier = Modifier.padding(start = 8.dp, top = 15.dp),
+
+                            )
+                        Icon(
+                            painter = painterResource(id = R.drawable.star_icon),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier
+                                .size(70.dp)
+                                .align(Alignment.BottomEnd)
+                                .padding(bottom = 10.dp, end = 10.dp)
+                        )
+                }
+            }
+        }
+
+
 
         Spacer(modifier = Modifier.weight(1f))
-
         // footer
         Row(
             modifier = Modifier
@@ -334,7 +551,7 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(top=10.dp),
+                        .padding(top = 10.dp),
                     verticalArrangement = Arrangement.Center, // Center vertically
                     horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
                 ) {
