@@ -87,6 +87,7 @@ dependencies {
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation ("io.coil-kt:coil-compose:1.4.0")
+    implementation("com.google.firebase:firebase-storage:20.3.0")
 
 
 
