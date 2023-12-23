@@ -1,6 +1,5 @@
 package com.example.dailysync.home.sleep
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -62,6 +59,30 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
 
     var selectedHourAwakeTime by remember { mutableIntStateOf(selectedHourBedTime + targetHours) }
     var selectedMinAwakeTime by remember { mutableIntStateOf(selectedMinBedTime + targetMinutes) }
+
+
+    fun calculateHour(selectedHourBed: Boolean, selectedMinBed: Boolean, selectedHourAwake: Boolean, selectedMinAwake: Boolean) {
+        if (selectedHourBed) {  // selectedHourBedTime changed
+            val updatedAwakeTime = updateHourAndMinute(selectedHourBedTime, selectedMinBedTime, targetHours, targetMinutes)
+            selectedHourAwakeTime = updatedAwakeTime.first
+            selectedMinAwakeTime = updatedAwakeTime.second
+
+        } else if (selectedMinBed) {   // selectedMinBedTime changed
+            val updatedAwakeTime = updateHourAndMinute(selectedHourBedTime, selectedMinBedTime, targetHours, targetMinutes)
+            selectedHourAwakeTime = updatedAwakeTime.first
+            selectedMinAwakeTime = updatedAwakeTime.second
+
+        } else if (selectedHourAwake) {   // selectedHourAwakeTime changed
+            val updatedBedTime = calculateInitialTime(selectedHourAwakeTime, selectedMinAwakeTime, targetHours, targetMinutes)
+            selectedHourBedTime = updatedBedTime.first
+            selectedMinBedTime = updatedBedTime.second
+
+        } else if (selectedMinAwake) {   // selectedMinAwakeTime changed
+            val updatedBedTime = calculateInitialTime(selectedHourAwakeTime, selectedMinAwakeTime, targetHours, targetMinutes)
+            selectedHourBedTime = updatedBedTime.first
+            selectedMinBedTime = updatedBedTime.second
+        }
+    }
 
     // Press Cancel (Pop Up)
     val cancelAction: () -> Unit = {
@@ -120,7 +141,9 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 oldValue = "{target}",
                 newValue = "$targetToPassBack"
             )
-        println("Navigate to: $route")
+
+        // TODO SAVE TO THE DB
+
         navController.navigate(route)
     }
 
@@ -207,7 +230,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourBedTime++
-                            selectedHourAwakeTime++
+                            calculateHour(true, false, false, false)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -236,7 +259,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourBedTime--
-                            selectedHourAwakeTime--
+                            calculateHour(true, false, false, false)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -266,7 +289,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinBedTime = (selectedMinBedTime + 10) % 60
-                            selectedMinAwakeTime = (selectedMinAwakeTime + 10) % 60
+                            calculateHour(false, true, false, false)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -295,7 +318,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinBedTime = (selectedMinBedTime - 10 + 60) % 60
-                            selectedMinAwakeTime = (selectedMinAwakeTime - 10) % 60
+                            calculateHour(false, true, false, false)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -359,7 +382,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourAwakeTime++
-                            selectedHourBedTime++
+                            calculateHour(false, false, true, false)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -388,7 +411,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedHourAwakeTime--
-                            selectedHourBedTime--
+                            calculateHour(false, false, true, false)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -418,7 +441,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinAwakeTime = (selectedMinAwakeTime + 10) % 60
-                            selectedMinBedTime = (selectedMinBedTime + 10) % 60
+                            calculateHour(false, false, false, true)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -447,7 +470,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     IconButton(
                         onClick = {
                             selectedMinAwakeTime = (selectedMinAwakeTime - 10 + 60) % 60
-                            selectedMinBedTime = (selectedMinBedTime - 10) % 60
+                            calculateHour(false, false, false, true)
                         },
                         modifier = Modifier
                             .background(Color(0xFFF3F3F3))
@@ -560,3 +583,26 @@ private fun formatMinute(minute: Int): String {
 private fun formatTarget(targetHours: Int, targetMinutes: Int) : Int {
     return (targetHours * 2) + (if (targetMinutes == 30) 1 else 0)
 }
+
+private fun updateHourAndMinute(hour1: Int, minute1: Int, hoursDifference: Int, minutesDifference: Int): Pair<Int, Int> {
+    val totalMinutes1 = hour1 * 60 + minute1
+
+    val totalMinutes2 = (totalMinutes1 + hoursDifference * 60 + minutesDifference) % (24 * 60)
+
+    val updatedHour2 = totalMinutes2 / 60
+    val updatedMinute2 = totalMinutes2 % 60
+
+    return Pair(updatedHour2, updatedMinute2)
+}
+
+private fun calculateInitialTime(hour2: Int, minute2: Int, hoursDifference: Int, minutesDifference: Int): Pair<Int, Int> {
+    val totalMinutes2 = hour2 * 60 + minute2
+
+    val totalMinutes1 = (totalMinutes2 - hoursDifference * 60 - minutesDifference + 24 * 60) % (24 * 60)
+
+    val initialHour1 = totalMinutes1 / 60
+    val initialMinute1 = totalMinutes1 % 60
+
+    return Pair(initialHour1, initialMinute1)
+}
+
