@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailysync.Exercise
+import com.example.dailysync.SleepTarget
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
@@ -134,9 +135,11 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             selectedHourAwakeTime.toString()
         }
 
-        // saving target in db
+        // saving target and schedule in db
+        val target = if (targetMinutes == 30) (targetHours*2) + 1 else targetHours*2
+        val sleepTarget = SleepTarget(hourBedTime.toInt(), minBedTime.toInt(), hourAwakeTime.toInt(), minAwakeTime.toInt(), target)
         if (userId != null) {
-            writeToDatabase(userId, targetHours, targetMinutes)
+            writeToDatabase(userId, sleepTarget)
         }
 
         navController.navigate(Screens.DefineSleepSchedule.route.replace(
@@ -612,14 +615,9 @@ private fun calculateInitialTime(hour2: Int, minute2: Int, hoursDifference: Int,
     return Pair(initialHour1, initialMinute1)
 }
 
-private fun writeToDatabase(userId: String, targetHours: Int, targetMinutes: Int) {
+private fun writeToDatabase(userId: String, sleepTarget: SleepTarget) {
     val database = Firebase.database
-    val sleepTargetRef = database.getReference("users").child(userId).child("sleepTarget")
-
-    if (targetMinutes != 0) {
-        sleepTargetRef.setValue((targetHours * 2) + 1)
-    } else {
-        sleepTargetRef.setValue(targetHours * 2)
-    }
+    val sleepTargetRef = database.getReference("users").child(userId).child("SleepTarget")
+    sleepTargetRef.setValue(sleepTarget)
 }
 
