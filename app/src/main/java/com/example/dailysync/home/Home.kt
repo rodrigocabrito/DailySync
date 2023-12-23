@@ -26,10 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.dailysync.R
+import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
@@ -37,7 +40,6 @@ import com.google.firebase.auth.FirebaseAuth
 fun Home(navController: NavController, auth: FirebaseAuth) {
 
     //Text("Welcome ${auth.currentUser?.email}")
-
     var showExerciseOptions by remember { mutableStateOf(false) }
     var showSleepOptions by remember { mutableStateOf(false) }
     var showReadOptions by remember { mutableStateOf(false) }
@@ -56,8 +58,18 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
         {
             Text(text = "HEADER")
         }
+        //name
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        )
+        {
+            auth.currentUser?.displayName?.let { Text(text = "Hey $it,", fontSize = 30.sp, fontWeight = FontWeight.SemiBold) }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        }
+
+        Spacer(modifier = Modifier.height(5.dp))
 
         // body
 

@@ -143,7 +143,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 workoutName = it
             },
 
-            label = { Text("*Give a name to your $title") },
+            label = { Text("Give a name to your $title", color = Color.DarkGray) },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.Black,
                 containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
@@ -165,7 +165,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             onValueChange = {
                 workoutDescription = it
             },
-            label = { Text("How did it go? Share some details...") },
+            label = { Text("How did it go? Share some details...", color = Color.DarkGray)},
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),

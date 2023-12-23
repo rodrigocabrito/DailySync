@@ -70,9 +70,11 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
 
         // TODO
 
-        Spacer(modifier = Modifier.height(16.dp))
+
+
 
         // footer
+        Spacer(modifier = Modifier.weight(1f))
         Row(
             modifier = Modifier
                 .padding(top = 10.dp)
