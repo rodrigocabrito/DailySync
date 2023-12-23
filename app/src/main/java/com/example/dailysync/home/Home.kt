@@ -29,12 +29,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.dailysync.R
-import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun Home(navController: NavController, auth: FirebaseAuth) {
@@ -43,6 +46,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
     var showExerciseOptions by remember { mutableStateOf(false) }
     var showSleepOptions by remember { mutableStateOf(false) }
     var showReadOptions by remember { mutableStateOf(false) }
+    val userId = auth.currentUser?.uid
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -355,21 +359,38 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                navController.navigate(
-                                    Screens.DefineSleepSchedule.route
-                                        .replace(
-                                            oldValue = "{bedTime}",
-                                            newValue = "1"
-                                        )
-                                        .replace(
-                                            oldValue = "{awakeTime}",
-                                            newValue = "1"
-                                        )
-                                        .replace(
-                                            oldValue = "{target}",
-                                            newValue = "16"                     // TODO GET FROM DATABASE?
-                                        )
-                                )
+
+                                val database = Firebase.database
+
+                                userId?.let {
+                                    database.getReference("users").child(it).child("sleepTarget")
+                                }?.addValueEventListener(object : ValueEventListener {
+                                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                        val sleepTarget = dataSnapshot.getValue(Int::class.java)
+                                        if (sleepTarget != null) {
+                                            navController.navigate(
+                                                Screens.DefineSleepSchedule.route
+                                                    .replace(
+                                                        oldValue = "{bedTime}",
+                                                        newValue = "1"
+                                                    )
+                                                    .replace(
+                                                        oldValue = "{awakeTime}",
+                                                        newValue = "1"
+                                                    )
+                                                    .replace(
+                                                        oldValue = "{target}",
+                                                        newValue = "$sleepTarget"
+                                                    )
+                                            )
+                                        }
+                                    }
+
+                                    override fun onCancelled(error: DatabaseError) {
+                                        // Handle error
+                                        println("Failed to read value: ${error.message}")
+                                    }
+                                })
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
