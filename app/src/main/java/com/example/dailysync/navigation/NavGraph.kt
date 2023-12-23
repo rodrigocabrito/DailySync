@@ -129,8 +129,8 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         // ##################################################################################################################################################################################
 
         // Profile
-        composable(route = Screens.EditProfile.route){
-            EditProfile(navController = navController, auth = auth)
+        composable(route = Screens.Profile.route){
+            Profile(navController = navController, auth = auth)
         }
     }
 }
