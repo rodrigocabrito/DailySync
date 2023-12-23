@@ -39,8 +39,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailysync.Exercise
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetShow: String) {
@@ -59,6 +62,8 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
 
     var selectedHourAwakeTime by remember { mutableIntStateOf(selectedHourBedTime + targetHours) }
     var selectedMinAwakeTime by remember { mutableIntStateOf(selectedMinBedTime + targetMinutes) }
+
+    val userId = auth.currentUser?.uid
 
 
     fun calculateHour(selectedHourBed: Boolean, selectedMinBed: Boolean, selectedHourAwake: Boolean, selectedMinAwake: Boolean) {
@@ -129,7 +134,12 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             selectedHourAwakeTime.toString()
         }
 
-        val route = Screens.DefineSleepSchedule.route.replace(
+        // TODO SAVE TO THE DB
+        if (userId != null) {
+            writeToDatabase(userId, targetHours, targetMinutes)
+        }
+
+        navController.navigate(Screens.DefineSleepSchedule.route.replace(
             oldValue = "{bedTime}",
             newValue = "$hourBedTime:$minBedTime"
         )
@@ -140,11 +150,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             .replace(
                 oldValue = "{target}",
                 newValue = "$targetToPassBack"
-            )
-
-        // TODO SAVE TO THE DB
-
-        navController.navigate(route)
+            ))
     }
 
     // header
@@ -604,5 +610,16 @@ private fun calculateInitialTime(hour2: Int, minute2: Int, hoursDifference: Int,
     val initialMinute1 = totalMinutes1 % 60
 
     return Pair(initialHour1, initialMinute1)
+}
+
+private fun writeToDatabase(userId: String, targetHours: Int, targetMinutes: Int) {
+    val database = Firebase.database
+    val sleepTargetRef = database.getReference("users").child(userId).child("sleepTarget")
+
+    if (targetMinutes != 0) {
+        sleepTargetRef.setValue((targetHours * 2) + 1)
+    } else {
+        sleepTargetRef.setValue(targetHours * 2)
+    }
 }
 
