@@ -14,7 +14,6 @@ import com.example.dailysync.home.sleep.EditSleepSchedule
 import com.example.dailysync.home.sleep.RegisterSleep
 import com.example.dailysync.login.Login
 import com.example.dailysync.login.SignUp
-import com.example.dailysync.profile.EditProfile
 import com.example.dailysync.profile.Profile
 import com.example.dailysync.report.Reports
 import com.google.firebase.auth.FirebaseAuth
