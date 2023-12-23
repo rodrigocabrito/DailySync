@@ -134,7 +134,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
             selectedHourAwakeTime.toString()
         }
 
-        // TODO SAVE TO THE DB
+        // saving target in db
         if (userId != null) {
             writeToDatabase(userId, targetHours, targetMinutes)
         }
