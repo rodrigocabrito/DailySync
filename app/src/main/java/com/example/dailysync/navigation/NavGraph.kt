@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
     NavHost(
         navController = navController,
-        startDestination = Screens.SignUp.route)
+        startDestination = Screens.Login.route)
     {
         // Start
         composable(route = Screens.Login.route){
@@ -80,7 +80,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
             // extracting the arguments
             val bedTime: String? = navBackStack.arguments?.getString("bedTime")
             val awakeTime: String? = navBackStack.arguments?.getString("awakeTime")
-            val targetShow: Int = navBackStack.arguments?.getString("target")?.toIntOrNull() ?: 0
+            val targetShow: Int = navBackStack.arguments?.getString("target")?.toIntOrNull() ?: 16
 
             val bedTimeShow: String = bedTime?.let {
                 val parts = it.split(":")
