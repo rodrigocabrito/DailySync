@@ -85,24 +85,24 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
             val bedTimeShow: String = bedTime?.let {
                 val parts = it.split(":")
                 if (parts.size == 2) {
-                    val hours = parts[0].toIntOrNull() ?: 1
+                    val hours = parts[0].toIntOrNull() ?: 23
                     val minutes = parts[1].toIntOrNull() ?: 0
                     "$hours:${String.format("%02d", minutes)}"
                 } else {
-                    "1:00" // Default value if the format is not as expected
+                    "23:00" // Default value if the format is not as expected
                 }
-            } ?: "1:00" // Default value if bedTime is null
+            } ?: "23:00" // Default value if bedTime is null
 
             val awakeTimeShow: String = awakeTime?.let {
                 val parts = it.split(":")
                 if (parts.size == 2) {
-                    val hours = parts[0].toIntOrNull() ?: 1
+                    val hours = parts[0].toIntOrNull() ?: 7
                     val minutes = parts[1].toIntOrNull() ?: 0
                     "$hours:${String.format("%02d", minutes)}"
                 } else {
-                    "1:00" // Default value if the format is not as expected
+                    "7:00" // Default value if the format is not as expected
                 }
-            } ?: "1:00" // Default value if awakeTime is null
+            } ?: "7:00" // Default value if awakeTime is null
 
             DefineSleepSchedule(navController = navController, auth = auth, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow, targetShow = targetShow)
         }
