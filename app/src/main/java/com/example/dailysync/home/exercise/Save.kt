@@ -1,7 +1,22 @@
 package com.example.dailysync.home.exercise
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.provider.MediaStore
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,6 +56,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -50,25 +66,38 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
 import com.example.dailysync.Exercise
 import com.example.dailysync.R
-import com.example.dailysync.User
 import com.example.dailysync.navigation.Screens
 import com.google.android.gms.maps.MapView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import java.io.ByteArrayOutputStream
 import java.util.Locale
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
+@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, timeShow: Long, averagePaceShow: Float, distanceShow: Float) {
 
     var mapView: MapView? by remember { mutableStateOf(null) }
+
     val category by remember { mutableIntStateOf(categoryShow) }
-    var workoutName by remember { mutableStateOf("") }
-    var workoutDescription by remember { mutableStateOf("") }
     val time by remember { mutableLongStateOf (timeShow) }
     val averagePace by remember { mutableFloatStateOf (averagePaceShow) }
     val distance by remember { mutableFloatStateOf (distanceShow) }
+
+    var workoutName by remember { mutableStateOf("") }
+    var workoutDescription by remember { mutableStateOf("") }
+
+    var isCameraPreviewVisible by remember { mutableStateOf(false) }
+    var capturedImageProxy: ImageProxy? by remember { mutableStateOf(null) }
+    var isPictureTaken by remember { mutableStateOf(false) }
+    var imageUri: Uri? by remember { mutableStateOf(null)}
+
     val userId = auth.currentUser?.uid
 
     val title = when (category) {
@@ -81,14 +110,28 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
     var showDialogCancel by remember { mutableStateOf(false) }
     var showDialogCancelConfirmed by remember { mutableStateOf(false) }
 
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                imageUri = uri
+            }
+        }
+    }
+
     // Press OK (Pop Up)
     val confirmAction: () -> Unit = {
         showDialogSave = false
         showDialogCancelConfirmed = false
 
-        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance)
+        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance, isPictureTaken)
         if (userId != null) {
-            writeToDatabase(userId, exercise, title)
+            val exerciseId = writeToDatabase(userId, exercise, title)
+
+            if (isPictureTaken) {
+                imageUri?.let { uploadImageToFirebaseStorage(exerciseId, it) }
+            }
         }
         navController.navigate(Screens.Home.route)
     }
@@ -101,6 +144,33 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
     // Press Cancel (Pop Up)
     val cancelAction: () -> Unit = {
         showDialogCancel = false
+    }
+
+    // Open camera preview
+    if (isCameraPreviewVisible) {
+        CameraPreview(
+            modifier = Modifier.fillMaxSize(),
+            onPhotoCaptured = { imageProxy ->
+                capturedImageProxy = imageProxy
+                isCameraPreviewVisible = false
+                isPictureTaken = true
+            }
+        )
+    }
+
+    // Handle the captured image
+    capturedImageProxy?.let { imageProxy ->
+        // Process the captured image (you can save it or display it)
+        // For example, you can use the captured image in an ImageView
+        // val bitmap = imageProxy.toBitmap()
+        // imageView.setImageBitmap(bitmap)
+
+        // Close the imageProxy when done
+        imageProxy.close()
+        capturedImageProxy = null
+
+        // Reset the flag after handling the image
+        isPictureTaken = false
     }
 
     Column(
@@ -238,6 +308,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                         )
                         .clickable {
                             // TODO ACCESS PHONE GALLERY
+                            openGallery(launcher)
                         }
                         .drawBehind {
                             drawRoundRect(
@@ -284,6 +355,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                         )
                         .clickable {
                             // TODO ACCESS PHONE CAMERA
+                            isCameraPreviewVisible = true
                         }
                         .drawBehind {
                             drawRoundRect(
@@ -551,6 +623,73 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
+@Composable
+fun CameraPreview(
+    modifier: Modifier = Modifier,
+    onPhotoCaptured: (ImageProxy) -> Unit
+) {
+    val context = LocalContext.current
+    val cameraExecutor: ExecutorService = remember { Executors.newSingleThreadExecutor() }
+
+    // Use MainThreadExecutor to execute UI operations on the main thread
+    val mainThreadExecutor = LocalContext.current.mainExecutor
+
+    AndroidView(
+        modifier = modifier,
+        factory = { ctx ->
+            val previewView = PreviewView(ctx)
+            val cameraProviderFuture = ProcessCameraProvider.getInstance(ctx)
+
+            cameraProviderFuture.addListener({
+                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+                mainThreadExecutor.execute {
+                    val preview = Preview.Builder()
+                        .build()
+                        .also {
+                            it.setSurfaceProvider(previewView.surfaceProvider)
+                        }
+
+                    val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+                    try {
+                        cameraProvider.unbindAll()
+                        cameraProvider.bindToLifecycle(
+                            (context as androidx.activity.ComponentActivity),
+                            cameraSelector,
+                            preview
+                        )
+
+                        val imageAnalysis = ImageAnalysis.Builder()
+                            .build()
+                            .also {
+                                it.setAnalyzer(cameraExecutor) { imageProxy ->
+                                    // Do something with the captured image
+                                    onPhotoCaptured.invoke(imageProxy)
+                                    imageProxy.close()
+                                }
+                            }
+
+                        cameraProvider.bindToLifecycle(
+                            (context as androidx.activity.ComponentActivity),
+                            cameraSelector,
+                            preview,
+                            imageAnalysis
+                        )
+
+                    } catch (exc: Exception) {
+                        // Handle errors
+                    }
+                }
+            }, cameraExecutor)
+
+            previewView
+        },
+    )
+}
+
+
 private fun formatTime(elapsedTime: Long): String {
     val totalSeconds = elapsedTime / 1000
     val hours = totalSeconds / 3600
@@ -564,7 +703,12 @@ private fun formatAveragePace(averagePace: Float): String {
     return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
 }
 
-private fun writeToDatabase(userId: String, exercise: Exercise, category: String) {
+private fun openGallery(pickImage: ActivityResultLauncher<Intent>) {
+    val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+    pickImage.launch(intent)
+}
+
+private fun writeToDatabase(userId: String, exercise: Exercise, category: String) : String {
     val database = Firebase.database
     val exerciseRef = database.getReference("users").child(userId).child(category)
 
@@ -572,4 +716,26 @@ private fun writeToDatabase(userId: String, exercise: Exercise, category: String
     val workoutId = exerciseRef.push().key
 
     exerciseRef.child(workoutId!!).setValue(exercise)
+
+    return workoutId
+}
+
+private fun uploadImageToFirebaseStorage(exerciseId: String, imageUri: Uri) {
+    val storage = FirebaseStorage.getInstance()
+    val storageRef: StorageReference = storage.reference
+    val imageRef: StorageReference = storageRef.child("exercise_images/$exerciseId.jpg")
+
+    // Upload file to Firebase Storage
+    imageRef.putFile(imageUri)
+        .addOnSuccessListener { taskSnapshot ->
+            // Image uploaded successfully, you can get the download URL if needed
+            val downloadUrl = taskSnapshot.storage.downloadUrl
+            // TODO: Handle the download URL as needed (e.g., update user profile)
+        }
+}
+
+fun Bitmap.toByteArray(): ByteArray {
+    val stream = ByteArrayOutputStream()
+    compress(Bitmap.CompressFormat.JPEG, 100, stream)
+    return stream.toByteArray()
 }
