@@ -3,7 +3,11 @@ package com.example.dailysync
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
+import com.example.dailysync.bookRepository.BookRepository
+import com.example.dailysync.bookapi.BookApi
+import com.example.dailysync.bookapi.RetrofitClient
 import com.example.dailysync.navigation.NavGraph
 import com.example.dailysync.ui.theme.DailySyncTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -16,14 +20,19 @@ class MainActivity : ComponentActivity() {
     // Firebase instance variables
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
+    private lateinit var bookViewModel: BookViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        val bookApi = RetrofitClient.getInstance().create(BookApi::class.java)
+        val bookRepository = BookRepository(bookApi)
+        val bookViewModelFactory = BookViewModelFactory(bookRepository)
+        bookViewModel = ViewModelProvider(this, bookViewModelFactory).get(BookViewModel::class.java)
         setContent {
             DailySyncTheme {
                 val navController = rememberNavController()
-                NavGraph(navController = navController, auth)           // TODO PASS 'db' AS ARG?
+                NavGraph(navController = navController, auth, bookViewModel)           // TODO PASS 'db' AS ARG?
             }
         }
     }
