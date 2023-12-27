@@ -5,5 +5,6 @@ data class Exercise(
     val description: String = "",
     val time: Long,
     val averagePace: Float,
-    val distance: Float
+    val distance: Float,
+    val image: Boolean
 )
