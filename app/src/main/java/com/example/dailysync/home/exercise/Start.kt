@@ -1,6 +1,9 @@
 package com.example.dailysync.home.exercise
 
+import android.Manifest
 import android.os.Bundle
+import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,15 +35,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -48,6 +59,12 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
 
     val category by remember { mutableIntStateOf(categoryShow) }
     var mapView: MapView? by remember { mutableStateOf(null) }
+    var currentLatLng by remember { mutableStateOf(LatLng(0.0, 0.0)) }
+
+    val context = LocalContext.current
+    val fusedLocationClient = remember(context) {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
 
     val title = when (category) {
         1 -> "Walk"
@@ -70,6 +87,47 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
     // Press Cancel (Pop Up)
     val cancelAction: () -> Unit = {
         showDialog = false
+    }
+
+    DisposableEffect(context) {
+        // Request location permission if not granted
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PermissionChecker.PERMISSION_GRANTED
+        ) {
+            // Request current location
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    location?.let {
+                        currentLatLng = LatLng(it.latitude, it.longitude)
+
+                        // Log the current coordinates
+                        Log.e("Location", "Latitude: ${it.latitude}, Longitude: ${it.longitude}")
+
+
+                        mapView?.getMapAsync { googleMap ->
+                            // Move camera to the current location
+                            googleMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+                            )
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Location", "Error getting location", e)
+                }
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(
+                context as ComponentActivity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
+        }
+
+        // Dispose when the composable is removed from the hierarchy
+        onDispose {}
     }
 
     Column(
