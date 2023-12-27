@@ -23,5 +23,5 @@ sealed class Screens(val route: String) {
     object EditSleepSchedule : Screens("edit_sleep_schedule_screen/{target}")
 
     // Read
-    // TODO ALL READ ROUTES
+    object Search : Screens("find_books")
 }

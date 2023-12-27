@@ -4,11 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.dailysync.BookViewModel
+import com.example.dailysync.bookModels.Items
 import com.example.dailysync.community.Community
 import com.example.dailysync.home.Home
 import com.example.dailysync.home.exercise.DuringExercise
 import com.example.dailysync.home.exercise.SaveExercise
 import com.example.dailysync.home.exercise.StartExercise
+import com.example.dailysync.home.read.SearchScreen
 import com.example.dailysync.home.sleep.DefineSleepSchedule
 import com.example.dailysync.home.sleep.EditSleepSchedule
 import com.example.dailysync.home.sleep.RegisterSleep
@@ -19,7 +22,7 @@ import com.example.dailysync.report.Reports
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
+fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewModel: BookViewModel){
     NavHost(
         navController = navController,
         startDestination = Screens.Login.route)
@@ -123,7 +126,12 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth){
         // ##################################################################################################################################################################################
 
         // Read
-        // TODO ALL READ PAGES
+        composable(Screens.Search.route) {
+            SearchScreen(
+                navController = navController,
+                bookViewModel = bookViewModel
+            )
+        }
 
         // ##################################################################################################################################################################################
     }

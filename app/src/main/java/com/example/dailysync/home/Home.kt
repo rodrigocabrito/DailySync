@@ -511,7 +511,9 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                // TODO ADD NAVIGATION & ARGS
+                                navController.navigate(
+                                    Screens.Search.route // TODO CHANGE ARGS
+                                )
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
