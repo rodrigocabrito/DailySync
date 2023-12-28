@@ -1,8 +1,10 @@
 package com.example.dailysync
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.compose.rememberNavController
 import com.example.dailysync.bookRepository.BookRepository
@@ -22,11 +24,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var db: FirebaseDatabase
     private lateinit var bookViewModel: BookViewModel
 
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
         val bookApi = RetrofitClient.getInstance().create(BookApi::class.java)
-        val bookRepository = BookRepository(bookApi)
+        val bookRepository = BookRepository(bookApi, auth)
         val bookViewModelFactory = BookViewModelFactory(bookRepository)
         bookViewModel = ViewModelProvider(this, bookViewModelFactory).get(BookViewModel::class.java)
         setContent {

@@ -14,6 +14,7 @@ enum class Status {
 @Parcelize
 data class Items(
     var status: Status?,
+    @PropertyName("id") val id: String,
     @PropertyName("kind") val kind: String = "",
     @PropertyName("etag") val etag: String = "",
     @PropertyName("selfLink") val selfLink: String = "",

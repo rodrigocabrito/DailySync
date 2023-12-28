@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.bookModels.Status
 import com.example.dailysync.bookRepository.BookRepository
@@ -110,13 +111,14 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
         }
     }
 
-    fun deleteItem(id: String) {
+    fun deleteItem(id: String, navController: NavHostController) {
         viewModelScope.launch {
             showRemovingDialog = true
             delay(500)
             repository.deleteItemById(id)
             showRemovingDialog = false
             // Navigation logic if needed
+            navController.popBackStack()
         }
     }
 

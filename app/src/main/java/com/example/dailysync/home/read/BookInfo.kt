@@ -98,7 +98,7 @@ fun BookInfo(item: Items?, onClick: () -> Unit) {
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .size(70.dp, 200.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.star_icon),
+                            imageVector = ImageVector.vectorResource(R.drawable.image_not_available),
                             contentDescription = "",
                         )
                     }

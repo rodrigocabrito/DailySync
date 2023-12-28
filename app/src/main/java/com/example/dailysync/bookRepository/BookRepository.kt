@@ -4,20 +4,21 @@ import com.example.dailysync.bookModels.Book
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.bookModels.Status
 import com.example.dailysync.bookapi.BookApi
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.skydoves.sandwich.ApiResponse
-import com.skydoves.sandwich.onError
-import com.skydoves.sandwich.onException
-import com.skydoves.sandwich.onSuccess
 import kotlinx.coroutines.tasks.await
 
-class BookRepository(private val bookApi: BookApi) {
+class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
 
-    private val database: DatabaseReference = FirebaseDatabase.getInstance().reference.child("books")
+
+    private val userId = auth.currentUser?.uid
+    private val database: DatabaseReference = FirebaseDatabase.getInstance().reference.child("users").child(
+        userId!!).child("books")
 
     suspend fun getBooksList(query: String, startIndex: Int, callback: (ApiResponse<Book?>) -> Unit) {
         val result = bookApi.getBooks(
@@ -30,7 +31,9 @@ class BookRepository(private val bookApi: BookApi) {
     }
 
     suspend fun insertItem(item: Items) {
-        database.push().setValue(item).await()
+        val newItemReference = database.push()
+        val newItem = item.copy(id = newItemReference.key ?: "")
+        newItemReference.setValue(newItem).await()
     }
 
     suspend fun getItems(callback: (List<Items>) -> Unit) {

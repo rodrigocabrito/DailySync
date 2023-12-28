@@ -1,5 +1,7 @@
 package com.example.dailysync.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -11,6 +13,7 @@ import com.example.dailysync.home.Home
 import com.example.dailysync.home.exercise.DuringExercise
 import com.example.dailysync.home.exercise.SaveExercise
 import com.example.dailysync.home.exercise.StartExercise
+import com.example.dailysync.home.read.BookDetailsScreen
 import com.example.dailysync.home.read.SearchScreen
 import com.example.dailysync.home.sleep.DefineSleepSchedule
 import com.example.dailysync.home.sleep.EditSleepSchedule
@@ -21,11 +24,12 @@ import com.example.dailysync.profile.Profile
 import com.example.dailysync.report.Reports
 import com.google.firebase.auth.FirebaseAuth
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewModel: BookViewModel){
     NavHost(
         navController = navController,
-        startDestination = Screens.Login.route)
+        startDestination = Screens.Home.route)
     {
         // Start
         composable(route = Screens.Login.route){
@@ -131,6 +135,17 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
                 navController = navController,
                 bookViewModel = bookViewModel
             )
+        }
+
+        composable(route = Screens.BookDetails.route) {
+            val item = navController.previousBackStackEntry?.savedStateHandle?.get<Items>("item")
+            if (item != null) {
+                BookDetailsScreen(
+                    navController = navController,
+                    bookViewModel = bookViewModel,
+                    item = item
+                )
+            }
         }
 
         // ##################################################################################################################################################################################

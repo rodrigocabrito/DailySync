@@ -188,7 +188,8 @@ fun GetBooks(navController: NavHostController, bookViewModel: BookViewModel) {
 
             BookInfo(item = item) {
                 // Handle click action, for example, navigate to HOME screen
-                navController.navigate(Screens.Home.route)
+                navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
+                navController.navigate(Screens.BookDetails.route)
             }
         }
 

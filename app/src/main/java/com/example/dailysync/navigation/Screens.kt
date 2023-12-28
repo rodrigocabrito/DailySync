@@ -24,4 +24,5 @@ sealed class Screens(val route: String) {
 
     // Read
     object Search : Screens("find_books")
+    object BookDetails : Screens("book_details")
 }
