@@ -12,4 +12,15 @@ data class SaleInfo (
     @PropertyName("retailPrice") val retailPrice : RetailPrice,
     @PropertyName("buyLink") val buyLink : String,
     @PropertyName("offers") val offers : List<Offers>
-) : Serializable
+) : Serializable{
+    // Provide a no-argument constructor for Firebase deserialization
+    constructor() : this(
+        "",
+        "",
+        false,
+        ListPrice(),  // assuming ListPrice has a no-argument constructor
+        RetailPrice(),  // assuming RetailPrice has a no-argument constructor
+        "",
+        emptyList()  // assuming Offers is a data class with a no-argument constructor
+    )
+}

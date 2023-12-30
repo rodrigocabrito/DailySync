@@ -7,4 +7,10 @@ data class ImageLinks (
 
     @PropertyName("smallThumbnail") val smallThumbnail : String,
     @PropertyName("thumbnail") val thumbnail : String
-) : Serializable
+) : Serializable{
+    // Provide a no-argument constructor for Firebase deserialization
+    constructor() : this(
+        "",
+        ""
+    )
+}

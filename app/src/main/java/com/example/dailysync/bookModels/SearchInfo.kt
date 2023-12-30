@@ -6,4 +6,7 @@ import java.io.Serializable
 data class SearchInfo (
 
     @PropertyName("textSnippet") val textSnippet : String
-) : Serializable
+) : Serializable{
+    // Provide a no-argument constructor for Firebase deserialization
+    constructor() : this("")
+}

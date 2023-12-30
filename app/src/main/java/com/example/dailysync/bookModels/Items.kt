@@ -7,13 +7,13 @@ import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
 enum class Status {
-    TO_READ, READING, FINISHED
+    TO_READ, READING, FINISHED;
 }
 
 @IgnoreExtraProperties
 @Parcelize
 data class Items(
-    var status: Status?,
+    @PropertyName("status") val status: Status?, // Use a private property for Firebase serialization
     @PropertyName("id") val id: String,
     @PropertyName("kind") val kind: String = "",
     @PropertyName("etag") val etag: String = "",
@@ -22,4 +22,17 @@ data class Items(
     @PropertyName("saleInfo") val saleInfo: SaleInfo,
     @PropertyName("accessInfo") val accessInfo: AccessInfo,
     @PropertyName("searchInfo") val searchInfo: SearchInfo? = null,
-) : Serializable, Parcelable
+) : Serializable, Parcelable{
+    // Firebase requires a no-argument constructor for deserialization
+    constructor() : this(
+        null,
+        "",
+        "",
+        "",
+        "",
+        VolumeInfo(), // You might need to provide default values for nested classes
+        SaleInfo(),
+        AccessInfo(),
+        null
+    )
+}

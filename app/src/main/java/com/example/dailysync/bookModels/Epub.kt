@@ -7,4 +7,10 @@ data class Epub (
 
     @PropertyName("isAvailable") val isAvailable : Boolean,
     @PropertyName("acsTokenLink") val acsTokenLink : String
-) : Serializable
+) : Serializable{
+    // Provide a no-argument constructor for Firebase deserialization
+    constructor() : this(
+        false,
+        ""
+    )
+}

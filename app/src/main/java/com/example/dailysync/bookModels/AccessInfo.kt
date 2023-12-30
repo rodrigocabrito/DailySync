@@ -15,4 +15,18 @@ data class AccessInfo (
     @PropertyName("webReaderLink") val webReaderLink : String,
     @PropertyName("accessViewStatus") val accessViewStatus : String,
     @PropertyName("quoteSharingAllowed") val quoteSharingAllowed : Boolean
-) : Serializable
+) : Serializable{
+    // Provide a no-argument constructor for Firebase deserialization
+    constructor() : this(
+        "",    // Set a default value for country
+        "",    // Set a default value for viewability
+        false, // Set a default value for embeddable
+        false, // Set a default value for publicDomain
+        "",    // Set a default value for textToSpeechPermission
+        Epub(), // Assuming Epub has a no-argument constructor
+        Pdf(),  // Assuming Pdf has a no-argument constructor
+        "",    // Set a default value for webReaderLink
+        "",    // Set a default value for accessViewStatus
+        false  // Set a default value for quoteSharingAllowed
+    )
+}

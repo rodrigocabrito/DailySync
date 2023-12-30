@@ -27,4 +27,30 @@ data class VolumeInfo (
     @PropertyName("previewLink") val previewLink : String,
     @PropertyName("infoLink") val infoLink : String,
     @PropertyName("canonicalVolumeLink") val canonicalVolumeLink : String
-) : Serializable
+) : Serializable{
+    // Provide a no-argument constructor for Firebase deserialization
+    constructor() : this(
+        "",
+        "",
+        null,
+        "",
+        "",
+        "",
+        emptyList(),
+        ReadingModes(),
+        0,
+        "",
+        emptyList(),
+        0.0f,
+        0,
+        "",
+        false,
+        "",
+        PanelizationSummary(),
+        null,
+        "",
+        "",
+        "",
+        ""
+    )
+}
