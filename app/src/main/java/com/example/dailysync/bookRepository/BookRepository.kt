@@ -11,7 +11,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.skydoves.sandwich.ApiResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
 
@@ -53,20 +55,24 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
         database.removeValue().await()
     }
 
-    fun getItemsByStatus(status: Status, callback: (List<Items>) -> Unit) {
-        database
-            .orderByChild("status")
-            .equalTo(status.name)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val itemsByStatus = snapshot.children.mapNotNull { it.getValue(Items::class.java) }
-                    callback(itemsByStatus)
-                }
+    suspend fun getItemsByStatus(status: Status, callback: (List<Items>) -> Unit) {
+        withContext(Dispatchers.IO) {
+            database
+                .orderByChild("status")
+                .equalTo(status.name)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val itemsByStatus = snapshot.children.mapNotNull { it.getValue(Items::class.java) }
+                        callback(itemsByStatus)
+                    }
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle error
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle error
+                        // You might want to pass an empty list or some default value to the callback
+                        callback(emptyList())
+                    }
+                })
+        }
     }
     suspend fun deleteItemById(id: String) {
         database.child(id).removeValue().await()

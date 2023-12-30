@@ -132,13 +132,11 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                 TextButton(
                     onClick = {
                         openDialog.value = false
-
-                        when(selectedOption) {
-                            "To Read" -> item.status = Status.TO_READ
-                            "Reading" -> item.status = Status.READING
-                            "Finished" -> item.status = Status.FINISHED
-                        }
-
+                            when (selectedOption) {
+                                "To Read" -> Status.TO_READ
+                                "Reading" -> Status.READING
+                                "Finished" -> Status.FINISHED
+                            }
                         item.let { bookViewModel.insertItem(it) }
                     }
                 ) {

@@ -96,20 +96,12 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
         }
     }
 
-    fun getItemsByStatus(status: Status) {
+    fun getItemsByStatus(status: Status, callback: (List<Items>) -> Unit) {
         viewModelScope.launch {
-            isLoading.value = true
-            delay(1000)
-            repository.getItemsByStatus(status) { result ->
-                if (result != null) {
-                    _items.value = result
-                } else {
-                    //TODO handleException()
-                }
-                isLoading.value = false
-            }
+            repository.getItemsByStatus(status, callback)
         }
     }
+
 
     fun deleteItem(id: String, navController: NavHostController) {
         viewModelScope.launch {

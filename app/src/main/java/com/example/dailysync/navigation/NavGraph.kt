@@ -14,6 +14,7 @@ import com.example.dailysync.home.exercise.DuringExercise
 import com.example.dailysync.home.exercise.SaveExercise
 import com.example.dailysync.home.exercise.StartExercise
 import com.example.dailysync.home.read.BookDetailsScreen
+import com.example.dailysync.home.read.MyLibrary
 import com.example.dailysync.home.read.SearchScreen
 import com.example.dailysync.home.sleep.DefineSleepSchedule
 import com.example.dailysync.home.sleep.EditSleepSchedule
@@ -146,6 +147,9 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
                     item = item
                 )
             }
+        }
+        composable(Screens.MyLibrary.route){
+            MyLibrary(navController = navController, bookViewModel = bookViewModel)
         }
 
         // ##################################################################################################################################################################################

@@ -511,9 +511,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                navController.navigate(
-                                    Screens.Search.route // TODO CHANGE ARGS
-                                )
+                                navController.navigate(Screens.Search.route)
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
@@ -548,7 +546,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .clickable {
-                                // TODO ADD NAVIGATION & ARGS
+                                navController.navigate(Screens.MyLibrary.route)
                             }
                             .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
                     ) {
@@ -558,7 +556,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                             horizontalArrangement = Arrangement.Center
                         ) {
                             Text(
-                                text = "Currently Reading",
+                                text = "My library",
                                 modifier = Modifier.padding(start = 8.dp)
                             )
                             Spacer(modifier = Modifier.width(100.dp))
@@ -571,40 +569,6 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // Wishlist
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                            .background(
-                                Color(android.graphics.Color.parseColor("#E5AE5A")),
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .clickable {
-                                // TODO ADD NAVIGATION & ARGS
-                            }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = "Wishlist",
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                            Spacer(modifier = Modifier.width(190.dp))
-                            Icon(
-                                painter = painterResource(id = R.drawable.wishlist_icon),
-                                contentDescription = null,
-                                tint = Color.Unspecified,
-                                modifier = Modifier.size(40.dp)
-                            )
-                        }
-                    }
                 }
             }
         }
