@@ -2,6 +2,8 @@ package com.example.dailysync.home.read
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -38,7 +41,7 @@ import com.example.dailysync.bookModels.Items
 
 
 @Composable
-fun BookInfo(item: Items?, onClick: () -> Unit) {
+fun BookItemCard(item: Items?, onClick: () -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -68,10 +71,11 @@ fun BookInfo(item: Items?, onClick: () -> Unit) {
                     enabled = true,
                     onClick = { onClick() }
                 )
-                .scale(scale.value),
+                .scale(scale.value)
+                .border(2.dp, Color(0xFF362305),shape = RoundedCornerShape(16.dp)),
             shape = RoundedCornerShape(corner = CornerSize(16.dp)),
         ) {
-            Row {
+            Row (modifier = Modifier.background(Color(0xFFFBE5C4))){
                 if (imageLinks != null) {
                     val url: StringBuilder = StringBuilder(imageLinks.thumbnail)
                     url.insert(4, "s")
@@ -83,10 +87,10 @@ fun BookInfo(item: Items?, onClick: () -> Unit) {
                         rememberAsyncImagePainter(
                             ImageRequest.Builder(LocalContext.current).data(data = url.toString())
                                 .apply(block = fun ImageRequest.Builder.() {
-                                    crossfade(true) // Optional: add crossfade effect
+                                    crossfade(true)
                                 }).build()
                         ),
-                        contentDescription = null, // Provide a meaningful content description if needed
+                        contentDescription = null,
                         contentScale = ContentScale.Fit
                     )
                 } else {
@@ -115,7 +119,9 @@ fun BookInfo(item: Items?, onClick: () -> Unit) {
                             style = TextStyle(
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
+                                color = Color(0xFF362305)
                             ),
+                            maxLines = 3
                         )
                     }
                     item?.volumeInfo?.authors?.let { it ->
@@ -127,7 +133,8 @@ fun BookInfo(item: Items?, onClick: () -> Unit) {
                         Text(
                             text = value,
                             fontSize = 12.sp,
-
+                            color = Color(0xFF794E0B),
+                            maxLines = 2
                         )
                     }
                 }

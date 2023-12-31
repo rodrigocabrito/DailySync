@@ -67,10 +67,10 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 16.dp)
         )
         {
-            auth.currentUser?.displayName?.let { Text(text = "Hey $it,", fontSize = 30.sp, fontWeight = FontWeight.SemiBold) }
+            auth.currentUser?.displayName?.let { Text(text = "Hey $it,", fontSize = 25.sp, fontWeight = FontWeight.SemiBold) }
 
         }
 
@@ -94,7 +94,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                         showSleepOptions = false
                         showReadOptions = false
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -150,7 +150,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                         )
                                 )
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -191,7 +191,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                         )
                                 )
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -232,7 +232,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                         )
                                 )
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -274,7 +274,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                         showSleepOptions = true
                         showReadOptions = false
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -327,7 +327,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                     Screens.RegisterSleep.route // TODO CHANGE ARGS
                                 )
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -420,7 +420,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                     }
                                 })
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -462,7 +462,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                         showSleepOptions = false
                         showReadOptions = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp))
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
@@ -505,7 +505,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(75.dp)
                             .background(
                                 Color(android.graphics.Color.parseColor("#E5AE5A")),
                                 shape = RoundedCornerShape(8.dp)
@@ -513,7 +513,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                             .clickable {
                                 navController.navigate(Screens.Search.route)
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -524,23 +524,23 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 text = "Find Books",
                                 modifier = Modifier.padding(start = 8.dp)
                             )
-                            Spacer(modifier = Modifier.width(170.dp))
+                            Spacer(modifier = Modifier.width(165.dp))
                             Icon(
                                 painter = painterResource(id = R.drawable.search_icon),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
-                                modifier = Modifier.size(40.dp)
+                                modifier = Modifier.size(60.dp)
                             )
                         }
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    // Currently Reading
+                    // My library
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(75.dp)
                             .background(
                                 Color(android.graphics.Color.parseColor("#E5AE5A")),
                                 shape = RoundedCornerShape(8.dp)
@@ -548,7 +548,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                             .clickable {
                                 navController.navigate(Screens.MyLibrary.route)
                             }
-                            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                            .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp))
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -559,7 +559,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                                 text = "My library",
                                 modifier = Modifier.padding(start = 8.dp)
                             )
-                            Spacer(modifier = Modifier.width(100.dp))
+                            Spacer(modifier = Modifier.width(170.dp))
                             Icon(
                                 painter = painterResource(id = R.drawable.reading_icon),
                                 contentDescription = null,

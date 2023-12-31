@@ -71,7 +71,7 @@ fun DisplayItemsList(navController: NavHostController, items: List<Items>, title
             verticalArrangement = Arrangement.spacedBy(13.dp),
         ) {
             itemsIndexed(items) { _, item ->
-                BookInfo(
+                BookItemCard(
                     item = item,
                     onClick = {
                         navController.currentBackStackEntry?.savedStateHandle?.set("item", item)

@@ -170,14 +170,17 @@ fun BookDetails(item: Items?) {
                         modifier = Modifier.width(120.dp),
                         text = "ISBN",
                     )
-                    if(item?.volumeInfo?.industryIdentifiers?.get(0)?.identifier != null) {
-                        Text(
-                            text = item.volumeInfo.industryIdentifiers[0].identifier,
-                        )
-                    } else {
-                        Text(
-                            text = "-",
-                        )
+                    if (item != null) {
+                        if(!item?.volumeInfo?.industryIdentifiers.isNullOrEmpty() &&
+                            item.volumeInfo.industryIdentifiers[0]?.identifier != null) {
+                            Text(
+                                text = item.volumeInfo.industryIdentifiers[0].identifier,
+                            )
+                        } else {
+                            Text(
+                                text = "-",
+                            )
+                        }
                     }
                 }
                 Row {

@@ -1,11 +1,13 @@
 package com.example.dailysync.home.read
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -15,14 +17,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,43 +48,80 @@ var textStateDuplicate: String = ""
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(navController: NavHostController, bookViewModel: BookViewModel) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
     ) {
         Scaffold(
-            topBar = { SearchTopBar(navController, bookViewModel) },
-        ) {
-            BookList(navController, bookViewModel)
-
-            if (bookViewModel.isLoading.value) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(Alignment.Center),
-                ) {
-                    CircularProgressIndicator()
-                }
-            }
-
-            if(bookViewModel.emptySearchedResult) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .align(Alignment.Center)
-                            .padding(vertical = 10.dp),
-                        text = "Powered by Google",
-                        style = TextStyle(
-                            fontSize = 20.sp,
+            topBar = {
+                Column (modifier = Modifier.background(Color.White) ){
+                    Row{
+                        IconButton(
+                            onClick = {
+                                navController.popBackStack()
+                                bookViewModel.clearLoadItemsList()
+                            },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = Color(0xFF362305)
+                            )
+                        ) { Icon(Icons.Default.ArrowBack, "Back") }
+                        Text(
+                            text = "Find Books",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
                             textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                        ),
-                    )
+                            style = TextStyle(
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 20.sp,
+                                color = Color(0xFF362305)
+                            )
+                        )
+                    }
+                    SearchTopBar(bookViewModel)
+
                 }
+            },
+            content = {
+                Column(modifier = Modifier.fillMaxSize().background(Color.White)){// background color do corpo sem nada
+                    BookList(navController, bookViewModel)
+
+                    if (bookViewModel.isLoading.value) {
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .wrapContentSize(Alignment.Center)
+                                .background( Color.White),
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+
+                    if(bookViewModel.emptySearchedResult) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background( Color.White)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .padding(vertical = 10.dp),
+                                text = "Powered by Google",
+                                style = TextStyle(
+                                    fontSize = 20.sp,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = FontWeight.Bold,
+                                ),
+                            )
+                        }
+                    }
+                }
+
             }
-        }
+        )
     }
 }
 
@@ -91,19 +133,19 @@ fun BookList(navController: NavHostController, bookViewModel: BookViewModel) {
         }
         Internet.ErrorType.INTERNET -> {
             ErrorAlert(
-                drawableRes = R.drawable.star_icon,
+                drawableRes = R.drawable.ic_error,
                 text = "No internet connection",
             )
         }
         Internet.ErrorType.EXCEPTION -> {
             ErrorAlert(
-                drawableRes = R.drawable.star_icon,
+                drawableRes = R.drawable.ic_error,
                 text = bookViewModel.errorType.value.errorMsg,
             )
         }
         Internet.ErrorType.CUSTOM -> {
             ErrorAlert(
-                drawableRes = R.drawable.headset_icon,
+                drawableRes = R.drawable.ic_reading,
                 text = "No books found",
             )
         }
@@ -112,28 +154,34 @@ fun BookList(navController: NavHostController, bookViewModel: BookViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTopBar(navController: NavHostController, bookViewModel: BookViewModel) {
+fun SearchTopBar(bookViewModel: BookViewModel) {
     var textState by remember { mutableStateOf("") }
     val focusRequester = FocusRequester()
     val focusManager = LocalFocusManager.current
 
-        IconButton(onClick = {
-            navController.popBackStack()
-            bookViewModel.clearLoadItemsList()
-        }) {
-            Icon(Icons.Default.ArrowBack, null)
-        }
-        TextField(
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background( Color.White)
+    ) {
+        OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester)
+                .background(
+                    color = Color.White, // Set the background color of the TextField
+                    shape = RoundedCornerShape(5.dp)
+                ),
             value = textState,
             onValueChange = {
                 textState = it
             },
+            textStyle = TextStyle(color = Color(0xFF362305)),
             placeholder = {
                 Text(
-                    text = "Search for title, author or ISBN"
+                    text = "Search for title, author or ISBN",
+                    color = Color(0xFF362305)
                 )
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
@@ -150,11 +198,12 @@ fun SearchTopBar(navController: NavHostController, bookViewModel: BookViewModel)
             }),
             singleLine = true
         )
-        DisposableEffect(Unit) {
-            focusRequester.requestFocus()
-            onDispose { }
-        }
     }
+    DisposableEffect(Unit) {
+        focusRequester.requestFocus()
+        onDispose { }
+    }
+}
 
 
 @Composable
@@ -165,10 +214,14 @@ fun GetBooks(navController: NavHostController, bookViewModel: BookViewModel) {
             layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
 
     LazyColumn(
-        contentPadding = PaddingValues(horizontal = 25.dp, vertical = 18.dp),
+        modifier = Modifier.background( Color.White),
+        contentPadding = PaddingValues(horizontal = 25.dp),
         verticalArrangement = Arrangement.spacedBy(13.dp),
         state = scrollState,
     ) {
+        item {
+            Spacer(modifier = Modifier.height(170.dp))
+        }
         itemsIndexed(bookViewModel.items.value) { index, item ->
             val endOfListReached by remember {
                 derivedStateOf {
@@ -182,8 +235,7 @@ fun GetBooks(navController: NavHostController, bookViewModel: BookViewModel) {
                 }
             }
 
-            BookInfo(item = item) {
-                // Handle click action, for example, navigate to HOME screen
+            BookItemCard(item = item) {
                 navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
                 navController.navigate(Screens.BookDetails.route)
             }
@@ -194,7 +246,8 @@ fun GetBooks(navController: NavHostController, bookViewModel: BookViewModel) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .background( Color.White),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     CircularProgressIndicator()
