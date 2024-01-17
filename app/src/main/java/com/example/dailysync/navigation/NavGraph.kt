@@ -21,6 +21,7 @@ import com.example.dailysync.home.sleep.EditSleepSchedule
 import com.example.dailysync.home.sleep.RegisterSleep
 import com.example.dailysync.login.Login
 import com.example.dailysync.login.SignUp
+import com.example.dailysync.notifications.Notifications
 import com.example.dailysync.profile.Profile
 import com.example.dailysync.report.Reports
 import com.google.firebase.auth.FirebaseAuth
@@ -153,5 +154,10 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         }
 
         // ##################################################################################################################################################################################
+
+        composable(Screens.Notifications.route){
+            Notifications(navController = navController, auth = auth)
+        }
+
     }
 }
