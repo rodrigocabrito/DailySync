@@ -1,5 +1,6 @@
 package com.example.dailysync.report
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,28 +51,33 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
     ) {
 
         // header
-
-        // icons
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 10.dp, end = 16.dp, top = 10.dp),
+            horizontalArrangement = Arrangement.End
         ) {
-            // Align text to the right
-            Text(
-                text = "Notification Icon",                     // TODO NOTIFICATION ICON
-                textAlign = TextAlign.End,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Notifications.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = "Notifications",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
 
-        Text(text = "Your Weekly Report")
+        Text(text = "Your Weekly Report", fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(20.dp))
 
         // body
-
         // period filter
         Row(
             modifier = Modifier
@@ -77,46 +85,62 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 .padding(start = 16.dp)
                 .padding(end = 16.dp)
         ) {
-            Button(
-                onClick = {
-                    reportPeriodDaily = true
-                    reportPeriodWeekly = false
-                    reportPeriodMonthly = false
-                },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
                     .padding(end = 16.dp)
-                    .background(Color.Black, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#47E285")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        reportPeriodDaily = true
+                        reportPeriodWeekly = false
+                        reportPeriodMonthly = false
+                    }
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
             ) {
                 Text(text = "Daily")
             }
 
-            Button(
-                onClick = {
-                    reportPeriodDaily = false
-                    reportPeriodWeekly = true
-                    reportPeriodMonthly = false
-                },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
                     .padding(end = 16.dp)
-                    .background(Color.Black, shape = RoundedCornerShape(8.dp))
+                    .background(
+                        Color(android.graphics.Color.parseColor("#A17FEB")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        reportPeriodDaily = false
+                        reportPeriodWeekly = true
+                        reportPeriodMonthly = false
+                    }
+                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
             ) {
                 Text(text = "Weekly")
             }
 
-            Button(
-                onClick = {
-                    reportPeriodDaily = false
-                    reportPeriodWeekly = false
-                    reportPeriodMonthly = true
-                },
+            Box(
                 modifier = Modifier
                     .weight(1f)
                     .height(50.dp)
-                    .background(Color.Black, shape = RoundedCornerShape(8.dp))
+                    .padding(end = 16.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor("#E5AE5A")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        reportPeriodDaily = false
+                        reportPeriodWeekly = false
+                        reportPeriodMonthly = true
+                    }
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp)),
+                contentAlignment = Alignment.Center
             ) {
                 Text(text = "Monthly")
             }
