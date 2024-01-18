@@ -141,7 +141,6 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
                 bookViewModel = bookViewModel
             )
         }
-
         composable(route = Screens.BookDetails.route) {
             val item = navController.previousBackStackEntry?.savedStateHandle?.get<Items>("item")
             if (item != null) {
@@ -158,12 +157,14 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
 
         // ##################################################################################################################################################################################
 
+        // Notifications
         composable(Screens.Notifications.route){
             Notifications(navController = navController, auth = auth)
         }
 
         // ##################################################################################################################################################################################
 
+        // Report
         composable(Screens.ExerciseReport.route){
             ExerciseReport(navController = navController, auth = auth)
         }
