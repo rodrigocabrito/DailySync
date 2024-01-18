@@ -212,7 +212,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
         }
 
         // graphs
-        Box(                                        // TODO change background and border
+        Box(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
@@ -239,7 +239,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
             fontWeight = FontWeight.Bold
         )
 
-        Box(                                        // TODO change background and border
+        Box(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
@@ -265,7 +265,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
             fontWeight = FontWeight.Bold
         )
 
-        Box(                                        // TODO change background and border
+        Box(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
