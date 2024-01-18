@@ -191,7 +191,7 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                         value = it,
                         onValueChange = { name = it },
                         colors = TextFieldDefaults.textFieldColors(
-                            textColor = Color.DarkGray,
+                            //textColor = Color.DarkGray,
                             containerColor = Color.White,
                             cursorColor = Color(0xFF0455BF),
                             focusedIndicatorColor = Color(0xFF0455BF),
