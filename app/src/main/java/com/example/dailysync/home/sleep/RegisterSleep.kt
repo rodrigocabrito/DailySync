@@ -51,6 +51,7 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import java.time.Instant
 
 @Composable
 fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
@@ -105,7 +106,7 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
         }
 
         val timeSlept = calculateTimeDifference(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime)
-        val sleep = Sleep(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime, timeSlept)
+        val sleep = Sleep(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime, timeSlept, Instant.now())
         if (userId != null) {
             writeToDatabase(userId, sleep)
         }
