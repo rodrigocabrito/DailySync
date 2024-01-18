@@ -23,7 +23,10 @@ import com.example.dailysync.login.Login
 import com.example.dailysync.login.SignUp
 import com.example.dailysync.notifications.Notifications
 import com.example.dailysync.profile.Profile
+import com.example.dailysync.report.ExerciseReport
+import com.example.dailysync.report.ReadReport
 import com.example.dailysync.report.Reports
+import com.example.dailysync.report.SleepReport
 import com.google.firebase.auth.FirebaseAuth
 
 @RequiresApi(Build.VERSION_CODES.P)
@@ -157,6 +160,18 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
 
         composable(Screens.Notifications.route){
             Notifications(navController = navController, auth = auth)
+        }
+
+        // ##################################################################################################################################################################################
+
+        composable(Screens.ExerciseReport.route){
+            ExerciseReport(navController = navController, auth = auth)
+        }
+        composable(Screens.SleepReport.route){
+            SleepReport(navController = navController, auth = auth)
+        }
+        composable(Screens.ReadReport.route){
+            ReadReport(navController = navController, auth = auth)
         }
 
     }

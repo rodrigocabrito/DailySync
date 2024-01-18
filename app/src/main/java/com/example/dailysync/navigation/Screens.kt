@@ -30,4 +30,9 @@ sealed class Screens(val route: String) {
 
     // Notifications
     object Notifications : Screens("notifications")
+
+    // Report
+    object ExerciseReport : Screens("exercise_report")
+    object SleepReport : Screens("sleep_report")
+    object ReadReport : Screens("read_report")
 }
