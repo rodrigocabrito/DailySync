@@ -78,7 +78,7 @@ fun BookDetails(item: Items?) {
                             .align(Alignment.Center)
                             .size(100.dp, 200.dp),
                         imageVector = ImageVector.vectorResource(R.drawable.image_not_available),
-                        contentDescription = "",
+                        contentDescription = "Image not available",
                     )
                 }
             }
@@ -90,6 +90,7 @@ fun BookDetails(item: Items?) {
                         fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
+                        color = Color(0xFF362305)
                     ),
                 )
             }
@@ -102,13 +103,14 @@ fun BookDetails(item: Items?) {
                 Text(
                     text = value,
                     fontSize = 12.sp,
+                    color = Color(0xFF362305)
                 )
             }
         }
 
         Divider(
             modifier = Modifier.padding(top = 15.dp),
-            color = Color.Black
+            color = Color(0xFF362305)
         )
 
         Column(
@@ -120,7 +122,9 @@ fun BookDetails(item: Items?) {
                     modifier = Modifier.padding(horizontal = 10.dp),
                     text = "Description",
                     style = TextStyle(
+                        fontWeight = FontWeight.SemiBold,
                         fontSize = 20.sp,
+                        color = Color(0xFF362305)
                     )
                 )
 
@@ -133,6 +137,7 @@ fun BookDetails(item: Items?) {
                             text = item.volumeInfo.description,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 3,
+                            color = Color(0xFF362305)
                         )
                     } else {
                         Text(
@@ -140,18 +145,20 @@ fun BookDetails(item: Items?) {
                                 .padding(10.dp)
                                 .clickable { expanded = !expanded },
                             text = item.volumeInfo.description,
+                            color = Color(0xFF362305)
                         )
                     }
                 } else {
                     Text(
                         modifier = Modifier.padding(10.dp),
                         text = "Not available",
+                        color = Color(0xFF362305)
                     )
                 }
             }
 
             Divider(
-                color = Color.Black,
+                color = Color(0xFF362305),
             )
 
             Column(
@@ -162,6 +169,8 @@ fun BookDetails(item: Items?) {
                     text = "Details",
                     style = TextStyle(
                         fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color(0xFF362305)
                     )
                 )
 
@@ -169,16 +178,19 @@ fun BookDetails(item: Items?) {
                     Text(
                         modifier = Modifier.width(120.dp),
                         text = "ISBN",
+                        color = Color(0xFF362305)
                     )
                     if (item != null) {
                         if(!item?.volumeInfo?.industryIdentifiers.isNullOrEmpty() &&
                             item.volumeInfo.industryIdentifiers[0]?.identifier != null) {
                             Text(
                                 text = item.volumeInfo.industryIdentifiers[0].identifier,
+                                color = Color(0xFF362305)
                             )
                         } else {
                             Text(
                                 text = "-",
+                                color = Color(0xFF362305)
                             )
                         }
                     }
@@ -187,29 +199,35 @@ fun BookDetails(item: Items?) {
                     Text(
                         modifier = Modifier.width(120.dp),
                         text = "Page Count",
+                        color = Color(0xFF362305)
                     )
                     if(item?.volumeInfo?.pageCount != null) {
                         Text(
                             text = item.volumeInfo.pageCount.toString(),
+                            color = Color(0xFF362305)
                         )
                     } else {
                         Text(
                             text = "-",
+                            color = Color(0xFF362305)
                         )
                     }
                 }
                 Row {
                     Text(
                         modifier = Modifier.width(120.dp),
-                        text = "Published Date",
+                        text = "Date",
+                        color = Color(0xFF362305)
                     )
                     if(item?.volumeInfo?.publishedDate != null) {
                         Text(
                             text = item.volumeInfo.publishedDate,
+                            color = Color(0xFF362305)
                         )
                     } else {
                         Text(
                             text = "-",
+                            color = Color(0xFF362305)
                         )
                     }
                 }
@@ -217,36 +235,43 @@ fun BookDetails(item: Items?) {
                     Text(
                         modifier = Modifier.width(120.dp),
                         text = "Publisher",
+                        color = Color(0xFF362305)
                     )
                     if(item?.volumeInfo?.publisher != null) {
                         Text(
                             text = item.volumeInfo.publisher,
+                            color = Color(0xFF362305)
                         )
                     } else {
                         Text(
                             text = "-",
+                            color = Color(0xFF362305)
                         )
                     }
                 }
                 Row {
                     Text(
                         modifier = Modifier.width(120.dp),
-                        text = "Language"
+                        text = "Language",
+                        color = Color(0xFF362305)
                     )
                     if(item?.volumeInfo?.language != null) {
                         Text(
-                            text = item.volumeInfo.language
+                            text = item.volumeInfo.language,
+                            color = Color(0xFF362305)
                         )
                     } else {
                         Text(
-                            text = "-"
+                            text = "-",
+                            color = Color(0xFF362305)
                         )
                     }
                 }
                 Row {
                     Text(
                         modifier = Modifier.width(120.dp),
-                        text = "Categories"
+                        text = "Categories",
+                        color = Color(0xFF362305)
                     )
                     if(item?.volumeInfo?.categories != null) {
                         item.volumeInfo.categories.let { it ->
@@ -255,18 +280,21 @@ fun BookDetails(item: Items?) {
                             ) {
                                 it
                             }
-                            Text(text = value)
+                            Text(text = value,
+                                color = Color(0xFF362305))
                         }
                     } else {
                         Text(
-                            text = "-"
+                            text = "-",
+                            color = Color(0xFF362305)
                         )
                     }
                 }
                 Row {
                     Text(
                         modifier = Modifier.width(120.dp),
-                        text = "Link"
+                        text = "Link",
+                        color = Color(0xFF362305)
                     )
                     if(item?.volumeInfo?.infoLink != null) {
                         Text(
@@ -290,7 +318,8 @@ fun BookDetails(item: Items?) {
                         )
                     } else {
                         Text(
-                            text = "-"
+                            text = "-",
+                            color = Color(0xFF362305)
                         )
                     }
                 }
