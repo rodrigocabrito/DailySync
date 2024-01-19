@@ -1,6 +1,7 @@
 package com.example.dailysync.home.read
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -20,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,11 +31,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -55,6 +56,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
 
     Scaffold(
+        modifier = Modifier.background(Color.White),
         topBar = {
             TopBar(navController, item)
         },
@@ -63,18 +65,20 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                 modifier = Modifier.size(60.dp),
                 onClick = {
                     openDialog.value = true
-                }
+                },
+                containerColor = Color(0xFFF5D4A2),
+                contentColor = Color(0xFF362305),
             ) {
                 if(item.status != null) {
                     Icon(
                         modifier = Modifier.size(30.dp),
                         painter = painterResource(id = R.drawable.ic_swap),
-                        contentDescription = "",
+                        contentDescription = "Swap reading status",
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = ""
+                        contentDescription = "Add reading status"
                     )
                 }
             }
@@ -84,6 +88,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState),
+            color = Color.White
         ) {
             BookDetails(item = item)
         }
@@ -96,7 +101,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
             },
             title = {
                 Text(
-                    text = "Save To"
+                    text = "Select progress"
                 )
             },
             text = {
@@ -132,12 +137,13 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                 TextButton(
                     onClick = {
                         openDialog.value = false
-                            when (selectedOption) {
-                                "To Read" -> Status.TO_READ
-                                "Reading" -> Status.READING
-                                "Finished" -> Status.FINISHED
-                            }
+                        when (selectedOption) {
+                            "To Read" -> item.status = Status.TO_READ
+                            "Reading" -> item.status = Status.READING
+                            "Finished" -> item.status = Status.FINISHED
+                        }
                         item.let { bookViewModel.insertItem(it) }
+
                     }
                 ) {
                     Text("Save")
@@ -229,18 +235,21 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
 
 @Composable
 fun TopBar(navController: NavHostController, item: Items?) {
-    val appBarHorizontalPadding = 4.dp
     val titleIconModifier = Modifier
         .fillMaxHeight()
-        .width(72.dp - appBarHorizontalPadding)
+        .fillMaxWidth()
     val openMenu = remember { mutableStateOf(false) }
 
-    Box(Modifier.height(32.dp)) {
+    Box(Modifier.height(32.dp).background(Color.White)) {
+
         Row(titleIconModifier, verticalAlignment = Alignment.CenterVertically) {
             IconButton(
                 onClick = {
                     navController.popBackStack()
                 },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xFF362305)
+                ),
                 enabled = true,
             ) {
                 Icon(
@@ -249,23 +258,6 @@ fun TopBar(navController: NavHostController, item: Items?) {
                 )
             }
         }
-        Row(
-            Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                maxLines = 1,
-                text = "Details",
-                style = TextStyle(
-                    textAlign = TextAlign.Center,
-                    fontSize = 30.sp,
-                    fontFamily = FontFamily.Cursive,
-                ),
-            )
-
-        }
-
 
         if (item?.status != null) {
             IconButton(
@@ -273,6 +265,9 @@ fun TopBar(navController: NavHostController, item: Items?) {
                 onClick = {
                     openMenu.value = true
                 },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xFF362305)
+                ),
                 enabled = true,
             ) {
                 Icon(
@@ -284,13 +279,15 @@ fun TopBar(navController: NavHostController, item: Items?) {
                     onDismissRequest = {
                         openMenu.value = false
                     },
+                    modifier = Modifier.background(color = Color(0xFFF5D4A2))
                 ) {
                     DropdownMenuItem(
                         onClick = {
                             openMenu.value = false
                             openRemoveDialog = true
                         },
-                        text = { Text(text = "Remove") }
+                        modifier = Modifier.background(color = Color(0xFFF5D4A2)),
+                        text = { Text(text = "Remove", color = Color(0xFF362305)) }
                     )
                 }
             }

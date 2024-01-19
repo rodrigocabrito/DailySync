@@ -1,5 +1,6 @@
 package com.example.dailysync.bookRepository
 
+import android.util.Log
 import com.example.dailysync.bookModels.Book
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.bookModels.Status
@@ -18,9 +19,19 @@ import kotlinx.coroutines.withContext
 class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
 
 
-    private val userId = auth.currentUser?.uid
-    private val database: DatabaseReference = FirebaseDatabase.getInstance().reference.child("users").child(
-        userId!!).child("books")
+    private var userId: String? = null
+    private var database: DatabaseReference
+
+    init {
+        auth.addAuthStateListener { firebaseAuth ->
+            // This block will be called when the authentication state changes
+            userId = firebaseAuth.currentUser?.uid
+            database = FirebaseDatabase.getInstance().reference.child("users").child(userId!!).child("books")
+        }
+
+        // Initialize the database reference, but userId is initially null
+        database = FirebaseDatabase.getInstance().reference
+    }
 
     suspend fun getBooksList(query: String, startIndex: Int, callback: (ApiResponse<Book?>) -> Unit) {
         val result = bookApi.getBooks(
@@ -33,6 +44,7 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     }
 
     suspend fun insertItem(item: Items) {
+        userId?.let { Log.d("CARALHO", it) }
         val newItemReference = database.push()
         val newItem = item.copy(id = newItemReference.key ?: "")
         newItemReference.setValue(newItem).await()
