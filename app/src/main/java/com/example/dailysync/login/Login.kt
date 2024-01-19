@@ -50,7 +50,7 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             onValueChange = { email = it },
             label = { Text("Email", color = Color.Gray) },
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.DarkGray,
+                //textColor = Color.DarkGray,
                 containerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
                 cursorColor = Color(0xFF0455BF),
                 focusedIndicatorColor = Color(0xFF0455BF),
@@ -67,7 +67,7 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             label = { Text("Password", color = Color.Gray) },
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.DarkGray,
+                //textColor = Color.DarkGray,
                 containerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
                 cursorColor = Color(0xFF0455BF),
                 focusedIndicatorColor = Color(0xFF0455BF),

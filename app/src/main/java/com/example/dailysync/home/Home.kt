@@ -43,7 +43,6 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun Home(navController: NavController, auth: FirebaseAuth) {
 
-    //Text("Welcome ${auth.currentUser?.email}")
     var showExerciseOptions by remember { mutableStateOf(false) }
     var showSleepOptions by remember { mutableStateOf(false) }
     var showReadOptions by remember { mutableStateOf(false) }
@@ -54,24 +53,14 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
             horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // header
+        // name
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-        )
-        {
-            Text(text = "HEADER")
-        }
-        //name
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp)
+                .padding(start = 16.dp, top = 30.dp)
         )
         {
             auth.currentUser?.displayName?.let { Text(text = "Hey $it,", fontSize = 25.sp, fontWeight = FontWeight.SemiBold) }
-
         }
 
         Spacer(modifier = Modifier.height(5.dp))
@@ -98,8 +87,8 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.exercise_icon),
