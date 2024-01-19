@@ -13,7 +13,7 @@ enum class Status {
 @IgnoreExtraProperties
 @Parcelize
 data class Items(
-    @PropertyName("status") val status: Status?, // Use a private property for Firebase serialization
+    @PropertyName("status") var status: Status?, // Use a private property for Firebase serialization
     @PropertyName("id") val id: String,
     @PropertyName("kind") val kind: String = "",
     @PropertyName("etag") val etag: String = "",
