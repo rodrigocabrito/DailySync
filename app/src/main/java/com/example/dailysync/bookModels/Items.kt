@@ -22,6 +22,7 @@ data class Items(
     @PropertyName("saleInfo") val saleInfo: SaleInfo,
     @PropertyName("accessInfo") val accessInfo: AccessInfo,
     @PropertyName("searchInfo") val searchInfo: SearchInfo? = null,
+    @PropertyName("currentPage") val currentPage: Int
 ) : Serializable, Parcelable{
     // Firebase requires a no-argument constructor for deserialization
     constructor() : this(
@@ -33,6 +34,7 @@ data class Items(
         VolumeInfo(), // You might need to provide default values for nested classes
         SaleInfo(),
         AccessInfo(),
-        null
+        null,
+        0
     )
 }

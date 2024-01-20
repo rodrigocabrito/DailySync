@@ -90,7 +90,12 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                 .verticalScroll(scrollState),
             color = Color.White
         ) {
-            BookDetails(item = item)
+            if(item.status != null){
+                AddedBookDetails(item = item)
+            }else{
+                BookDetails(item = item)
+            }
+
         }
     }
 
@@ -239,7 +244,10 @@ fun TopBar(navController: NavHostController, item: Items?) {
         .fillMaxWidth()
     val openMenu = remember { mutableStateOf(false) }
 
-    Box(Modifier.height(32.dp).background(Color.White)) {
+    Box(
+        Modifier
+            .height(32.dp)
+            .background(Color.White)) {
 
         Row(titleIconModifier, verticalAlignment = Alignment.CenterVertically) {
             IconButton(
