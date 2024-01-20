@@ -1,5 +1,6 @@
 package com.example.dailysync
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -99,6 +100,20 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
     fun getItemsByStatus(status: Status, callback: (List<Items>) -> Unit) {
         viewModelScope.launch {
             repository.getItemsByStatus(status, callback)
+        }
+    }
+
+    fun updateStatus(item: Items) {
+
+        viewModelScope.launch {
+            Log.d("Ver se muda",repository.checkItemExists(item.id).toString())
+            if (repository.checkItemExists(item.id)) {
+
+                repository.updateItem(item)
+            } else {
+                // If the item doesn't exist, insert it
+                repository.insertItem(item)
+            }
         }
     }
 

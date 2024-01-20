@@ -89,4 +89,18 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     suspend fun deleteItemById(id: String) {
         database.child(id).removeValue().await()
     }
+
+    suspend fun checkItemExists(id: String): Boolean {
+        return withContext(Dispatchers.IO) {
+            val snapshot = database.child(id).get().await()
+            return@withContext snapshot.exists()
+        }
+    }
+
+    suspend fun updateItem(item: Items) {
+        userId?.let {
+            val itemId = item.id
+            database.child(itemId).setValue(item).await()
+        }
+    }
 }
