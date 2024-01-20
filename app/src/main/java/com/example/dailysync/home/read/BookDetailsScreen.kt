@@ -142,8 +142,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                             "Reading" -> item.status = Status.READING
                             "Finished" -> item.status = Status.FINISHED
                         }
-                        item.let { bookViewModel.insertItem(it) }
-
+                        item.let { bookViewModel.updateStatus(it)}
                     }
                 ) {
                     Text("Save")

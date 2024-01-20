@@ -74,6 +74,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
+import java.time.Instant
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -95,6 +96,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
     var isCameraPreviewVisible by remember { mutableStateOf(false) }
     var capturedImageProxy: ImageProxy? by remember { mutableStateOf(null) }
+    var date: Instant by remember { mutableStateOf(Instant.now())}
     var isPictureTaken by remember { mutableStateOf(false) }
     var imageUri: Uri? by remember { mutableStateOf(null)}
 
@@ -125,7 +127,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         showDialogSave = false
         showDialogCancelConfirmed = false
 
-        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance, isPictureTaken)
+        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance, isPictureTaken, date)
         if (userId != null) {
             val exerciseId = writeToDatabase(userId, exercise, title)
 
@@ -215,7 +217,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
             label = { Text("Give a name to your $title", color = Color.DarkGray) },
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Black,
+                //textColor = Color.Black,
                 containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
                 cursorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
@@ -240,7 +242,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 imeAction = ImeAction.Done
             ),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Black,
+                //textColor = Color.Black,
                 containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
                 cursorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,

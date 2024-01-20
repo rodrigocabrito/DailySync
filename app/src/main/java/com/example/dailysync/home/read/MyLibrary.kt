@@ -1,6 +1,7 @@
 package com.example.dailysync.home.read
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,7 +24,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -59,10 +63,28 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
     var libraryItems by remember { mutableStateOf<List<Items>>(emptyList()) }
     var selectedCategory by remember { mutableStateOf("All") }
 
+    fun loadItemsByCategory(category: String) {
+        when (category) {
+            "All" -> {
+                libraryItems = readingItems + toReadItems + finishedItems
+            }
+            "To Read" -> {
+                libraryItems = toReadItems
+            }
+            "Finished" -> {
+                libraryItems = finishedItems
+            }
+            "Reading" -> {
+                libraryItems = readingItems
+            }
+        }
+    }
+
     // Launch the coroutine to fetch items
     LaunchedEffect(Unit) {
         bookViewModel.getItemsByStatus(Status.READING) { items ->
             readingItems = items
+            loadItemsByCategory(selectedCategory)
         }
         bookViewModel.getItemsByStatus(Status.TO_READ) { items ->
             toReadItems = items
@@ -105,6 +127,22 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
                     }
                 }
             },
+            floatingActionButton = {
+                FloatingActionButton(
+                    modifier = Modifier.size(60.dp).border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(15.dp)),
+                    onClick = {
+                        navController.navigate(Screens.Search.route)
+                    },
+                    containerColor = Color(0xFFF5D4A2),
+                    contentColor = Color(0xFF362305),
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "find books button",
+                    )
+                }
+            },
             content = {
 
 
@@ -113,37 +151,53 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
                     Row (modifier = Modifier.padding(start = 15.dp, end = 15.dp)){
                         createCategoryButton("All", selectedCategory) {
                             selectedCategory = "All"
-                            // Load or update items for "All" category
+                            loadItemsByCategory(selectedCategory)
+
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
                         createCategoryButton("To Read", selectedCategory) {
                             selectedCategory = "To Read"
-                            // Load or update items for "To Read" category
+                            loadItemsByCategory(selectedCategory)
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
                         createCategoryButton("Finished", selectedCategory) {
                             selectedCategory = "Finished"
-                            // Load or update items for "Finished" category
+                            loadItemsByCategory(selectedCategory)
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
                         createCategoryButton("Reading", selectedCategory) {
                             selectedCategory = "Reading"
-                            // Load or update items for "Reading" category
+                            loadItemsByCategory(selectedCategory)
                         }
                     }
                     when {
-                        toReadItems.isNotEmpty() -> {
-                            DisplayItemsList(items = toReadItems, navController = navController, title = "To Read")
+                        libraryItems.isNotEmpty() -> {
+                            DisplayItemsList(items = libraryItems, navController = navController, title = "To Read")
                         }
                         else -> {
-                            // Handle case when all lists are empty
-                            // Display a message or UI for an empty state
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .wrapContentSize(Alignment.Center)
+                            ) {
+                                Text(
+                                    text = if(selectedCategory == "All"){
+                                        "Click search to add books to your library"
+                                    }else{
+                                        "You have no books in your $selectedCategory shelf"
+                                         },
+                                    color = Color.Gray,
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 20.sp,
+                                )
+                            }
                         }
                     }
                 }
@@ -156,13 +210,14 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
 @Composable
 fun DisplayItemsList(navController: NavHostController, items: List<Items>, title: String) {
 
+    Log.d("Size", items.size.toString())
     if(items.isNotEmpty()) {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 25.dp, vertical = 18.dp),
             verticalArrangement = Arrangement.spacedBy(13.dp),
         ) {
             itemsIndexed(items) { _, item ->
-                BookItemCard(
+                MyLibraryBookItemCard(
                     item = item,
                     onClick = {
                         navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
@@ -176,6 +231,7 @@ fun DisplayItemsList(navController: NavHostController, items: List<Items>, title
             modifier = Modifier
                 .fillMaxSize()
                 .wrapContentSize(Alignment.Center)
+                .padding(top = 200.dp)
         ) {
             Text(
                 text = "Click + to add books",
@@ -216,3 +272,4 @@ fun createCategoryButton(
         )
     }
 }
+
