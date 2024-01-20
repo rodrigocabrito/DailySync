@@ -22,7 +22,7 @@ data class Items(
     @PropertyName("saleInfo") val saleInfo: SaleInfo,
     @PropertyName("accessInfo") val accessInfo: AccessInfo,
     @PropertyName("searchInfo") val searchInfo: SearchInfo? = null,
-    @PropertyName("currentPage") val currentPage: Int
+    @PropertyName("currentPage") var currentPage: Int
 ) : Serializable, Parcelable{
     // Firebase requires a no-argument constructor for deserialization
     constructor() : this(

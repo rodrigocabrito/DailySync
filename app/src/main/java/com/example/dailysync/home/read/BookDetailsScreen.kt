@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -22,6 +23,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -35,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -53,7 +56,20 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
     val scrollState = rememberScrollState()
     val openDialog = remember { mutableStateOf(false) }
     val radioOptions = listOf("To Read", "Reading", "Finished")
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+
+    fun formatStatus(status: String?): String {
+        return when (status?.uppercase()) {
+            "TO_READ" -> "To Read"
+            "READING" -> "Reading"
+            "FINISHED" -> "Finished"
+            else -> radioOptions[0] // Default to the first option if status is null or not recognized
+        }
+    }
+
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(formatStatus(item.status.toString())) }
+    var currentPage by remember { mutableIntStateOf(item.currentPage) }
+
+
 
     Scaffold(
         modifier = Modifier.background(Color.White),
@@ -118,7 +134,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(46.dp)
+                                .height(58.dp)
                                 .selectable(
                                     selected = (text == selectedOption),
                                     onClick = { onOptionSelected(text) },
@@ -134,6 +150,19 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                                 text = text,
                                 modifier = Modifier.padding(start = 16.dp)
                             )
+                            // Additional options for marking the page when "Reading" is selected
+                            if (text == "Reading" && selectedOption == "Reading") {
+                                Spacer(modifier = Modifier.width(16.dp))
+                                OutlinedTextField(
+                                    value = if (currentPage == 0) "" else currentPage.toString(),
+                                    onValueChange = { currentPage = if (it.isBlank()) -1 else it.toIntOrNull()?.coerceIn(-1, item?.volumeInfo?.pageCount ?: 0) ?: 0 },
+                                    label = { Text("Current Page") },
+                                    keyboardOptions = KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Number
+                                    ),
+                                    modifier = Modifier.width(120.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -144,7 +173,11 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         openDialog.value = false
                         when (selectedOption) {
                             "To Read" -> item.status = Status.TO_READ
-                            "Reading" -> item.status = Status.READING
+                            "Reading" -> {
+                                item.status = Status.READING
+                                // Retrieve the current page value from the text field
+                                item.currentPage = currentPage
+                            }
                             "Finished" -> item.status = Status.FINISHED
                         }
                         item.let { bookViewModel.updateStatus(it)}

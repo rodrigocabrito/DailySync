@@ -339,8 +339,13 @@ fun AddedBookDetails(item: Items?) {
 
     val currentPage = item?.currentPage
     val totalPages = item?.volumeInfo?.pageCount
-    val pagesLeft = totalPages?.minus(currentPage!!)
-    val percentage = (currentPage?.times(100))!! / totalPages!!
+    var pagesLeft: Int? = null
+    var percentage: Int? = null
+
+    if (totalPages != null && totalPages > 0) {
+        pagesLeft = totalPages - (currentPage ?: 0)
+        percentage = (currentPage?.times(100))!! / totalPages
+    }
 
     Column(
         modifier = Modifier
@@ -457,9 +462,14 @@ fun AddedBookDetails(item: Items?) {
                             color = Color(0xFF362305),
                             fontWeight = FontWeight.Bold
                         )
-                        Text(text = pagesLeft.toString() + " remaining",
-                            color = Color.Gray
-                        )
+                        if (pagesLeft != null) {
+                            if(pagesLeft > 0) {
+                                Text(
+                                    text = "$pagesLeft remaining",
+                                    color = Color.Gray
+                                )
+                            }
+                        }
                     }else{
                         Text(
                             text = "Number of pages not available",
