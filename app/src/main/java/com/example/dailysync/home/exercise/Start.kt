@@ -1,7 +1,12 @@
 package com.example.dailysync.home.exercise
 
 import android.Manifest
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -40,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,12 +58,18 @@ import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.ui.graphics.Color as ComposeColor
 
 
 @Composable
@@ -119,12 +131,57 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
 
                             // Enable blue dot on "My location"
                             googleMap.isMyLocationEnabled = true
+
+                            val markerOptions = MarkerOptions()
+                                .position(currentLatLng)
+                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                                .title("My Location")
+
+                            // Remove previous marker if any
+                            googleMap.clear()
+
+                            // Add the marker to the map
+                            googleMap.addMarker(markerOptions)
                         }
                     }
                 }
                 .addOnFailureListener { e ->
                     Log.e("Location", "Error getting location", e)
                 }
+            // Set up location updates
+            val locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000) // Update every 1 second
+
+            val greenCircleBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(getGreenCircleBitmap())
+
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.lastLocation?.let { location ->
+                        currentLatLng = LatLng(location.latitude, location.longitude)
+
+                        mapView?.getMapAsync { googleMap ->
+                            // Update the marker position
+                            googleMap.clear()
+
+                            val markerOptions = MarkerOptions()
+                                .position(currentLatLng)
+                                .icon(greenCircleBitmapDescriptor)
+                                .title("My Location")
+
+                            googleMap.addMarker(markerOptions)
+                        }
+                    }
+                }
+            }
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
+            // Dispose when the composable is removed from the hierarchy
+            onDispose {
+                // Stop location updates when the composable is disposed
+                fusedLocationClient.removeLocationUpdates(locationCallback)
+            }
         } else {
             // Request location permission
             ActivityCompat.requestPermissions(
@@ -371,4 +428,32 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             }
         }
     }
+}
+
+fun getGreenCircleBitmap(): Bitmap {
+    val diameter = 55
+    val bitmap = Bitmap.createBitmap(diameter, diameter, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    val outerPaint = Paint().apply {
+        color = Color(0xFFCCCCCC).toArgb()
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+
+    val innerPaint = Paint().apply {
+        color = Color(0xFF15723B).toArgb()
+        style = Paint.Style.FILL
+        isAntiAlias = true
+    }
+
+    val radius = diameter / 2f
+
+    // Draw outer circle (white border)
+    canvas.drawCircle(radius, radius, radius, outerPaint)
+
+    // Draw inner circle (green fill)
+    canvas.drawCircle(radius, radius, radius - 8, innerPaint) // Adjust 2 to set the width of the white border
+
+    return bitmap
 }
