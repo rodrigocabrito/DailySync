@@ -1,6 +1,5 @@
 package com.example.dailysync.login
 
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,13 +26,15 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("")}
     var isLoading by remember { mutableStateOf(false) }
+    var emailError by remember { mutableStateOf(false) }
+    var nameError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
     var signupFail by remember { mutableStateOf (false)}
 
     Image(
@@ -53,7 +54,9 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
     ) {
         TextField(
             value = name,
-            onValueChange = { name = it },
+            onValueChange = {
+                name = it
+                nameError = false},
             label = { Text("Name", color = Color.Gray) },
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.DarkGray,
@@ -66,12 +69,21 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
         )
+        if (nameError) {
+            Text(
+                text = "Name cannot be empty",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                emailError = false},
             label = { Text("Email", color = Color.Gray) },
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.DarkGray,
@@ -84,12 +96,21 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
         )
+        if (emailError) {
+            Text(
+                text = "Email cannot be empty",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                passwordError = false},
             label = { Text("Password", color = Color.Gray) },
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.colors(
@@ -105,6 +126,13 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                 imeAction = ImeAction.Done,
             )
         )
+        if (passwordError) {
+            Text(
+                text = "Password cannot be empty",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -118,31 +146,38 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                 )
                 .clickable {
                     // Perform registration
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                // User registration successful
-                                val userId = auth.currentUser?.uid
-                                userId?.let { uid ->
-                                    val user = User(name, email, password)
-                                    val profileUpdate = UserProfileChangeRequest.Builder()
-                                        .setDisplayName(name)
-                                        .build()
-                                    auth.currentUser?.updateProfile(profileUpdate)
-                                        ?.addOnCompleteListener { profileUpdateTask ->
-                                            if (profileUpdateTask.isSuccessful) {
-                                                writeUserToDatabase(uid, user)
-                                                navController.navigate(Screens.Home.route)
-                                            } else {
-                                                signupFail = true
+                    if (email.isNotBlank() && password.isNotBlank()) {
+                        auth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    // User registration successful
+                                    val userId = auth.currentUser?.uid
+                                    userId?.let { uid ->
+                                        val user = User(name, email, password)
+                                        val profileUpdate = UserProfileChangeRequest.Builder()
+                                            .setDisplayName(name)
+                                            .build()
+                                        auth.currentUser?.updateProfile(profileUpdate)
+                                            ?.addOnCompleteListener { profileUpdateTask ->
+                                                if (profileUpdateTask.isSuccessful) {
+                                                    writeUserToDatabase(uid, user)
+                                                    navController.navigate(Screens.Home.route)
+                                                } else {
+                                                    signupFail = true
+                                                }
                                             }
-                                        }
+                                    }
+                                } else {
+                                    // Handle the case where user registration failed
+                                    signupFail = true
                                 }
-                            } else {
-                                // Handle the case where user registration failed
-                                signupFail = true
                             }
-                        }
+                    }else{
+                        nameError = name.isBlank()
+                        emailError = email.isBlank()
+                        passwordError = password.isBlank()
+                        signupFail = false // Reset login fail flag
+                    }
                 }
                 .border(2.dp, Color(0xFF033575), shape = RoundedCornerShape(8.dp))
         ) {

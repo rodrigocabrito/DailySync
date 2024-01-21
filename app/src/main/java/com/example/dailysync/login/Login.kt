@@ -44,6 +44,8 @@ import com.google.firebase.auth.FirebaseAuth
 fun Login(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var emailError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
     var loginFail by remember {mutableStateOf(false)}
 
     Image(
@@ -63,7 +65,9 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
     ) {
         TextField(
             value = email,
-            onValueChange = { email = it },
+            onValueChange = {
+                email = it
+                emailError = false},
             label = { Text("Email", color = Color.Gray) },
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color.DarkGray,
@@ -76,12 +80,21 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
             ),
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
         )
+        if (emailError) {
+            Text(
+                text = "Email cannot be empty",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
 
         TextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                passwordError = false},
             label = { Text("Password", color = Color.Gray) },
             visualTransformation = PasswordVisualTransformation(),
             colors = TextFieldDefaults.colors(
@@ -97,6 +110,13 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                 imeAction = ImeAction.Done,
             )
         )
+        if (passwordError) {
+            Text(
+                text = "Password cannot be empty",
+                fontSize = 11.sp,
+                color = Color.Red
+            )
+        }
 
         Spacer(modifier = Modifier.height(4.dp))
 
@@ -120,14 +140,20 @@ fun Login(navController: NavHostController, auth: FirebaseAuth) {
                 )
                 .clickable {
                     // Perform login
-                    auth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                navController.navigate(Screens.Home.route)
-                            } else {
-                                loginFail = true
+                    if (email.isNotBlank() && password.isNotBlank()) {
+                        auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    navController.navigate(Screens.Home.route)
+                                } else {
+                                    loginFail = true
+                                }
                             }
-                        }
+                    }else{
+                        emailError = email.isBlank()
+                        passwordError = password.isBlank()
+                        loginFail = false // Reset login fail flag
+                    }
                 }
                 .border(2.dp, Color(0xFF033575), shape = RoundedCornerShape(8.dp))
         ) {
