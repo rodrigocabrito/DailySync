@@ -1,6 +1,5 @@
 package com.example.dailysync.community
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,12 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -34,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -43,8 +39,7 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Community(navController: NavController, auth: FirebaseAuth) {
-
+fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -82,60 +77,143 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
             }
         }
 
-        Text(text = "Community")
+        Text(text = "Select What to Share")
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val list = listOf("A", "B", "C", "D") + ((0..25).map { it.toString() })
-        LazyColumn(modifier = Modifier.weight(200f).fillMaxHeight()) {
-            items(items = list, itemContent = { item ->
-                when (item) {
-                    "A" -> {
-                        Text(text = item, style = TextStyle(fontSize = 20.sp))
-                    }
-                    "B" -> {
-                        Button(onClick = {}) {
-                            Text(text = item, style = TextStyle(fontSize = 20.sp))
+        Column {
+            Row {
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(120.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#47E285")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            navController.navigate(Screens.SelectFromList.route
+                                .replace(oldValue = "{type}", newValue = "Exercise")
+                            )
+                        }
+                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxHeight()
+                            .wrapContentSize(Alignment.Center)
+                    ){
+                        Column {
+                            Image(
+                                painter = painterResource(id = R.drawable.exercise_icon),
+                                contentDescription = "Exercise",
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        Column {
+                            Text(
+                                text = "Exercise",
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                modifier = Modifier
+                                    .padding(start = 10.dp)
+                            )
                         }
                     }
-                    "C" -> {
-                        //Do Nothing
-                    }
-                    "D" -> {
-                        Text(text = item)
-                    }
-                    else -> {
-                        Text(text = item, style = TextStyle(fontSize = 20.sp))
+                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row {
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(120.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#A17FEB")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            navController.navigate(Screens.SelectFromList.route
+                                .replace(oldValue = "{type}", newValue = "Sleep")
+                            )
+                        }
+                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxHeight()
+                            .wrapContentSize(Alignment.Center)
+                    ){
+                        Column {
+                            Image(
+                                painter = painterResource(id = R.drawable.sleep_icon),
+                                contentDescription = "Sleep",
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        Column {
+                            Text(
+                                text = "Sleep",
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                modifier = Modifier
+                                    .padding(start = 10.dp)
+                            )
+                        }
                     }
                 }
-            })
-        }
-
-        Box(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp)
-                .background(
-                    Color(android.graphics.Color.parseColor("#A2D6F0")),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .clickable {
-                    navController.navigate(Screens.SelectToShare.route)
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            Row {
+                Box(
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(120.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#E5AE5A")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            navController.navigate(Screens.SelectFromList.route
+                                .replace(oldValue = "{type}", newValue = "Read")
+                            )
+                        }
+                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .fillMaxHeight()
+                            .wrapContentSize(Alignment.Center)
+                    ){
+                        Column {
+                            Image(
+                                painter = painterResource(id = R.drawable.read_icon),
+                                contentDescription = "Read",
+                                modifier = Modifier.size(40.dp)
+                            )
+                        }
+                        Column {
+                            Text(
+                                text = "Read",
+                                style = TextStyle(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                modifier = Modifier
+                                    .padding(start = 10.dp)
+                            )
+                        }
+                    }
                 }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
-        ) {
-            Text(
-                "Share Your Own",
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxHeight()
-                    .wrapContentSize(Alignment.Center)
-            )
+            }
         }
-
-
-
 
         // footer
         Spacer(modifier = Modifier.weight(1f))

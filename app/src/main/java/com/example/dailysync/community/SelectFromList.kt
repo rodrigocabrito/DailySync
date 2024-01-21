@@ -1,6 +1,5 @@
 package com.example.dailysync.community
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,12 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -34,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -43,8 +39,7 @@ import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun Community(navController: NavController, auth: FirebaseAuth) {
-
+fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: String) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -82,61 +77,41 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
             }
         }
 
-        Text(text = "Community")
+        if(type == "Exercise"){
+            Text(text = "Exercise")
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val list = listOf("A", "B", "C", "D") + ((0..25).map { it.toString() })
-        LazyColumn(modifier = Modifier.weight(200f).fillMaxHeight()) {
-            items(items = list, itemContent = { item ->
-                when (item) {
-                    "A" -> {
-                        Text(text = item, style = TextStyle(fontSize = 20.sp))
-                    }
-                    "B" -> {
-                        Button(onClick = {}) {
-                            Text(text = item, style = TextStyle(fontSize = 20.sp))
+        // list
+        if(type == "Exercise") {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .width(350.dp)
+                        .height(50.dp)
+                        .background(
+                            Color(android.graphics.Color.parseColor("#A2F0C1")),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .clickable {
+                            //Click action
                         }
-                    }
-                    "C" -> {
-                        //Do Nothing
-                    }
-                    "D" -> {
-                        Text(text = item)
-                    }
-                    else -> {
-                        Text(text = item, style = TextStyle(fontSize = 20.sp))
-                    }
+                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                ){
+                    Text(
+                        text = "Exercise",
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 5.dp)
+                    )
                 }
-            })
+            }
+        } else if(type == "Sleep") {
+            Text(text = "Sleep")
+        } else if(type == "Read") {
+            Text(text = "Read")
         }
-
-        Box(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp)
-                .background(
-                    Color(android.graphics.Color.parseColor("#A2D6F0")),
-                    shape = RoundedCornerShape(8.dp)
-                )
-                .clickable {
-                    navController.navigate(Screens.SelectToShare.route)
-                }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
-        ) {
-            Text(
-                "Share Your Own",
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxHeight()
-                    .wrapContentSize(Alignment.Center)
-            )
-        }
-
-
-
-
         // footer
         Spacer(modifier = Modifier.weight(1f))
         Row(

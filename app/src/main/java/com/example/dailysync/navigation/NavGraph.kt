@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import com.example.dailysync.BookViewModel
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.community.Community
+import com.example.dailysync.community.SelectFromList
+import com.example.dailysync.community.SelectToShare
 import com.example.dailysync.home.Home
 import com.example.dailysync.home.exercise.DuringExercise
 import com.example.dailysync.home.exercise.SaveExercise
@@ -182,6 +184,22 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         }
         composable(Screens.ReadReport.route){
             ReadReport(navController = navController, auth = auth)
+        }
+
+        // ##################################################################################################################################################################################
+        // Community
+        composable(route = Screens.SelectToShare.route){
+            SelectToShare(navController = navController, auth = auth)
+        }
+        composable(route = Screens.SelectFromList.route + "?type={type}"){ navBackStack ->
+            val type: String? = navBackStack.arguments?.getString("type")
+
+            if(type == "Exercise")
+                SelectFromList(navController = navController, auth = auth, type = "Exercise")
+            else if(type == "Sleep")
+                SelectFromList(navController = navController, auth = auth, type = "Sleep")
+            else if(type == "Read")
+                SelectFromList(navController = navController, auth = auth, type = "Read")
         }
 
     }
