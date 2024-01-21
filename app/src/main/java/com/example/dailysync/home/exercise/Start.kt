@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,8 +22,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -49,6 +54,7 @@ import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
@@ -105,12 +111,14 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
                         // Log the current coordinates
                         Log.e("Location", "Latitude: ${it.latitude}, Longitude: ${it.longitude}")
 
-
                         mapView?.getMapAsync { googleMap ->
                             // Move camera to the current location
                             googleMap.moveCamera(
                                 CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
                             )
+
+                            // Enable blue dot on "My location"
+                            googleMap.isMyLocationEnabled = true
                         }
                     }
                 }
@@ -142,23 +150,32 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 10.dp, end = 16.dp, top = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Align text to the left
-            Text(
-                text = "IDK",
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            IconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) { Icon(Icons.Default.ArrowBack, "Back") }
 
-            // Align text to the right
-            Text(
-                text = "Notification Icon",
-                textAlign = TextAlign.End,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Notifications.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = "Notifications",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
 
         // body
@@ -200,6 +217,7 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
         ) {
             Text(
                 "Start",
+                fontSize = 20.sp,
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxHeight()
@@ -228,7 +246,7 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(28.dp))
 
         // footer
         Row(

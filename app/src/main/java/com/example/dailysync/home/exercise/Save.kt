@@ -17,6 +17,7 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,6 +39,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -59,7 +62,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -74,6 +76,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.io.ByteArrayOutputStream
+import java.time.Instant
 import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -125,7 +128,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         showDialogSave = false
         showDialogCancelConfirmed = false
 
-        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance, isPictureTaken)
+        val exercise = Exercise(workoutName, workoutDescription, time, averagePace, distance, isPictureTaken, Instant.now().toEpochMilli())
         if (userId != null) {
             val exerciseId = writeToDatabase(userId, exercise, title)
 
@@ -182,28 +185,28 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 10.dp, end = 16.dp, top = 10.dp),
+            horizontalArrangement = Arrangement.End
         ) {
-            // Align text to the left
-            Text(
-                text = "IDK",
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .weight(1f)
-            )
-
-            // Align text to the right
-            Text(
-                text = "Notification Icon",
-                textAlign = TextAlign.End,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Notifications.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = "Notifications",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
 
         // body
 
-        Text(text = "Save $title")
+        Text(text = "Save $title", fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -215,7 +218,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
 
             label = { Text("Give a name to your $title", color = Color.DarkGray) },
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Black,
+                //textColor = Color.Black,
                 containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
                 cursorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
@@ -240,7 +243,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 imeAction = ImeAction.Done
             ),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.Black,
+                //textColor = Color.Black,
                 containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
                 cursorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
@@ -266,7 +269,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 .padding(start = 16.dp, end = 16.dp)
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row {
             Box(
@@ -393,7 +396,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             }
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         Row {
             Box(
@@ -411,6 +414,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             ) {
                 Text(
                     "Cancel",
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxHeight()
@@ -435,6 +439,7 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             ) {
                 Text(
                     "Save",
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxHeight()
@@ -619,7 +624,6 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
                 }
             }
         }
-
     }
 }
 

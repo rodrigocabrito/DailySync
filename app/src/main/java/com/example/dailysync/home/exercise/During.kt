@@ -1,7 +1,12 @@
 package com.example.dailysync.home.exercise
 
+import android.Manifest
+import android.location.Location
 import android.os.Bundle
 import android.text.format.DateUtils.formatElapsedTime
+import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -19,11 +24,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -36,15 +46,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -62,7 +81,21 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
     var elapsedTime by remember { mutableLongStateOf(0L) }
     var isChronometerRunning by remember { mutableStateOf(true) }
     var averagePace by remember { mutableFloatStateOf(0.0f) }
-    var distance by remember { mutableFloatStateOf(0.0f) }          // TODO GET DISTANCE FROM GPS LOCATION
+
+    var polylineOptions by remember { mutableStateOf(PolylineOptions()
+        .color(Color.Blue.toArgb())         // Set the color to blue
+        .width(10f)                         // Set the width of the polyline
+    ) }
+    var totalDistanceInMeters by remember { mutableFloatStateOf(0f) }
+    var lastLocation: Location? by remember { mutableStateOf(null) }
+
+    var distance by remember { mutableFloatStateOf((totalDistanceInMeters/1000)) }    // in km // TODO GET DISTANCE FROM GPS LOCATION
+
+    var currentLatLng by remember { mutableStateOf(LatLng(0.0, 0.0)) }
+    val context = LocalContext.current
+    val fusedLocationClient = remember(context) {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
 
     Chronometer(isRunning = isChronometerRunning) { elapsedMillis ->
         elapsedTime = elapsedMillis
@@ -104,6 +137,61 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         showDialog = false
     }
 
+    DisposableEffect(context) {
+        // Request location permission if not granted
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PermissionChecker.PERMISSION_GRANTED
+        ) {
+            // Request current location
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    location?.let {
+                        currentLatLng = LatLng(it.latitude, it.longitude)
+
+                        // Log the current coordinates
+                        Log.e("Location", "Latitude: ${it.latitude}, Longitude: ${it.longitude}")
+
+                        mapView?.getMapAsync { googleMap ->
+                            // Move camera to the current location
+                            googleMap.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+                            )
+
+                            // Enable blue dot on "My location"
+                            googleMap.isMyLocationEnabled = true
+
+                            // Update Polyline to draw the path
+                            polylineOptions.add(currentLatLng)
+                            googleMap.addPolyline(polylineOptions)
+
+                            // Calculate distance
+                            lastLocation?.let { last ->
+                                val distance2 = last.distanceTo(it)
+                                totalDistanceInMeters += distance2
+                                Log.e("Distance", "Total Distance: $totalDistanceInMeters meters")
+                            }
+
+                            lastLocation = it
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Location", "Error getting location", e)
+                }
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(
+                context as ComponentActivity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                1
+            )
+        }
+
+        onDispose {}
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -113,30 +201,39 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(start = 10.dp, end = 16.dp, top = 10.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Align text to the left
-            Text(
-                text = "IDK",
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            IconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) { Icon(Icons.Default.ArrowBack, "Back") }
 
-            // Align text to the right
-            Text(
-                text = "Notification Icon",
-                textAlign = TextAlign.End,
-                modifier = Modifier
-                    .weight(1f)
-            )
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Notifications.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.notification_icon),
+                    contentDescription = "Notifications",
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
 
         // body
 
-        Text(text = title)
+        Text(text = title, fontSize = 30.sp)
 
-        Spacer(modifier = Modifier.height(36.dp))
+        Spacer(modifier = Modifier.height(26.dp))
 
         AndroidView(
             factory = { context ->
@@ -190,6 +287,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             ) {
                 Text(
                     buttonName,
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxHeight()
@@ -215,6 +313,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             ) {
                 Text(
                     "Finish",
+                    fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxHeight()
@@ -245,128 +344,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             )
         }
 
-        // footer
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top=10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
-                }
-            }
-        }
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
