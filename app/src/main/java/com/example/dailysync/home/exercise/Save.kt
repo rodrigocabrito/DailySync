@@ -80,7 +80,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @RequiresApi(Build.VERSION_CODES.P)
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SaveExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, timeShow: Long, averagePaceShow: Float, distanceShow: Float) {
 
@@ -216,9 +215,11 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             },
 
             label = { Text("Give a name to your $title", color = Color.DarkGray) },
-            colors = TextFieldDefaults.textFieldColors(
-                //textColor = Color.Black,
-                containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedContainerColor = Color(0xFFA2F0C1),
+                unfocusedContainerColor = Color(0xFFA2F0C1),
                 cursorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.Black
@@ -241,9 +242,11 @@ fun SaveExercise(navController: NavController, categoryShow: Int, auth: Firebase
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
-            colors = TextFieldDefaults.textFieldColors(
-                //textColor = Color.Black,
-                containerColor = Color(android.graphics.Color.parseColor("#A2F0C1")),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedContainerColor = Color(0xFFA2F0C1),
+                unfocusedContainerColor = Color(0xFFA2F0C1),
                 cursorColor = Color.Black,
                 focusedIndicatorColor = Color.Black,
                 unfocusedIndicatorColor = Color.Black

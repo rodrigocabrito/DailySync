@@ -55,9 +55,11 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
             value = name,
             onValueChange = { name = it },
             label = { Text("Name", color = Color.Gray) },
-            colors = TextFieldDefaults.textFieldColors(
-                //textColor = Color.DarkGray,
-                containerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.DarkGray,
+                unfocusedTextColor = Color.DarkGray,
+                focusedContainerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
+                unfocusedContainerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
                 cursorColor = Color(0xFF0455BF),
                 focusedIndicatorColor = Color(0xFF0455BF),
                 unfocusedIndicatorColor = Color(0xFF0455BF)
@@ -71,9 +73,11 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
             value = email,
             onValueChange = { email = it },
             label = { Text("Email", color = Color.Gray) },
-            colors = TextFieldDefaults.textFieldColors(
-                //textColor = Color.DarkGray,
-                containerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.DarkGray,
+                unfocusedTextColor = Color.DarkGray,
+                focusedContainerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
+                unfocusedContainerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
                 cursorColor = Color(0xFF0455BF),
                 focusedIndicatorColor = Color(0xFF0455BF),
                 unfocusedIndicatorColor = Color(0xFF0455BF)
@@ -88,9 +92,11 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
             onValueChange = { password = it },
             label = { Text("Password", color = Color.Gray) },
             visualTransformation = PasswordVisualTransformation(),
-            colors = TextFieldDefaults.textFieldColors(
-                //textColor = Color.DarkGray,
-                containerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color.DarkGray,
+                unfocusedTextColor = Color.DarkGray,
+                focusedContainerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
+                unfocusedContainerColor = Color(android.graphics.Color.parseColor("#E6F3F3")),
                 cursorColor = Color(0xFF0455BF),
                 focusedIndicatorColor = Color(0xFF0455BF),
                 unfocusedIndicatorColor = Color(0xFF0455BF)
@@ -138,10 +144,11 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                             }
                         }
                 }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xFF033575), shape = RoundedCornerShape(8.dp))
         ) {
             Text(
                 "Register",
+                color = Color(0xFF033575),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxHeight()
