@@ -41,7 +41,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -106,7 +105,7 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
         }
 
         val timeSlept = calculateTimeDifference(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime)
-        val sleep = Sleep(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime, timeSlept, Instant.now())
+        val sleep = Sleep(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime, timeSlept, Instant.now().toEpochMilli())
         if (userId != null) {
             writeToDatabase(userId, sleep)
         }
