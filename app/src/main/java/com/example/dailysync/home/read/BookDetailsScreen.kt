@@ -100,7 +100,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false },
-                            modifier = Modifier.background(color = Color.White),
+                            modifier = Modifier.background(color = Color(0xFFF5D4A2)),
                         ) {
                             DropdownMenuItem(
                                 onClick = { expanded = false
@@ -110,7 +110,9 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                             )
 
                             DropdownMenuItem(
-                                onClick = { navController.navigate(Screens.ReadingSession.route) },
+                                onClick = {
+                                    navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
+                                    navController.navigate(Screens.ReadingSession.route) },
                                 modifier = Modifier.background(color = Color(0xFFF5D4A2)),
                                 text = { Text(text = "Start Reading Session", color = Color(0xFF362305)) }
                             )
@@ -119,7 +121,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         if (registerReadingSessionPopupVisible) {
                             RegisterReadingSessionPopup(
                                 onDismiss = { registerReadingSessionPopupVisible = false },
-                                bookViewModel, item
+                                bookViewModel, item, navController
                             )
                         }
                     }
@@ -160,9 +162,6 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
         ) {
             if(item.status != null){
                 AddedBookDetails(item = item)
-                bookViewModel.getReadingSessions(item) { sessions ->
-                    Log.d("YourComposable", "Reading Sessions: $sessions")
-                }
             }else{
                 BookDetails(item = item)
             }
@@ -171,7 +170,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
     }
 
     if (openDialog.value) {
-        AlertDialog(
+        AlertDialog(//TODO Change color
             onDismissRequest = {
                 openDialog.value = false
             },
@@ -399,7 +398,7 @@ fun TopBar(navController: NavHostController, item: Items?) {
 @Composable
 fun RegisterReadingSessionPopup(
     onDismiss: () -> Unit,
-    bookViewModel: BookViewModel, item: Items
+    bookViewModel: BookViewModel, item: Items, navController: NavHostController
 ) {
     var textField1Value by remember { mutableStateOf(item.currentPage.toString()) }
     var textField3Value by remember { mutableStateOf("") }
@@ -424,12 +423,12 @@ fun RegisterReadingSessionPopup(
                     textStyle = TextStyle(
                         color = Color(0xFF362305)
                     ),
-                    placeholder = { Text("Page you finished your reading session", color = Color.Gray) },
+                    placeholder = { Text("The current page you're on", color = Color.Gray) },
                     onValueChange = { textField1Value = it },
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number
                     ),
-                    label = { Text("Current Page", color = Color(0xFF362305)) }
+                    label = { Text("Last Page Read", color = Color(0xFF362305)) }
                 )
                 OutlinedTextField(
                     value = textField3Value,
@@ -448,8 +447,6 @@ fun RegisterReadingSessionPopup(
         confirmButton = {
             TextButton(
                 onClick = {
-                    Log.e("Value1", textField1Value)
-                    Log.e("Value3", textField3Value)
                     if(textField1Value.isNotEmpty() && textField3Value.isNotEmpty()){
                         if(textField1Value.toInt() > item.currentPage) {
                             val previousPage = item.currentPage
@@ -461,13 +458,15 @@ fun RegisterReadingSessionPopup(
                             } else {
                                 item.currentPage = textField1Value.toInt()
                             }
-                            onDismiss()
                             item.let { bookViewModel.updateStatus(it) }
                             bookViewModel.registerReadingSession(
                                 item,
                                 textField1Value.toInt() - previousPage,
                                 textField3Value.toInt()
                             )
+                            onDismiss()
+                            navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
+                            navController.navigate(Screens.BookDetails.route)
                         }else{
                             Log.e("Current Page", "Page inserted is less than what it was")//TODO change to warning
                         }
