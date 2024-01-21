@@ -51,7 +51,9 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
             Home(navController = navController, auth = auth)
         }
         composable(route = Screens.Reports.route){
-            Reports(navController = navController, auth = auth)
+            if (Build.VERSION.SDK_INT >= 34) {
+                Reports(navController = navController, auth = auth)
+            }
         }
         composable(route = Screens.Community.route){
             Community(navController = navController, auth = auth)
