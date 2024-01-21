@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.dailysync.bookModels.Items
+import com.example.dailysync.bookModels.ReadingSession
 import com.example.dailysync.bookModels.Status
 import com.example.dailysync.bookRepository.BookRepository
 import com.skydoves.sandwich.onError
@@ -102,6 +103,16 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
         }
     }
 
+    fun updateStatus(item: Items) {
+        viewModelScope.launch {
+            if (repository.checkItemExists(item.id)) {
+                repository.updateItem(item)
+            } else {
+                repository.insertItem(item)
+            }
+        }
+    }
+
 
     fun deleteItem(id: String, navController: NavHostController) {
         viewModelScope.launch {
@@ -125,7 +136,27 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
             }
         }
     }
+
+    fun registerReadingSession(item: Items, currentPage: Int, durationMinutes: Int) {
+        val readingSession = ReadingSession(item.id, currentPage, durationMinutes)
+        insertReadingSession(item, readingSession)
+    }
+
+    private fun insertReadingSession(item: Items,readingSession: ReadingSession) {
+        viewModelScope.launch {
+            repository.insertReadingSession(item, readingSession)
+        }
+    }
+
+    fun getReadingSessions(item: Items, callback: (List<ReadingSession>) -> Unit) {
+        viewModelScope.launch {
+            val sessions = repository.getReadingSessionsForItem(item)
+            callback(sessions)
+        }
+    }
 }
+
+
 
 class BookViewModelFactory(private val repository: BookRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

@@ -62,7 +62,6 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
     var showNameChange by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf(auth.currentUser?.displayName)}
-    val context = LocalContext.current
 
     val storage = FirebaseStorage.getInstance()
     val storageRef: StorageReference = storage.reference.child("profile_images")
@@ -190,9 +189,11 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                     TextField(
                         value = it,
                         onValueChange = { name = it },
-                        colors = TextFieldDefaults.textFieldColors(
-                            //textColor = Color.DarkGray,
-                            containerColor = Color.White,
+                        colors = TextFieldDefaults.colors(
+                            focusedTextColor = Color.DarkGray,
+                            unfocusedTextColor = Color.DarkGray,
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White,
                             cursorColor = Color(0xFF0455BF),
                             focusedIndicatorColor = Color(0xFF0455BF),
                             unfocusedIndicatorColor = Color(0xFF0455BF)
