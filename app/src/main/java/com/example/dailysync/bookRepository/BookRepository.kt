@@ -1,8 +1,8 @@
 package com.example.dailysync.bookRepository
 
-import android.util.Log
 import com.example.dailysync.bookModels.Book
 import com.example.dailysync.bookModels.Items
+import com.example.dailysync.bookModels.ReadingSession
 import com.example.dailysync.bookModels.Status
 import com.example.dailysync.bookapi.BookApi
 import com.google.firebase.auth.FirebaseAuth
@@ -44,7 +44,6 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     }
 
     suspend fun insertItem(item: Items) {
-        userId?.let { Log.d("CARALHO", it) }
         val newItemReference = database.push()
         val newItem = item.copy(id = newItemReference.key ?: "")
         newItemReference.setValue(newItem).await()
@@ -102,5 +101,33 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
             val itemId = item.id
             database.child(itemId).setValue(item).await()
         }
+    }
+
+    suspend fun insertReadingSession(item: Items, session: ReadingSession) {
+        userId?.let { uid ->
+            val sessionReference = database.child("readingSessions").push()
+
+            // Set the item ID in the session
+            sessionReference.child("itemId").setValue(item.id)
+
+            // Set other session details
+            sessionReference.child("currentPage").setValue(session.pagesRead)
+            sessionReference.child("durationMinutes").setValue(session.durationMinutes)
+        }
+    }
+
+    suspend fun getReadingSessionsForItem(item: Items): List<ReadingSession> {
+        val itemId = item.id
+        val dataSnapshot = database.child("readingSessions")
+            .orderByChild("itemId")
+            .equalTo(item.id)
+            .get()
+            .await()
+
+        val sessions = dataSnapshot.children.mapNotNull { snapshot ->
+            snapshot.getValue(ReadingSession::class.java)
+        }
+
+        return sessions
     }
 }

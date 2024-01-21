@@ -1,6 +1,7 @@
 package com.example.dailysync.home.read
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,6 +48,7 @@ import com.example.dailysync.BookViewModel
 import com.example.dailysync.R
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.bookModels.Status
+import com.example.dailysync.navigation.Screens
 
 private var openRemoveDialog by mutableStateOf(false)
 
@@ -56,6 +59,8 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
     val scrollState = rememberScrollState()
     val openDialog = remember { mutableStateOf(false) }
     val radioOptions = listOf("To Read", "Reading", "Finished")
+    var expanded by remember { mutableStateOf(false) }
+    var registerReadingSessionPopupVisible by remember { mutableStateOf(false) }
 
     fun formatStatus(status: String?): String {
         return when (status?.uppercase()) {
@@ -77,28 +82,75 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
             TopBar(navController, item)
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.size(60.dp),
-                onClick = {
-                    openDialog.value = true
-                },
-                containerColor = Color(0xFFF5D4A2),
-                contentColor = Color(0xFF362305),
-            ) {
-                if(item.status != null) {
-                    Icon(
-                        modifier = Modifier.size(30.dp),
-                        painter = painterResource(id = R.drawable.ic_swap),
-                        contentDescription = "Swap reading status",
-                    )
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add reading status"
-                    )
+            Column {
+                if(item.status != null && item.status != Status.FINISHED) {
+                    FloatingActionButton(
+                        modifier = Modifier.size(60.dp),
+                        onClick = {
+                            expanded = true
+                        },
+                        containerColor = Color(0xFFF5D4A2),
+                        contentColor = Color(0xFF362305),
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(25.dp),
+                            painter = painterResource(id = R.drawable.play),
+                            contentDescription = "Start or register reading session",
+                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier.background(color = Color.White),
+                        ) {
+                            DropdownMenuItem(
+                                onClick = { expanded = false
+                                    registerReadingSessionPopupVisible = true},
+                                modifier = Modifier.background(color = Color(0xFFF5D4A2)),
+                                text = { Text(text = "Register Reading Session", color = Color(0xFF362305)) },
+                            )
+
+                            DropdownMenuItem(
+                                onClick = { navController.navigate(Screens.ReadingSession.route) },
+                                modifier = Modifier.background(color = Color(0xFFF5D4A2)),
+                                text = { Text(text = "Start Reading Session", color = Color(0xFF362305)) }
+                            )
+                        }
+
+                        if (registerReadingSessionPopupVisible) {
+                            RegisterReadingSessionPopup(
+                                onDismiss = { registerReadingSessionPopupVisible = false },
+                                bookViewModel, item
+                            )
+                        }
+                    }
+                }
+
+                // Add spacing between the two FloatingActionButton instances
+                Spacer(modifier = Modifier.height(16.dp))
+
+                FloatingActionButton(
+                    modifier = Modifier.size(60.dp),
+                    onClick = {
+                        openDialog.value = true
+                    },
+                    containerColor = Color(0xFFF5D4A2),
+                    contentColor = Color(0xFF362305),
+                ) {
+                    if (item.status != null) {
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            painter = painterResource(id = R.drawable.ic_swap),
+                            contentDescription = "Swap reading status",
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add reading status"
+                        )
+                    }
                 }
             }
-        },
+        }
     ) {
         Surface(
             modifier = Modifier
@@ -108,6 +160,9 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
         ) {
             if(item.status != null){
                 AddedBookDetails(item = item)
+                bookViewModel.getReadingSessions(item) { sessions ->
+                    Log.d("YourComposable", "Reading Sessions: $sessions")
+                }
             }else{
                 BookDetails(item = item)
             }
@@ -157,6 +212,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                                     value = if (currentPage == 0) "" else currentPage.toString(),
                                     onValueChange = { currentPage = if (it.isBlank()) -1 else it.toIntOrNull()?.coerceIn(-1, item?.volumeInfo?.pageCount ?: 0) ?: 0 },
                                     label = { Text("Current Page") },
+                                    placeholder = { currentPage.toString() },
                                     keyboardOptions = KeyboardOptions.Default.copy(
                                         keyboardType = KeyboardType.Number
                                     ),
@@ -172,13 +228,18 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                     onClick = {
                         openDialog.value = false
                         when (selectedOption) {
-                            "To Read" -> item.status = Status.TO_READ
+                            "To Read" -> {
+                                item.status = Status.TO_READ
+                                item.currentPage = 0
+                            }
                             "Reading" -> {
                                 item.status = Status.READING
-                                // Retrieve the current page value from the text field
                                 item.currentPage = currentPage
                             }
-                            "Finished" -> item.status = Status.FINISHED
+                            "Finished" -> {
+                                item.status = Status.FINISHED
+                                item.currentPage = item.volumeInfo.pageCount
+                            }
                         }
                         item.let { bookViewModel.updateStatus(it)}
                     }
@@ -333,4 +394,99 @@ fun TopBar(navController: NavHostController, item: Items?) {
             }
         }
     }
+}
+
+@Composable
+fun RegisterReadingSessionPopup(
+    onDismiss: () -> Unit,
+    bookViewModel: BookViewModel, item: Items
+) {
+    var textField1Value by remember { mutableStateOf(item.currentPage.toString()) }
+    var textField3Value by remember { mutableStateOf("") }
+
+
+    AlertDialog(
+        containerColor = Color(0xFFF5D4A2),
+        onDismissRequest = { onDismiss() },
+        title = {
+            Text(
+                text = "Register Reading Session",
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                color = Color(0xFF362305)
+            )
+        },
+        text = {
+            Column {
+                // Add your text fields and other UI elements here
+                OutlinedTextField(
+                    value = textField1Value,
+                    textStyle = TextStyle(
+                        color = Color(0xFF362305)
+                    ),
+                    placeholder = { Text("Page you finished your reading session", color = Color.Gray) },
+                    onValueChange = { textField1Value = it },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    label = { Text("Current Page", color = Color(0xFF362305)) }
+                )
+                OutlinedTextField(
+                    value = textField3Value,
+                    textStyle = TextStyle(
+                        color = Color(0xFF362305)
+                    ),
+                    onValueChange = { textField3Value = it },
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    placeholder = { Text("Minutes spent reading",color = Color.Gray) },
+                    label = { Text("Time Spent", color = Color(0xFF362305)) }
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    Log.e("Value1", textField1Value)
+                    Log.e("Value3", textField3Value)
+                    if(textField1Value.isNotEmpty() && textField3Value.isNotEmpty()){
+                        if(textField1Value.toInt() > item.currentPage) {
+                            val previousPage = item.currentPage
+                            if (item.status == Status.TO_READ && textField1Value.toInt() > 0) {
+                                item.status = Status.READING
+                            } else if (textField1Value.toInt() >= item.volumeInfo.pageCount) {//Check if the input surpasses the amount of pages on the book
+                                item.status = Status.FINISHED
+                                item.currentPage = item.volumeInfo.pageCount
+                            } else {
+                                item.currentPage = textField1Value.toInt()
+                            }
+                            onDismiss()
+                            item.let { bookViewModel.updateStatus(it) }
+                            bookViewModel.registerReadingSession(
+                                item,
+                                textField1Value.toInt() - previousPage,
+                                textField3Value.toInt()
+                            )
+                        }else{
+                            Log.e("Current Page", "Page inserted is less than what it was")//TODO change to warning
+                        }
+                    }else{
+                        Log.e("Empty Fields", "Need to fill the 2 fields")//TODO change to warning
+                    }
+                }
+            ) {
+                Text("Save",color = Color(0xFF362305))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onDismiss()
+                }
+            ) {
+                Text("Cancel",color = Color(0xFF362305))
+            }
+        }
+    )
 }

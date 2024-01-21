@@ -3,6 +3,7 @@ package com.example.dailysync.home.read
 import android.content.Intent
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
@@ -465,7 +467,7 @@ fun AddedBookDetails(item: Items?) {
                         if (pagesLeft != null) {
                             if(pagesLeft > 0) {
                                 Text(
-                                    text = "$pagesLeft remaining",
+                                    text = "$pagesLeft pages remaining",
                                     color = Color.Gray
                                 )
                             }
@@ -480,19 +482,7 @@ fun AddedBookDetails(item: Items?) {
 
                     Spacer(modifier = Modifier.width(50.dp))
 
-                    Text(text = if(percentage != null ){
-                        "$percentage%"
-                    }else{
-                        "0%"
-                    },
-                        color= Color(0xFF362305),
-                        style = TextStyle(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF362305)
-                        ),
-                        modifier = Modifier.padding(top = 20.dp))
-
+                    CircularRing(percentage)
                 }
 
 
@@ -660,5 +650,56 @@ fun AddedBookDetails(item: Items?) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun CircularRing(percentage: Int?) {
+    Box(
+        modifier = Modifier
+            .width(50.dp)
+            .height(70.dp)
+            .padding(top = 20.dp)
+    ) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val strokeWidth = 15f // Adjust the stroke width as needed
+            val center = size.width / 2f
+            val radius = size.width / 2f - strokeWidth / 2
+            val startAngle = 270f // Start angle at the top
+            val sweepAngle = percentage?.toFloat()?.let { it * 3.6f } ?: 0f // Convert percentage to degrees (100% -> 360f)
+
+            drawArc(
+                color = Color(0xFFFBF8DF),
+                startAngle = startAngle,
+                sweepAngle = 360f,
+                useCenter = false,
+                style = Stroke(strokeWidth)
+            )
+
+            drawArc(
+                color = if (percentage != null) Color(0xFF3FB03D) else Color(0xFFFBF8DF),
+                startAngle = startAngle,
+                sweepAngle = sweepAngle,
+                useCenter = false,
+                style = Stroke(strokeWidth)
+            )
+        }
+
+        Text(
+            text = if (percentage != null) {
+                "$percentage%"
+            } else {
+                "0%"
+            },
+            modifier = Modifier
+                .align(Alignment.Center)
+                .background(Color.Transparent)
+                .padding(4.dp),
+            color = Color(0xFF362305),
+            style = TextStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold,
+            )
+        )
     }
 }

@@ -26,6 +26,7 @@ sealed class Screens(val route: String) {
     object Search : Screens("find_books")
     object BookDetails : Screens("book_details")
     object MyLibrary : Screens("my_library")
+    object ReadingSession : Screens("reading_session")
 
 
     // Notifications
