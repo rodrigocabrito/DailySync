@@ -19,7 +19,8 @@ data class Sleep(
     @PropertyName("bedTimeMin") val bedTimeMin: Int,
     @PropertyName("awakeTimeHour") val awakeTimeHour: Int,
     @PropertyName("awakeTimeMin") val awakeTimeMin: Int,
-    @PropertyName("timeSlept") val timeSlept: Pair<Int, Int>?,
+    @PropertyName("hourSlept") val hourSlept: Int,
+    @PropertyName("minSlept") val minSlept: Int,
     @PropertyName("date") val date: Long
 ): Serializable, Parcelable {
     constructor() : this(
@@ -27,7 +28,8 @@ data class Sleep(
         0,
         0,
         0,
-        null,
+        0,
+        0,
         0L
     )
 }
