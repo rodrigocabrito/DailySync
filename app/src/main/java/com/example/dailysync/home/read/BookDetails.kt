@@ -65,6 +65,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import java.time.Instant
 
 
 @Composable
@@ -1065,7 +1066,8 @@ fun SaveReadingSessionPopup(
                             bookViewModel.registerReadingSession(
                                 item,
                                 textField1Value.toInt() - previousPage,
-                                (elapsedTime/ 60000).toInt()
+                                (elapsedTime/ 60000).toInt(),
+                                Instant.now().toEpochMilli()
                             )
                             onDismiss()
                             navController.currentBackStackEntry?.savedStateHandle?.set("item", item)

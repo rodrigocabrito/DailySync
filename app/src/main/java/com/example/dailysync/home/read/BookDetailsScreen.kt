@@ -49,6 +49,7 @@ import com.example.dailysync.R
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.bookModels.Status
 import com.example.dailysync.navigation.Screens
+import java.time.Instant
 
 private var openRemoveDialog by mutableStateOf(false)
 
@@ -462,7 +463,8 @@ fun RegisterReadingSessionPopup(
                             bookViewModel.registerReadingSession(
                                 item,
                                 textField1Value.toInt() - previousPage,
-                                textField3Value.toInt()
+                                textField3Value.toInt(),
+                                Instant.now().toEpochMilli()
                             )
                             onDismiss()
                             navController.currentBackStackEntry?.savedStateHandle?.set("item", item)

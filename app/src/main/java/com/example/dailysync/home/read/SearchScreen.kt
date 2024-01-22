@@ -152,7 +152,6 @@ fun BookList(navController: NavHostController, bookViewModel: BookViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(bookViewModel: BookViewModel) {
     var textState by remember { mutableStateOf("") }
