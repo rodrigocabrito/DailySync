@@ -3,6 +3,7 @@ package com.example.dailysync.home.exercise
 import android.Manifest
 import android.location.Location
 import android.os.Bundle
+import android.os.Looper
 import android.text.format.DateUtils.formatElapsedTime
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -59,10 +60,15 @@ import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
@@ -82,10 +88,12 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
     var isChronometerRunning by remember { mutableStateOf(true) }
     var averagePace by remember { mutableFloatStateOf(0.0f) }
 
-    var polylineOptions by remember { mutableStateOf(PolylineOptions()
-        .color(Color.Blue.toArgb())         // Set the color to blue
-        .width(10f)                         // Set the width of the polyline
-    ) }
+    var polylineOptions = remember {
+        PolylineOptions()
+            .color(Color.Blue.toArgb()) // Set the color to blue
+            .width(10f) // Set the width of the polyline
+    }
+
     var totalDistanceInMeters by remember { mutableFloatStateOf(0f) }
     var lastLocation: Location? by remember { mutableStateOf(null) }
 
@@ -162,6 +170,18 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                             // Enable blue dot on "My location"
                             googleMap.isMyLocationEnabled = true
 
+                            val greenCircleBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(getGreenCircleBitmap())
+                            val markerOptions = MarkerOptions()
+                                .position(currentLatLng)
+                                .icon(greenCircleBitmapDescriptor)
+                                .title("My Location")
+
+                            // Remove previous marker if any
+                            googleMap.clear()
+
+                            // Add the marker to the map
+                            googleMap.addMarker(markerOptions)
+
                             // Update Polyline to draw the path
                             polylineOptions.add(currentLatLng)
                             googleMap.addPolyline(polylineOptions)
@@ -180,6 +200,58 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .addOnFailureListener { e ->
                     Log.e("Location", "Error getting location", e)
                 }
+            // Set up location updates
+            val locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(1000) // Update every 1 second
+
+            val greenCircleBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(getGreenCircleBitmap())
+
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    locationResult.lastLocation?.let { location ->
+                        currentLatLng = LatLng(location.latitude, location.longitude)
+
+                        mapView?.getMapAsync { googleMap ->
+                            // Update the marker position
+                            googleMap.clear()
+
+                            val markerOptions = MarkerOptions()
+                                .position(currentLatLng)
+                                .icon(greenCircleBitmapDescriptor)
+                                .title("My Location")
+
+                            googleMap.addMarker(markerOptions)
+
+                            // Update Polyline to draw the path
+                            polylineOptions.add(currentLatLng)
+                            googleMap.addPolyline(polylineOptions)
+
+                            // Calculate distance
+                            lastLocation?.let { last ->
+                                val distance2 = last.distanceTo(location)
+                                totalDistanceInMeters += distance2
+                                Log.e("Distance", "Total Distance: $totalDistanceInMeters meters")
+                            }
+
+                            lastLocation = location
+
+                        }
+                    }
+                }
+            }
+
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
+
+            // Dispose when the composable is removed from the hierarchy
+            onDispose {
+                // Stop location updates when the composable is disposed
+                fusedLocationClient.removeLocationUpdates(locationCallback)
+                // Remove the polyline when the composable is disposed
+                mapView?.getMapAsync { googleMap ->
+                    googleMap.clear()
+                }
+            }
         } else {
             // Request location permission
             ActivityCompat.requestPermissions(

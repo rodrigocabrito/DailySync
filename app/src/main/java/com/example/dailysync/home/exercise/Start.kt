@@ -132,9 +132,10 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
                             // Enable blue dot on "My location"
                             googleMap.isMyLocationEnabled = true
 
+                            val greenCircleBitmapDescriptor = BitmapDescriptorFactory.fromBitmap(getGreenCircleBitmap())
                             val markerOptions = MarkerOptions()
                                 .position(currentLatLng)
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                                .icon(greenCircleBitmapDescriptor)
                                 .title("My Location")
 
                             // Remove previous marker if any
