@@ -137,8 +137,8 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
         }
     }
 
-    fun registerReadingSession(item: Items, currentPage: Int, durationMinutes: Int) {
-        val readingSession = ReadingSession(item.id, currentPage, durationMinutes)
+    fun registerReadingSession(item: Items, currentPage: Int, durationMinutes: Int, date: Long) {
+        val readingSession = ReadingSession(item.id, currentPage, durationMinutes, date)
         insertReadingSession(item, readingSession)
     }
 

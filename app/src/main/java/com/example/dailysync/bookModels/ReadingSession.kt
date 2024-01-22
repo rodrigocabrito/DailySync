@@ -8,12 +8,14 @@ import java.io.Serializable
 data class ReadingSession(
     val itemId: String = "",
     val pagesRead: Int = 0,
-    val durationMinutes: Int = 0
+    val durationMinutes: Int = 0,
+    val date: Long = 0L
 ) : Parcelable, Serializable{
     constructor() : this(
         "",
-        0,      // Set a default value for amountInMicros
-        0       // Set a default value for currencyCode
+        0,
+        0,
+        0L
     )
 }
 
