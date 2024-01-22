@@ -93,14 +93,14 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
     var polylineOptions = remember {
         PolylineOptions()
-            .color(Color.Blue.toArgb()) // Set the color to blue
+            .color(Color(0xFF4CAF50).toArgb())
             .width(10f) // Set the width of the polyline
     }
 
     var totalDistanceInMeters by remember { mutableFloatStateOf(0f) }
     var lastLocation: Location? by remember { mutableStateOf(null) }
 
-    var distance by remember { mutableFloatStateOf((totalDistanceInMeters/1000)) }    // in km // TODO GET DISTANCE FROM GPS LOCATION
+    var distance by remember { mutableFloatStateOf((totalDistanceInMeters/1000)) }    // in km
 
     var currentLatLng by remember { mutableStateOf(LatLng(0.0, 0.0)) }
     val context = LocalContext.current

@@ -53,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -60,7 +61,11 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -211,7 +216,7 @@ fun SaveExercise(navController: NavController,
 
         // body
 
-        Text(text = "Save $title", fontSize = 20.sp)
+        Text(text = "Save $title", fontSize = 30.sp, color = Color(0xFF0A361C))
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -221,15 +226,15 @@ fun SaveExercise(navController: NavController,
                 workoutName = it
             },
 
-            label = { Text("Give a name to your $title", color = Color.DarkGray) },
+            label = { Text("Give a name to your $title", color = Color.Gray) },
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color(0xFFA2F0C1),
-                unfocusedContainerColor = Color(0xFFA2F0C1),
-                cursorColor = Color.Black,
-                focusedIndicatorColor = Color.Black,
-                unfocusedIndicatorColor = Color.Black
+                focusedTextColor = Color(0xFF0A361C),
+                unfocusedTextColor = Color(0xFF0A361C),
+                focusedContainerColor = Color(0xFFC1F0D3),
+                unfocusedContainerColor = Color(0xFFC1F0D3),
+                cursorColor = Color(0xFF0A361C),
+                focusedIndicatorColor = Color(0xFF0A361C),
+                unfocusedIndicatorColor = Color(0xFF0A361C)
             ),
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
@@ -245,18 +250,18 @@ fun SaveExercise(navController: NavController,
             onValueChange = {
                 workoutDescription = it
             },
-            label = { Text("How did it go? Share some details...", color = Color.DarkGray)},
+            label = { Text("How did it go? Share some details...", color = Color.Gray)},
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = Color.Black,
-                unfocusedTextColor = Color.Black,
-                focusedContainerColor = Color(0xFFA2F0C1),
-                unfocusedContainerColor = Color(0xFFA2F0C1),
-                cursorColor = Color.Black,
-                focusedIndicatorColor = Color.Black,
-                unfocusedIndicatorColor = Color.Black
+                focusedTextColor = Color(0xFF0A361C),
+                unfocusedTextColor = Color(0xFF0A361C),
+                focusedContainerColor = Color(0xFFC1F0D3),
+                unfocusedContainerColor = Color(0xFFC1F0D3),
+                cursorColor = Color(0xFF0A361C),
+                focusedIndicatorColor = Color(0xFF0A361C),
+                unfocusedIndicatorColor = Color(0xFF0A361C)
             ),
             modifier = Modifier
                 .fillMaxWidth()
@@ -273,10 +278,11 @@ fun SaveExercise(navController: NavController,
                     .fillMaxWidth()
                     .height(275.dp)
                     .padding(start = 16.dp, end = 16.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             )
-        }else{
-            Text("ORA FODA SE")
         }
+
         Spacer(modifier = Modifier.height(12.dp))
 
         Row {
@@ -286,10 +292,10 @@ fun SaveExercise(navController: NavController,
                     .height(110.dp)
                     .padding(start = 16.dp)
                     .background(
-                        Color(android.graphics.Color.parseColor("#A2F0C1")),
+                        Color(0xFFA2F0C1),
                         shape = RoundedCornerShape(8.dp)
                     )
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 // TODO: FORMAT DISTANCE
@@ -297,9 +303,29 @@ fun SaveExercise(navController: NavController,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(start = 8.dp)
                 ){
-                    Text("Time: ${formatTime(time)}")
-                    Text("Average Pace: ${formatAveragePace(averagePace)}")
-                    Text("Distance: $distance")
+                    Text(text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Time: ")
+                        }
+                        append(formatTime(time))
+                    },  fontSize = 15.sp,
+                        color = Color(0xFF0A361C))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Avg Pace: ")
+                        }
+                        append(formatAveragePace(averagePace))
+                    }, fontSize = 15.sp,
+                        color = Color(0xFF0A361C))
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Distance: ")
+                        }
+                        append("${String.format("%.2f", distance)}km")
+                    }, fontSize = 15.sp,
+                        color = Color(0xFF0A361C))
                 }
             }
 
@@ -315,23 +341,14 @@ fun SaveExercise(navController: NavController,
                         .fillMaxWidth()
                         .height(50.dp)
                         .background(
-                            Color(android.graphics.Color.parseColor("#A2F0C1"))
+                            Color(0xFF1A8B47) ,
+                            shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
                             // TODO ACCESS PHONE GALLERY
                             openGallery(launcher)
                         }
-                        .drawBehind {
-                            drawRoundRect(
-                                color = Color.Black, style = Stroke(
-                                    width = 2f,
-                                    pathEffect = PathEffect.dashPathEffect(
-                                        floatArrayOf(10f, 10f),
-                                        0f
-                                    )
-                                )
-                            )
-                        }
+                        .border(2.dp, Color(0xFFA2F0C1), shape = RoundedCornerShape(8.dp)),
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -339,7 +356,8 @@ fun SaveExercise(navController: NavController,
                         horizontalArrangement = Arrangement.Center
                     ) {
                     Text(
-                        "Add Photos",
+                        "Add Photo",
+                        color = Color(0xFFA2F0C1),
                         modifier = Modifier
                             .padding(horizontal = 5.dp) // Adjust the padding as needed
                             .fillMaxHeight()
@@ -347,7 +365,8 @@ fun SaveExercise(navController: NavController,
                     )
                         Icon(
                             painter = painterResource(id = R.drawable.add_image_icon),
-                            contentDescription = null,
+                            contentDescription = "add image icon",
+                            tint = Color(0xFFA2F0C1),
                             modifier = Modifier
                                 .padding(end = 5.dp)
                                 .size(40.dp)
@@ -362,23 +381,14 @@ fun SaveExercise(navController: NavController,
                         .fillMaxWidth()
                         .height(50.dp)
                         .background(
-                            Color(android.graphics.Color.parseColor("#A2F0C1"))
+                            Color(0xFF1A8B47),
+                            shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
                             // TODO ACCESS PHONE CAMERA
                             isCameraPreviewVisible = true
                         }
-                        .drawBehind {
-                            drawRoundRect(
-                                color = Color.Black, style = Stroke(
-                                    width = 2f,
-                                    pathEffect = PathEffect.dashPathEffect(
-                                        floatArrayOf(10f, 10f),
-                                        0f
-                                    )
-                                )
-                            )
-                        }
+                        .border(2.dp, Color(0xFFA2F0C1), shape = RoundedCornerShape(8.dp)),
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
@@ -387,6 +397,7 @@ fun SaveExercise(navController: NavController,
                     ) {
                         Text(
                             "Take Photo",
+                            color = Color(0xFFA2F0C1),
                             modifier = Modifier
                                 .padding(horizontal = 5.dp) // Adjust the padding as needed
                                 .fillMaxHeight()
@@ -394,7 +405,8 @@ fun SaveExercise(navController: NavController,
                         )
                         Icon(
                             painter = painterResource(id = R.drawable.add_photo_icon),
-                            contentDescription = null,
+                            contentDescription = "camera icon",
+                            tint = Color(0xFFA2F0C1),
                             modifier = Modifier
                                 .padding(end = 5.dp)
                                 .size(40.dp)
@@ -412,16 +424,17 @@ fun SaveExercise(navController: NavController,
                     .width(110.dp)
                     .height(50.dp)
                     .background(
-                        Color(android.graphics.Color.parseColor("#A2F0C1")),
+                        Color(0xFFA2F0C1),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
                         showDialogCancel = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             ) {
                 Text(
                     "Cancel",
+                    color = Color(0xFF0A361C),
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -437,16 +450,17 @@ fun SaveExercise(navController: NavController,
                     .width(110.dp)
                     .height(50.dp)
                     .background(
-                        Color(android.graphics.Color.parseColor("#47E285")),
+                        Color(0xFF47E285),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
                         showDialogSave = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             ) {
                 Text(
                     "Save",
+                    color = Color(0xFF0A361C),
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
