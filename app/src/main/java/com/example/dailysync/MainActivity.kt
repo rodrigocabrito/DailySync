@@ -23,6 +23,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseDatabase
     private lateinit var bookViewModel: BookViewModel
+    private lateinit var exerciseViewModel: ExerciseViewModel
 
     @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,10 +33,11 @@ class MainActivity : ComponentActivity() {
         val bookRepository = BookRepository(bookApi, auth)
         val bookViewModelFactory = BookViewModelFactory(bookRepository)
         bookViewModel = ViewModelProvider(this, bookViewModelFactory).get(BookViewModel::class.java)
+        exerciseViewModel = ViewModelProvider(this).get(ExerciseViewModel::class.java)
         setContent {
             DailySyncTheme {
                 val navController = rememberNavController()
-                NavGraph(navController = navController, auth, bookViewModel)           // TODO PASS 'db' AS ARG?
+                NavGraph(navController = navController, auth, bookViewModel, exerciseViewModel)           // TODO PASS 'db' AS ARG?
             }
         }
     }

@@ -7,6 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.dailysync.BookViewModel
+import com.example.dailysync.ExerciseViewModel
 import com.example.dailysync.bookModels.Items
 import com.example.dailysync.community.Community
 import com.example.dailysync.community.SelectFromList
@@ -34,7 +35,7 @@ import com.google.firebase.auth.FirebaseAuth
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewModel: BookViewModel){
+fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewModel: BookViewModel, exerciseViewModel: ExerciseViewModel){
     NavHost(
         navController = navController,
         startDestination = Screens.Login.route)
@@ -76,7 +77,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         composable(route = Screens.DuringExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
             val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
-            DuringExercise(navController = navController, categoryShow = categoryShow, auth = auth)
+            DuringExercise(navController = navController, categoryShow = categoryShow, auth = auth, viewModel = exerciseViewModel)
         }
         composable(route = Screens.SaveExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
@@ -84,7 +85,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
             val timeShow: Long = navBackStack.arguments?.getString("time")?.toLongOrNull()?:1L
             val averagePaceShow: Float = navBackStack.arguments?.getString("averagePace")?.toFloatOrNull()?:1.0f
             val distanceShow: Float = navBackStack.arguments?.getString("distance")?.toFloatOrNull()?:1.0f
-            SaveExercise(navController = navController, categoryShow = categoryShow, auth = auth, timeShow = timeShow, averagePaceShow = averagePaceShow, distanceShow = distanceShow)
+            SaveExercise(navController = navController, categoryShow = categoryShow, auth = auth, timeShow = timeShow, averagePaceShow = averagePaceShow, distanceShow = distanceShow, viewModel = exerciseViewModel)
         }
 
         // ##################################################################################################################################################################################

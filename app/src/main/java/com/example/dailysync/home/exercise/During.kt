@@ -1,10 +1,10 @@
 package com.example.dailysync.home.exercise
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
-import android.text.format.DateUtils.formatElapsedTime
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.Image
@@ -42,15 +42,18 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -58,6 +61,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
+import com.example.dailysync.ExerciseViewModel
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.android.gms.location.LocationCallback
@@ -68,19 +72,18 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun DuringExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
+fun DuringExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, viewModel: ExerciseViewModel) {
 
     var mapView: MapView? by remember { mutableStateOf(null) }
     val category by remember { mutableIntStateOf(categoryShow) }
@@ -309,7 +312,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
         // body
 
-        Text(text = title, fontSize = 30.sp)
+        Text(text = title, fontSize = 30.sp, color = Color(0xFF0A361C))
 
         Spacer(modifier = Modifier.height(26.dp))
 
@@ -324,6 +327,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .fillMaxWidth()
                 .height(330.dp)
                 .padding(start = 16.dp, end = 16.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -334,17 +339,35 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .width(350.dp)
                 .padding(start = 20.dp, end = 20.dp, bottom = 15.dp)
                 .background(Color(android.graphics.Color.parseColor("#A2F0C1")), shape = RoundedCornerShape(8.dp))
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
             contentAlignment = Alignment.Center
         ) {
             Column (
                 horizontalAlignment = Alignment.CenterHorizontally
             ){
-                Text("Time: ${formatTime(elapsedTime)}")
+                Text(text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Time: ")
+                    }
+                    append(formatTime(elapsedTime))
+                },  fontSize = 20.sp,
+                    color = Color(0xFF0A361C))
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Average Pace: ${formatAveragePace(averagePace)}")
+                Text(text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Average Pace: ")
+                    }
+                    append(formatAveragePace(averagePace))
+                }, fontSize = 20.sp,
+                    color = Color(0xFF0A361C))
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Distance: ${String.format("%.2f", distance)} km")
+                Text(text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Distance: ")
+                    }
+                    append("${String.format("%.2f", distance)}km")
+                }, fontSize = 20.sp,
+                    color = Color(0xFF0A361C))
             }
         }
 
@@ -362,10 +385,11 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                         isChronometerRunning = !isChronometerRunning
                         isLocationUpdatesEnabled = !isLocationUpdatesEnabled
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             ) {
                 Text(
                     buttonName,
+                    color = Color(0xFF0A361C),
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -388,10 +412,11 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                     .clickable {
                         showDialog = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             ) {
                 Text(
                     "Finish",
+                    color = Color(0xFF0A361C),
                     fontSize = 20.sp,
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -411,7 +436,22 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 },
                 text = { Text("Do you want to finish your $title?") },
                 confirmButton = {
-                    TextButton(onClick = confirmAction) {
+                    TextButton(onClick = {
+                        captureMapSnapshot(mapView, polylineOptions) { capturedBitmap ->
+                            viewModel.setMyBitmap(capturedBitmap)
+                            Log.d("BitmapCheck", "Captured Bitmap: $capturedBitmap")
+                        }
+
+                        showDialog = false
+
+                        navController.navigate(
+                            Screens.SaveExercise.route
+                                .replace("{category}", categoryShow.toString())
+                                .replace("{time}", "$elapsedTime")
+                                .replace("{averagePace}", "$averagePace")
+                                .replace("{distance}", "$distance")
+                        )
+                    }) {
                         Text("Yes")
                     }
                 },
@@ -450,6 +490,33 @@ private fun Chronometer(
                 timeFlow.collect { elapsedMillis ->
                     onTick(elapsedMillis)
                 }
+            }
+        }
+    }
+}
+
+// Function to capture a snapshot of the map
+private fun captureMapSnapshot(
+    mapView: MapView?,
+    polylineOptions: PolylineOptions,
+    onSnapshotCaptured: (Bitmap) -> Unit
+) {
+    mapView?.getMapAsync { googleMap ->
+        // Set the zoom level to cover the whole polyline
+        val boundsBuilder = LatLngBounds.builder()
+        for (point in polylineOptions.points) {
+            boundsBuilder.include(point)
+        }
+        val bounds = boundsBuilder.build()
+        val padding = 50 // Padding in pixels
+        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+        googleMap.moveCamera(cameraUpdate)
+
+        // Capture a snapshot of the map
+        googleMap.snapshot { bitmap ->
+            // Invoke the lambda function with the captured bitmap
+            if (bitmap != null) {
+                onSnapshotCaptured(bitmap)
             }
         }
     }
