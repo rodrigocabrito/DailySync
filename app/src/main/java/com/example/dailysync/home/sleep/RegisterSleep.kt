@@ -104,8 +104,10 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
             selectedHourAwakeTime
         }
 
-        val timeSlept = calculateTimeDifference(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime)
-        val sleep = Sleep(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime, timeSlept, Instant.now().toEpochMilli())
+        val hourSlept = getHourDifference(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime)
+        val minSlept = getMinDifference(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime)
+        val sleep = Sleep(hourBedTime, minBedTime, hourAwakeTime, minAwakeTime, hourSlept, minSlept, Instant.now().toEpochMilli())
+
         if (userId != null) {
             writeToDatabase(userId, sleep)
         }
@@ -670,7 +672,7 @@ private fun writeToDatabase(userId: String, sleep: Sleep) {
     sleepRef.child(sleepId!!).setValue(sleep)
 }
 
-private fun calculateTimeDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int): Pair<Int, Int> {
+private fun getHourDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int): Int {
     val totalMinutes1 = hour1 * 60 + minute1
     val totalMinutes2 = hour2 * 60 + minute2
 
@@ -679,5 +681,16 @@ private fun calculateTimeDifference(hour1: Int, minute1: Int, hour2: Int, minute
     val hoursDifference = differenceMinutes / 60
     val minutesDifference = differenceMinutes % 60
 
-    return Pair(hoursDifference, minutesDifference)
+    return hoursDifference
+}
+
+private fun getMinDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int): Int {
+    val totalMinutes1 = hour1 * 60 + minute1
+    val totalMinutes2 = hour2 * 60 + minute2
+
+    val differenceMinutes = (totalMinutes2 - totalMinutes1 + 24 * 60) % (24 * 60)
+
+    val hoursDifference = differenceMinutes / 60
+
+    return differenceMinutes % 60
 }
