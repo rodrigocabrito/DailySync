@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableTarget
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +57,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.database
 import java.lang.Integer.parseInt
+import java.time.Instant
 
 @Composable
 fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: String) {
@@ -533,12 +535,14 @@ fun ShowSleepList(auth: FirebaseAuth) {
     }
 }
 
-@Composable
+/*@Composable
 fun ShowReadingList(auth: FirebaseAuth) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val readingPath = database.getReference("users/$userId/books/readingSessions")
+    var bookNamePath = database.getReference("users/$userId/books/")
     var readingData: List<ReadingSession> by remember { mutableStateOf(emptyList()) }
+    var bookName: List<String> by remember { mutableStateOf(emptyList()) }
 
     // Use LaunchedEffect to fetch data asynchronously
     LaunchedEffect(Unit) {
@@ -549,7 +553,13 @@ fun ShowReadingList(auth: FirebaseAuth) {
                     val reading = i.getValue(ReadingSession::class.java)
                     reading?.let {
                         dataList.add(it)
-                        Log.d("Teste", it.toString())
+                        bookNamePath = database.getReference("users/$userId/books/${it.itemId}/volumeInfo/title")
+                        bookNamePath.get().addOnSuccessListener { snapshot ->
+                            if (snapshot.exists()) {
+                                bookName += snapshot.value.toString()
+                                Log.d("Teste", "Book Name: ${bookName}")
+                            }
+                        }
                     }
                 }
                 readingData += dataList
@@ -580,12 +590,20 @@ fun ShowReadingList(auth: FirebaseAuth) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    /*Text(
-                        text = "${sleep.date}",
+                    Log.d("Teste", "Book Name Data: ${bookName}")
+                    Text(
+                        text = "${bookName}",
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    )
+                    Text(
+                        text = "${reading.date}",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
-                    )*/
+                    )
                 }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
@@ -611,7 +629,7 @@ fun ShowReadingList(auth: FirebaseAuth) {
                             )
                         )
                         Text(
-                            text = "${reading.durationMinutes}",
+                            text = "${reading.durationMinutes}min",
                             style = TextStyle(
                                 fontSize = 15.sp
                             )
@@ -621,4 +639,122 @@ fun ShowReadingList(auth: FirebaseAuth) {
                 }
             }
         }
+    }*/
+
+@Composable
+fun ShowReadingList(auth: FirebaseAuth) {
+    val database = Firebase.database
+    val userId = auth.currentUser?.uid
+    val readingPath = database.getReference("users/$userId/books/readingSessions")
+    var readingData by remember { mutableStateOf<List<ReadingSession>>(emptyList()) }
+    var bookNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+
+    // Fetch data asynchronously
+    DisposableEffect(userId) {
+        val dataList = mutableListOf<ReadingSession>()
+        val bookNameMap = mutableMapOf<String, String>()
+
+        readingPath.get().addOnSuccessListener { snapshot ->
+            if (snapshot.exists()) {
+                for (i in snapshot.children) {
+                    val reading = i.getValue(ReadingSession::class.java)
+                    reading?.let {
+                        dataList.add(it)
+                        bookNameMap[it.itemId] = ""
+                    }
+                }
+
+                for ((itemId, _) in bookNameMap) {
+                    val bookNamePath = database.getReference("users/$userId/books/$itemId/volumeInfo/title")
+                    bookNamePath.get().addOnSuccessListener { bookSnapshot ->
+                        if (bookSnapshot.exists()) {
+                            val name = bookSnapshot.value.toString()
+                            bookNameMap[itemId] = name
+                        }
+                        // Update the state when all data is fetched
+                        readingData = dataList
+                        bookNames = bookNameMap
+                    }
+                }
+            }
+        }
+
+        onDispose {
+            // Cleanup if needed
+        }
     }
+
+    // Display the data in a Column with dynamic Rows
+    Column {
+        for (reading in readingData) {
+            Log.d("Teste", "Reading data: ${reading}")
+            val bookName = bookNames[reading.itemId] ?: "Unknown Book"
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .padding(8.dp)
+                    .background(
+                        Color(android.graphics.Color.parseColor("#F5D4A2")),
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        /*navController.navigate(Screens.SelectFromList.route
+                            .replace(oldValue = "{type}", newValue = "Exercise")
+                        )*/
+                        Log.d("Teste", "Clicou")
+                    }
+                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = bookName,
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    )
+                    Text(
+                        text = "${reading.date}",
+                        style = TextStyle(
+                            fontSize = 15.sp
+                        )
+                    )
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Pages Read",
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    )
+                    Text(
+                        text = "${reading.pagesRead}",
+                        style = TextStyle(
+                            fontSize = 15.sp
+                        )
+                    )
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "time Spent",
+                        style = TextStyle(
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp
+                        )
+                    )
+                    Text(
+                        text = "${reading.durationMinutes}min",
+                        style = TextStyle(
+                            fontSize = 15.sp
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
