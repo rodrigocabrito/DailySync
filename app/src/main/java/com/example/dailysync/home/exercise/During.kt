@@ -105,6 +105,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         LocationServices.getFusedLocationProviderClient(context)
     }
 
+    var isLocationUpdatesEnabled by remember { mutableStateOf(true) }
+
     Chronometer(isRunning = isChronometerRunning) { elapsedMillis ->
         elapsedTime = elapsedMillis
         averagePace = calculateAveragePace(distance, elapsedTime)
@@ -209,6 +211,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
             val locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult) {
+                    if (!isLocationUpdatesEnabled) return
+
                     locationResult.lastLocation?.let { location ->
                         currentLatLng = LatLng(location.latitude, location.longitude)
 
@@ -221,6 +225,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                                 .icon(greenCircleBitmapDescriptor)
                                 .title("My Location")
 
+                            googleMap.clear()
                             googleMap.addMarker(markerOptions)
 
                             // Update Polyline to draw the path
@@ -231,6 +236,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                             lastLocation?.let { last ->
                                 val distance2 = last.distanceTo(location)
                                 totalDistanceInMeters += distance2
+                                distance = totalDistanceInMeters / 1000 // Convert to kilometers
                                 Log.e("Distance", "Total Distance: $totalDistanceInMeters meters")
                             }
 
@@ -338,7 +344,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 Spacer(modifier = Modifier.height(8.dp))
                 Text("Average Pace: ${formatAveragePace(averagePace)}")
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("Distance: $distance")                           // TODO LIVE DISTANCE
+                Text("Distance: ${String.format("%.2f", distance)} km")
             }
         }
 
@@ -354,6 +360,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                     )
                     .clickable {
                         isChronometerRunning = !isChronometerRunning
+                        isLocationUpdatesEnabled = !isLocationUpdatesEnabled
                     }
                     .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
             ) {
@@ -458,7 +465,7 @@ private fun formatTime(elapsedTime: Long): String {
 }
 
 // Function to calculate average pace
-private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float {
+private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float { //TODO min/km instead of km/min
     // Convert elapsed time to minutes
     val elapsedMinutes = elapsedTime / 1000f / 60f
     // Calculate average pace in km/min
