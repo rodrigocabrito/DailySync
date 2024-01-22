@@ -22,7 +22,8 @@ data class Exercise(
     @PropertyName("averagePace") val averagePace: Float,
     @PropertyName("distance") val distance: Float,
     @PropertyName("image") val image: Boolean,
-    @PropertyName("date") val date: Long  // Use Long to represent date as milliseconds
+    @PropertyName("date") val date: Long,  // Use Long to represent date as milliseconds
+    @PropertyName("type") var type: String = ""
 ) : Serializable, Parcelable {
     constructor() : this(
         "",
@@ -31,7 +32,8 @@ data class Exercise(
         0f,
         0f,
         false,
-        0L
+        0L,
+        ""
     )
 }
 

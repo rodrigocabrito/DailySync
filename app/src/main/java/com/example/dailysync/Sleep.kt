@@ -10,12 +10,11 @@ import com.google.firebase.database.PropertyName
 import com.google.firebase.database.ValueEventListener
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
-import java.time.Instant
 
 @IgnoreExtraProperties
 @Parcelize
 data class Sleep(
-    @PropertyName("bedTimeHour") val bedTimeHour: Int,
+    @PropertyName("bedTimeHour") var bedTimeHour: Int,
     @PropertyName("bedTimeMin") val bedTimeMin: Int,
     @PropertyName("awakeTimeHour") val awakeTimeHour: Int,
     @PropertyName("awakeTimeMin") val awakeTimeMin: Int,
