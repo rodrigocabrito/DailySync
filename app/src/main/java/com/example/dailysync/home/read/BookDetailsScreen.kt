@@ -242,6 +242,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                             }
                         }
                         item.let { bookViewModel.updateStatus(it)}
+                        navController.navigate(Screens.MyLibrary.route)
                     }
                 ) {
                     Text("Save")
@@ -453,13 +454,13 @@ fun RegisterReadingSessionPopup(
                             val previousPage = item.currentPage
                             if (item.status == Status.TO_READ && textField1Value.toInt() > 0) {
                                 item.status = Status.READING
+                                item.currentPage = textField1Value.toInt()
                             } else if (textField1Value.toInt() >= item.volumeInfo.pageCount) {//Check if the input surpasses the amount of pages on the book
                                 item.status = Status.FINISHED
                                 item.currentPage = item.volumeInfo.pageCount
                             } else {
                                 item.currentPage = textField1Value.toInt()
                             }
-                            item.let { bookViewModel.updateStatus(it) }
                             bookViewModel.registerReadingSession(
                                 item,
                                 textField1Value.toInt() - previousPage,

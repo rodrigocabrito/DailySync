@@ -1056,6 +1056,7 @@ fun SaveReadingSessionPopup(
                             val previousPage = item.currentPage
                             if (item.status == Status.TO_READ && textField1Value.toInt() > 0) {
                                 item.status = Status.READING
+                                item.currentPage = textField1Value.toInt()
                             } else if (textField1Value.toInt() >= item.volumeInfo.pageCount) {//Check if the input surpasses the amount of pages on the book
                                 item.status = Status.FINISHED
                                 item.currentPage = item.volumeInfo.pageCount
