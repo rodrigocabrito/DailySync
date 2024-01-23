@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.dailysync.BookViewModel
 import com.example.dailysync.bookModels.Items
+import com.example.dailysync.navigation.Screens
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,7 +59,8 @@ fun TopBarSession(navController: NavHostController, item: Items?) {
     Box(
         Modifier
             .height(32.dp)
-            .background(Color.White)) {
+            .background(Color.White)
+    ) {
 
         Row(titleIconModifier, verticalAlignment = Alignment.CenterVertically) {
             IconButton(
@@ -73,6 +76,16 @@ fun TopBarSession(navController: NavHostController, item: Items?) {
                     Icons.Default.ArrowBack,
                     contentDescription = null
                 )
+            }
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xFF362305)
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
             }
         }
     }

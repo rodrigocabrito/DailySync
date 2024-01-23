@@ -886,7 +886,7 @@ fun ReadingSessionBookDetails(item: Items, bookViewModel: BookViewModel, navCont
                         .weight(1f)
                         .height(50.dp)
                         .background(
-                            Color(0xFF362305),
+                            Color(0xD8362305),
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
@@ -896,7 +896,7 @@ fun ReadingSessionBookDetails(item: Items, bookViewModel: BookViewModel, navCont
                 ) {
                     Text(
                         "Cancel",
-                        color = Color(0xFFF5D4A2),
+                        color = Color(0xE4F5D4A2),
                         modifier = Modifier
                             .align(Alignment.Center)
                             .fillMaxHeight()
@@ -984,7 +984,7 @@ fun ReadingSessionBookDetails(item: Items, bookViewModel: BookViewModel, navCont
 
                 },
                 text = {
-                    Text("Do you want to cancel your reading session?")
+                    Text("Do you want to cancel your reading session?", color = Color(0xFF362305))
                 },
                 confirmButton = {
                     TextButton(
@@ -1019,6 +1019,9 @@ fun SaveReadingSessionPopup(
 ) {
     var textField1Value by remember { mutableStateOf(item.currentPage.toString()) }
 
+    var nrPagesError by remember { mutableStateOf(false) }
+    var lessPagesError by remember { mutableStateOf(false) }
+
 
     AlertDialog(
         containerColor = Color(0xFFF5D4A2),
@@ -1046,6 +1049,20 @@ fun SaveReadingSessionPopup(
                     ),
                     label = { Text("Last Page Read", color = Color(0xFF362305)) }
                 )
+                if (nrPagesError) {
+                    Text(
+                        text = "Field cannot be empty or with negative values",
+                        fontSize = 11.sp,
+                        color = Color.Red
+                    )
+                }
+                if (lessPagesError) {
+                    Text(
+                        text = "Number of the page selected is less than it was registered before",
+                        fontSize = 11.sp,
+                        color = Color.Red
+                    )
+                }
             }
         },
         confirmButton = {
@@ -1074,10 +1091,10 @@ fun SaveReadingSessionPopup(
                             navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
                             navController.navigate(Screens.BookDetails.route)
                         }else{
-                            Log.e("Current Page", "Page inserted is less than what it was")//TODO change to warning
+                            lessPagesError = true
                         }
                     }else{
-                        Log.e("Empty Fields", "Need to fill the 2 fields")//TODO change to warning
+                        nrPagesError = true
                     }
 
                 }

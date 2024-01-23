@@ -2,6 +2,7 @@ package com.example.dailysync.home.read
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -13,11 +14,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -29,6 +30,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -43,8 +45,6 @@ import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 
 var textStateDuplicate: String = ""
-
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SearchScreen(navController: NavHostController, bookViewModel: BookViewModel) {
@@ -56,31 +56,71 @@ fun SearchScreen(navController: NavHostController, bookViewModel: BookViewModel)
         Scaffold(
             topBar = {
                 Column (modifier = Modifier.background(Color.White) ){
-                    Row{
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                                bookViewModel.clearLoadItemsList()
-                            },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = Color(0xFF362305)
-                            )
-                        ) { Icon(Icons.Default.ArrowBack, "Back") }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 15.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    navController.popBackStack()
+                                    bookViewModel.clearLoadItemsList()
+                                },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = Color(0xFF362305)
+                                )
+                            ) {
+                                Icon(Icons.Default.ArrowBack, "Back")
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Screens.Home.route)
+                                    bookViewModel.clearLoadItemsList()
+                                },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = Color(0xFF362305)
+                                )
+                            ) {
+                                Icon(Icons.Default.Home, "Home")
+                            }
+                        }
+
                         Text(
                             text = "Find Books",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .align(Alignment.Center),
                             textAlign = TextAlign.Center,
                             style = TextStyle(
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
+                                fontSize = 25.sp,
                                 color = Color(0xFF362305)
                             )
                         )
                     }
                     SearchTopBar(bookViewModel)
 
+                }
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    modifier = Modifier.size(60.dp).border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(15.dp)),
+                    onClick = {
+                        navController.navigate(Screens.MyLibrary.route)
+                    },
+                    containerColor = Color(0xFFF5D4A2),
+                    contentColor = Color(0xFF362305),
+                ) {
+                    Icon(
+                        modifier = Modifier.size(35.dp),
+                        painter = painterResource(id = R.drawable.library_icon),
+                        tint = Color(0xFF362305),
+                        contentDescription = "Swap reading status",
+                    )
                 }
             },
             content = {

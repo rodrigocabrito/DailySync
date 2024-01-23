@@ -3,6 +3,7 @@ package com.example.dailysync.home.read
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
@@ -14,6 +15,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -26,10 +28,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonColors
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +59,6 @@ import java.time.Instant
 private var openRemoveDialog by mutableStateOf(false)
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewModel, item: Items) {
     val scrollState = rememberScrollState()
@@ -86,7 +90,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
             Column {
                 if(item.status != null && item.status != Status.FINISHED) {
                     FloatingActionButton(
-                        modifier = Modifier.size(60.dp),
+                        modifier = Modifier.size(60.dp).border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(15.dp)),
                         onClick = {
                             expanded = true
                         },
@@ -132,7 +136,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                 Spacer(modifier = Modifier.height(16.dp))
 
                 FloatingActionButton(
-                    modifier = Modifier.size(60.dp),
+                    modifier = Modifier.size(60.dp).border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(15.dp)),
                     onClick = {
                         openDialog.value = true
                     },
@@ -171,13 +175,18 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
     }
 
     if (openDialog.value) {
-        AlertDialog(//TODO Change color
+        AlertDialog(
+            modifier = Modifier.border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(25.dp)),
+            containerColor = Color(0xFFF5D4A2),
             onDismissRequest = {
                 openDialog.value = false
             },
             title = {
                 Text(
-                    text = "Select progress"
+                    text = "Select Progress",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(0xFF362305)
                 )
             },
             text = {
@@ -199,22 +208,39 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         ) {
                             RadioButton(
                                 selected = (text == selectedOption),
-                                onClick = null
+                                onClick = null,
+                                colors = RadioButtonDefaults.colors(
+                                    unselectedColor = Color(0xFF362305),
+                                    selectedColor = Color(0xFFC47E11)
+                                )
                             )
                             Text(
                                 text = text,
+                                color = Color(0xFF362305),
                                 modifier = Modifier.padding(start = 16.dp)
                             )
                             // Additional options for marking the page when "Reading" is selected
                             if (text == "Reading" && selectedOption == "Reading") {
                                 Spacer(modifier = Modifier.width(16.dp))
                                 OutlinedTextField(
+                                    textStyle = TextStyle(
+                                        color = Color(0xFF362305)
+                                    ),
                                     value = if (currentPage == 0) "" else currentPage.toString(),
-                                    onValueChange = { currentPage = if (it.isBlank()) -1 else it.toIntOrNull()?.coerceIn(-1, item?.volumeInfo?.pageCount ?: 0) ?: 0 },
-                                    label = { Text("Current Page") },
+                                    onValueChange = { currentPage = if (it.isBlank()) 0 else it.toIntOrNull()?.coerceIn(-1, item?.volumeInfo?.pageCount ?: 0) ?: 0 },
+                                    label = { Text("Current Page", color = Color(0xFFC47E11), fontSize = 12.sp) },
                                     placeholder = { currentPage.toString() },
                                     keyboardOptions = KeyboardOptions.Default.copy(
                                         keyboardType = KeyboardType.Number
+                                    ),
+                                    colors = TextFieldDefaults.colors(
+                                        unfocusedContainerColor = Color.Transparent,
+                                        focusedContainerColor = Color.Transparent,
+                                        unfocusedIndicatorColor = Color(0xFF362305),
+                                        unfocusedLabelColor = Color(0xFF362305),
+                                        focusedIndicatorColor = Color(0xFFC47E11),
+                                        focusedLabelColor = Color(0xFFC47E11)
+
                                     ),
                                     modifier = Modifier.width(120.dp)
                                 )
@@ -245,7 +271,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         navController.navigate(Screens.MyLibrary.route)
                     }
                 ) {
-                    Text("Save")
+                    Text("Save",color = Color(0xFF362305))
                 }
             },
             dismissButton = {
@@ -254,7 +280,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         openDialog.value = false
                     }
                 ) {
-                    Text("Cancel")
+                    Text("Cancel",color = Color(0xFF362305))
                 }
             }
         )
@@ -262,15 +288,17 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
 
     if (openRemoveDialog) {
         AlertDialog(
+            modifier = Modifier.border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(25.dp)),
+            containerColor = Color(0xFFF5D4A2),
             onDismissRequest = {
                 openRemoveDialog = false
             },
             title = {
                 Text(
                     text = "Remove",
-                    style = TextStyle(
-                        fontSize = 20.sp
-                    ),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color(0xFF362305)
                 )
             },
             text = {
@@ -279,6 +307,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                 ) {
                     Text(
                         text = "Are you sure you want to remove this book?",
+                        color = Color(0xFF362305)
                     )
                 }
             },
@@ -289,7 +318,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         openRemoveDialog = false
                     }
                 ) {
-                    Text("Yes")
+                    Text("Yes", color = Color(0xFF362305))
                 }
             },
             dismissButton = {
@@ -298,7 +327,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
                         openRemoveDialog = false
                     }
                 ) {
-                    Text("No")
+                    Text("No", color = Color(0xFF362305))
                 }
             }
         )
@@ -333,7 +362,7 @@ fun BookDetailsScreen(navController: NavHostController, bookViewModel: BookViewM
 
 
 @Composable
-fun TopBar(navController: NavHostController, item: Items?) { //TODO Add home button
+fun TopBar(navController: NavHostController, item: Items?) {
     val titleIconModifier = Modifier
         .fillMaxHeight()
         .fillMaxWidth()
@@ -342,7 +371,7 @@ fun TopBar(navController: NavHostController, item: Items?) { //TODO Add home but
     Box(
         Modifier
             .height(32.dp)
-            .background(Color.White)) {
+            .background(Color.White).padding(top = 10.dp)) {
 
         Row(titleIconModifier, verticalAlignment = Alignment.CenterVertically) {
             IconButton(
@@ -358,6 +387,17 @@ fun TopBar(navController: NavHostController, item: Items?) { //TODO Add home but
                     Icons.Default.ArrowBack,
                     contentDescription = null
                 )
+            }
+
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xFF362305)
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
             }
         }
 
@@ -405,8 +445,13 @@ fun RegisterReadingSessionPopup(
     var textField1Value by remember { mutableStateOf(item.currentPage.toString()) }
     var textField3Value by remember { mutableStateOf("") }
 
+    var timeSpentError by remember { mutableStateOf(false) }
+    var nrPagesError by remember { mutableStateOf(false) }
+    var lessPagesError by remember { mutableStateOf(false) }
+
 
     AlertDialog(
+        modifier = Modifier.border(2.dp, Color(0xFFC4AA83), RoundedCornerShape(25.dp)),
         containerColor = Color(0xFFF5D4A2),
         onDismissRequest = { onDismiss() },
         title = {
@@ -426,12 +471,28 @@ fun RegisterReadingSessionPopup(
                         color = Color(0xFF362305)
                     ),
                     placeholder = { Text("The current page you're on", color = Color.Gray) },
-                    onValueChange = { textField1Value = it },
+                    onValueChange = { textField1Value = it
+                        nrPagesError = false
+                        lessPagesError = false},
                     keyboardOptions = KeyboardOptions.Default.copy(
                         keyboardType = KeyboardType.Number
                     ),
                     label = { Text("Last Page Read", color = Color(0xFF362305)) }
                 )
+                if (nrPagesError) {
+                    Text(
+                        text = "Field cannot be empty or with negative values",
+                        fontSize = 11.sp,
+                        color = Color.Red
+                    )
+                }
+                if (lessPagesError) {
+                    Text(
+                        text = "Number of the page selected is less than it was registered before",
+                        fontSize = 11.sp,
+                        color = Color.Red
+                    )
+                }
                 OutlinedTextField(
                     value = textField3Value,
                     textStyle = TextStyle(
@@ -442,14 +503,21 @@ fun RegisterReadingSessionPopup(
                         keyboardType = KeyboardType.Number
                     ),
                     placeholder = { Text("Minutes spent reading",color = Color.Gray) },
-                    label = { Text("Time Spent", color = Color(0xFF362305)) }
+                    label = { Text("Time spent reading (min)", color = Color(0xFF362305)) }
                 )
+                if (timeSpentError) {
+                    Text(
+                        text = "Field cannot be empty",
+                        fontSize = 11.sp,
+                        color = Color.Red
+                    )
+                }
             }
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    if(textField1Value.isNotEmpty() && textField3Value.isNotEmpty()){
+                    if(textField1Value.isNotEmpty() && textField3Value.isNotEmpty() && textField1Value.toInt() > 0 && textField3Value.toInt() > 0 ){
                         if(textField1Value.toInt() > item.currentPage) {
                             val previousPage = item.currentPage
                             if (item.status == Status.TO_READ && textField1Value.toInt() > 0) {
@@ -471,10 +539,11 @@ fun RegisterReadingSessionPopup(
                             navController.currentBackStackEntry?.savedStateHandle?.set("item", item)
                             navController.navigate(Screens.BookDetails.route)
                         }else{
-                            Log.e("Current Page", "Page inserted is less than what it was")//TODO change to warning
+                            lessPagesError = true
                         }
                     }else{
-                        Log.e("Empty Fields", "Need to fill the 2 fields")//TODO change to warning
+                        nrPagesError = textField1Value.isBlank() || textField1Value.toInt() <= 0
+                        timeSpentError = textField3Value.isBlank() || textField3Value.toInt() <= 0
                     }
                 }
             ) {
