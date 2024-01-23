@@ -53,7 +53,7 @@ class FirebaseExerciseDataManager {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val exerciseList = mutableListOf<Exercise>()
 
-                Log.e("Depois", "Dentro do onDataChange do getExercises")
+                //Log.e("Depois", "Dentro do onDataChange do getExercises")
                 for (exerciseSnapshot in dataSnapshot.children) {
                     val exercise = exerciseSnapshot.getValue(Exercise::class.java)
                     exercise?.let {
