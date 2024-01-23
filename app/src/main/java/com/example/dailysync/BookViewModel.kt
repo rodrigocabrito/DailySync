@@ -119,6 +119,7 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
             showRemovingDialog = true
             delay(500)
             repository.deleteItemById(id)
+            repository.deleteReadingSessionsByItemId(id)
             showRemovingDialog = false
             // Navigation logic if needed
             navController.popBackStack()
