@@ -308,6 +308,9 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 selected = false
             )
             NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
                 icon = { Icon(
                     painter = painterResource(id = R.drawable.report_icon),
                     contentDescription = null,
@@ -319,6 +322,9 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 selected = true
             )
             NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
                 icon = { Icon(
                     painter = painterResource(id = R.drawable.community_icon),
                     contentDescription = null,
@@ -330,6 +336,9 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 selected = false
             )
             NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
                 icon = { Icon(
                     painter = painterResource(id = R.drawable.profile_icon),
                     contentDescription = null,
