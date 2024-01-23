@@ -78,15 +78,6 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
         ) {
             IconButton(
                 onClick = {
-                    navController.popBackStack()
-                },
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
-                )
-            ) { Icon(Icons.Default.ArrowBack, "Back") }
-
-            IconButton(
-                onClick = {
                     navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
