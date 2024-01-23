@@ -33,7 +33,7 @@ sealed class Screens(val route: String) {
     object Notifications : Screens("notifications")
 
     // Report
-    object ExerciseReport : Screens("exercise_report")
+    object ExerciseReport : Screens("exercise_report/{selectedExercise}/{selectedPeriod}")
     object SleepReport : Screens("sleep_report")
     object ReadReport : Screens("read_report")
 

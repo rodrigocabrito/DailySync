@@ -177,8 +177,12 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         // ##################################################################################################################################################################################
 
         // Report
-        composable(Screens.ExerciseReport.route){
-            ExerciseReport(navController = navController, auth = auth)
+        composable(Screens.ExerciseReport.route + "?selectedExercise={selectedExercise}&selectedPeriod={selectedPeriod}"){navBackStack ->
+            val selectedExercise: Int = navBackStack.arguments?.getString("selectedExercise")?.toIntOrNull() ?: 1
+            val selectedPeriod: Int = navBackStack.arguments?.getString("selectedPeriod")?.toIntOrNull() ?: 1
+            if (Build.VERSION.SDK_INT >= 34) {
+                ExerciseReport(navController = navController, selectedExercise, selectedPeriod, auth = auth)
+            }
         }
         composable(Screens.SleepReport.route){
             SleepReport(navController = navController, auth = auth)
@@ -195,7 +199,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         composable(route = Screens.SelectFromList.route + "?type={type}"){ navBackStack ->
             val type: String? = navBackStack.arguments?.getString("type")
 
-            if(type == "Exercise")
+            if (type == "Exercise")
                 SelectFromList(navController = navController, auth = auth, type = "Exercise")
             else if(type == "Sleep")
                 SelectFromList(navController = navController, auth = auth, type = "Sleep")
