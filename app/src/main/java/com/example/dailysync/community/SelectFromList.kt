@@ -1,5 +1,6 @@
 package com.example.dailysync.community
 
+import android.content.Context
 import android.os.Debug
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -24,10 +25,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableTarget
 import androidx.compose.runtime.DisposableEffect
@@ -39,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -57,7 +63,19 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.database
 import java.lang.Integer.parseInt
+import java.text.SimpleDateFormat
 import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
 fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: String) {
@@ -248,6 +266,9 @@ fun ShowExerciseList(auth: FirebaseAuth) {
     val exerciseCyclePath = database.getReference("users/$userId/Cycle")
     var exerciseData: List<Exercise> by remember { mutableStateOf(emptyList()) }
 
+    var index by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
+
     // Use LaunchedEffect to fetch data asynchronously
     LaunchedEffect(Unit) {
         exerciseWalkPath.get().addOnSuccessListener { snapshot ->
@@ -291,6 +312,22 @@ fun ShowExerciseList(auth: FirebaseAuth) {
         }
     }
 
+    //Alerta
+    if(showDialog){
+        ShowAlertDialog(
+            showDialog = showDialog,
+            message = "Do you want to share this sleeping session?",
+            confirmAction = {
+                Log.d("Teste", "${exerciseData[index].time}")
+                showDialog = false
+            },
+            cancelAction = {
+                Log.d("Teste", "Clicou Não")
+                showDialog = false
+            }
+        )
+    }
+
     // Display the data in a Column with dynamic Rows
     Column {
         for (exercise in exerciseData) {
@@ -304,10 +341,8 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
-                        /*navController.navigate(Screens.SelectFromList.route
-                            .replace(oldValue = "{type}", newValue = "Exercise")
-                        )*/
-                        Log.d("Teste", "Clicou")
+                        index = exerciseData.indexOf(exercise)
+                        showDialog = true
                     }
                     .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
@@ -349,7 +384,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         }
                     }
                     Text(
-                        text = "${exercise.date}",
+                        text = "${ConvertDate(date = exercise.date)}",
                         style = TextStyle(
                             fontSize = 10.sp
                         )
@@ -412,6 +447,9 @@ fun ShowSleepList(auth: FirebaseAuth) {
     val sleepPath = database.getReference("users/$userId/Sleep")
     var sleepData: List<Sleep> by remember { mutableStateOf(emptyList()) }
 
+    var index by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
+
     // Use LaunchedEffect to fetch data asynchronously
     LaunchedEffect(Unit) {
         sleepPath.get().addOnSuccessListener { snapshot ->
@@ -428,6 +466,22 @@ fun ShowSleepList(auth: FirebaseAuth) {
         }
     }
 
+    //Alerta
+    if(showDialog){
+        ShowAlertDialog(
+            showDialog = showDialog,
+            message = "Do you want to share this sleeping session?",
+            confirmAction = {
+                Log.d("Teste", "${sleepData[index].awakeTimeHour}")
+                showDialog = false
+            },
+            cancelAction = {
+                Log.d("Teste", "Clicou Não")
+                showDialog = false
+            }
+        )
+    }
+
     // Display the data in a Column with dynamic Rows
     Column {
         for (sleep in sleepData) {
@@ -441,10 +495,8 @@ fun ShowSleepList(auth: FirebaseAuth) {
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
-                        /*navController.navigate(Screens.SelectFromList.route
-                            .replace(oldValue = "{type}", newValue = "Exercise")
-                        )*/
-                        Log.d("Teste", "Clicou")
+                        index = sleepData.indexOf(sleep)
+                        showDialog = true
                     }
                     .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -452,9 +504,9 @@ fun ShowSleepList(auth: FirebaseAuth) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${sleep.date}",
+                        text = "${ConvertDate(date = sleep.date)}",
                         style = TextStyle(
-                            fontSize = 15.sp
+                            fontSize = 10.sp
                         )
                     )
                 }
@@ -535,112 +587,6 @@ fun ShowSleepList(auth: FirebaseAuth) {
     }
 }
 
-/*@Composable
-fun ShowReadingList(auth: FirebaseAuth) {
-    val database = Firebase.database
-    val userId = auth.currentUser?.uid
-    val readingPath = database.getReference("users/$userId/books/readingSessions")
-    var bookNamePath = database.getReference("users/$userId/books/")
-    var readingData: List<ReadingSession> by remember { mutableStateOf(emptyList()) }
-    var bookName: List<String> by remember { mutableStateOf(emptyList()) }
-
-    // Use LaunchedEffect to fetch data asynchronously
-    LaunchedEffect(Unit) {
-        readingPath.get().addOnSuccessListener { snapshot ->
-            if (snapshot.exists()) {
-                val dataList = mutableListOf<ReadingSession>()
-                for (i in snapshot.children) {
-                    val reading = i.getValue(ReadingSession::class.java)
-                    reading?.let {
-                        dataList.add(it)
-                        bookNamePath = database.getReference("users/$userId/books/${it.itemId}/volumeInfo/title")
-                        bookNamePath.get().addOnSuccessListener { snapshot ->
-                            if (snapshot.exists()) {
-                                bookName += snapshot.value.toString()
-                                Log.d("Teste", "Book Name: ${bookName}")
-                            }
-                        }
-                    }
-                }
-                readingData += dataList
-            }
-        }
-    }
-
-    // Display the data in a Column with dynamic Rows
-    Column {
-        for (reading in readingData) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp)
-                    .padding(8.dp)
-                    .background(
-                        Color(android.graphics.Color.parseColor("#F5D4A2")),
-                        shape = RoundedCornerShape(8.dp)
-                    )
-                    .clickable {
-                        /*navController.navigate(Screens.SelectFromList.route
-                            .replace(oldValue = "{type}", newValue = "Exercise")
-                        )*/
-                        Log.d("Teste", "Clicou")
-                    }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Log.d("Teste", "Book Name Data: ${bookName}")
-                    Text(
-                        text = "${bookName}",
-                        style = TextStyle(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
-                        )
-                    )
-                    Text(
-                        text = "${reading.date}",
-                        style = TextStyle(
-                            fontSize = 15.sp
-                        )
-                    )
-                }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "Pages Read",
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
-                            )
-                        )
-                        Text(
-                            text = "${reading.pagesRead}",
-                            style = TextStyle(
-                                fontSize = 15.sp
-                            )
-                        )
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = "time Spent",
-                            style = TextStyle(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 15.sp
-                            )
-                        )
-                        Text(
-                            text = "${reading.durationMinutes}min",
-                            style = TextStyle(
-                                fontSize = 15.sp
-                            )
-                        )
-                    }
-
-                }
-            }
-        }
-    }*/
-
 @Composable
 fun ShowReadingList(auth: FirebaseAuth) {
     val database = Firebase.database
@@ -648,6 +594,9 @@ fun ShowReadingList(auth: FirebaseAuth) {
     val readingPath = database.getReference("users/$userId/books/readingSessions")
     var readingData by remember { mutableStateOf<List<ReadingSession>>(emptyList()) }
     var bookNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
+
+    var index by remember { mutableStateOf(0) }
+    var showDialog by remember { mutableStateOf(false) }
 
     // Fetch data asynchronously
     DisposableEffect(userId) {
@@ -684,10 +633,26 @@ fun ShowReadingList(auth: FirebaseAuth) {
         }
     }
 
+    //Alerta
+    if(showDialog){
+        ShowAlertDialog(
+            showDialog = showDialog,
+            message = "Do you want to share this reading session?",
+            confirmAction = {
+                Log.d("Teste", "${readingData[index].durationMinutes}")
+                showDialog = false
+            },
+            cancelAction = {
+                Log.d("Teste", "Clicou Não")
+                showDialog = false
+            }
+        )
+    }
+
     // Display the data in a Column with dynamic Rows
     Column {
         for (reading in readingData) {
-            Log.d("Teste", "Reading data: ${reading}")
+            ConvertDate(date = reading.date)
             val bookName = bookNames[reading.itemId] ?: "Unknown Book"
             Row(
                 modifier = Modifier
@@ -699,10 +664,8 @@ fun ShowReadingList(auth: FirebaseAuth) {
                         shape = RoundedCornerShape(8.dp)
                     )
                     .clickable {
-                        /*navController.navigate(Screens.SelectFromList.route
-                            .replace(oldValue = "{type}", newValue = "Exercise")
-                        )*/
-                        Log.d("Teste", "Clicou")
+                        index = readingData.indexOf(reading)
+                        showDialog = true
                     }
                     .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
                 horizontalArrangement = Arrangement.SpaceAround,
@@ -717,9 +680,9 @@ fun ShowReadingList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${reading.date}",
+                        text = "${ConvertDate(date = reading.date)}",
                         style = TextStyle(
-                            fontSize = 15.sp
+                            fontSize = 10.sp
                         )
                     )
                 }
@@ -758,3 +721,33 @@ fun ShowReadingList(auth: FirebaseAuth) {
     }
 }
 
+
+
+fun ConvertDate(date: Long): String {
+    val instant = Instant.ofEpochMilli(date)
+    val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+   return localDateTime.format(formatter)
+}
+
+@Composable
+fun ShowAlertDialog(showDialog: Boolean, message: String, confirmAction: () -> Unit, cancelAction: () -> Unit) {
+    if(showDialog) {
+        AlertDialog(
+            onDismissRequest = {
+                cancelAction()
+            },
+            text = { Text(message) },
+            confirmButton = {
+                TextButton(onClick = confirmAction) {
+                    Text("Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = cancelAction) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+}
