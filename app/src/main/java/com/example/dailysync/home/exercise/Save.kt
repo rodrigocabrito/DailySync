@@ -35,6 +35,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,11 +56,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -122,6 +121,7 @@ fun SaveExercise(navController: NavController,
     var showDialogSave by remember { mutableStateOf(false) }
     var showDialogCancel by remember { mutableStateOf(false) }
     var showDialogCancelConfirmed by remember { mutableStateOf(false) }
+    var showDialogHomeCancel by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -157,6 +157,7 @@ fun SaveExercise(navController: NavController,
     // Press Cancel (Pop Up)
     val cancelAction: () -> Unit = {
         showDialogCancel = false
+        showDialogHomeCancel = false
     }
 
     // Open camera preview
@@ -196,21 +197,17 @@ fun SaveExercise(navController: NavController,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 16.dp, top = 10.dp),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.Start
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    showDialogHomeCancel = true
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xFF0A361C)
                 )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.Home, "Home")
             }
         }
 
@@ -281,6 +278,13 @@ fun SaveExercise(navController: NavController,
                     .clip(RoundedCornerShape(8.dp))
                     .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
             )
+        }else{
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(275.dp)
+                .padding(start = 16.dp, end = 16.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -386,7 +390,7 @@ fun SaveExercise(navController: NavController,
                         )
                         .clickable {
                             // TODO ACCESS PHONE CAMERA
-                            isCameraPreviewVisible = true
+                            // isCameraPreviewVisible = true
                         }
                         .border(2.dp, Color(0xFFA2F0C1), shape = RoundedCornerShape(8.dp)),
                 ) {
@@ -473,14 +477,16 @@ fun SaveExercise(navController: NavController,
         // Show the AlertDialog Pop Up
         if (showDialogSave) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialogSave = false
                 },
-                text = { Text("Your $title was saved successfully!") },
+                text = { Text("Your $title was saved successfully!", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("OK")
+                        Text("OK", color =Color(0xFF0A361C))
                     }
                 }
             )
@@ -489,19 +495,42 @@ fun SaveExercise(navController: NavController,
         // Show the AlertDialog Pop Up
         if (showDialogCancel) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
-                    showDialogSave = false
+                    showDialogCancel = false
                 },
-                text = { Text("Are you sure you want to cancel your $title?") },
+                text = { Text("Are you sure you want to cancel your $title?", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
                 confirmButton = {
                     TextButton(onClick = confirmActionYes) {
-                        Text("Yes")
+                        Text("Yes", color =Color(0xFF0A361C))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = cancelAction) {
-                        Text("No")
+                        Text("No", color =Color(0xFF0A361C))
+                    }
+                }
+            )
+        }
+
+        if (showDialogHomeCancel) {
+            AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
+                onDismissRequest = {
+                    showDialogHomeCancel = false
+                },
+                text = { Text("Are you sure you want to cancel your $title?", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
+                confirmButton = {
+                    TextButton(onClick = { navController.navigate(Screens.Home.route) }) {
+                        Text("Yes", color =Color(0xFF0A361C))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = cancelAction) {
+                        Text("No", color =Color(0xFF0A361C))
                     }
                 }
             )
@@ -509,14 +538,16 @@ fun SaveExercise(navController: NavController,
 
         if (showDialogCancelConfirmed) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialogCancelConfirmed = false
                 },
-                text = { Text("Your $title was cancelled!") },
+                text = { Text("Your $title was cancelled!", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("OK")
+                        Text("OK", color =Color(0xFF0A361C))
                     }
                 }
             )
