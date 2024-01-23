@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
@@ -126,8 +127,8 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
         // body
         Image(
-            painter = imageUrlState.value?.let { rememberImagePainter(data = it) }
-                ?: rememberImagePainter(data = R.drawable.default_profile),
+            painter = imageUrlState.value?.let { rememberAsyncImagePainter(model = it) }
+                ?: rememberAsyncImagePainter(model = R.drawable.default_profile),
             contentScale = ContentScale.Crop,
             contentDescription = "Profile Image",
             modifier = Modifier
@@ -188,7 +189,7 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                 name?.let {
                     TextField(
                         value = it,
-                        onValueChange = { name = it },
+                        onValueChange = { name = it }, //TODO change name in database
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = Color.DarkGray,
                             unfocusedTextColor = Color.DarkGray,
