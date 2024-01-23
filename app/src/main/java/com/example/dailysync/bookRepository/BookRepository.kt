@@ -13,8 +13,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.skydoves.sandwich.ApiResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
 
 class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
 
@@ -90,9 +93,26 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     }
 
     suspend fun checkItemExists(id: String): Boolean {
-        return withContext(Dispatchers.IO) {
-            val snapshot = database.child(id).get().await()
-            return@withContext snapshot.exists()
+        return suspendCancellableCoroutine { continuation ->
+            val databaseReference = database.child(id)
+
+            val eventListener = object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val exists = dataSnapshot.exists()
+                    continuation.resume(exists)
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    continuation.resume(false)
+                }
+            }
+
+            databaseReference.addListenerForSingleValueEvent(eventListener)
+
+            // Cancellation handling
+            continuation.invokeOnCancellation {
+                databaseReference.removeEventListener(eventListener)
+            }
         }
     }
 
@@ -130,5 +150,20 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
         }
 
         return sessions
+    }
+
+    suspend fun deleteReadingSessionsByItemId(itemId: String) {
+        userId?.let { uid ->
+            val dataSnapshot = database.child("readingSessions")
+                .orderByChild("itemId")
+                .equalTo(itemId)
+                .get()
+                .await()
+
+            dataSnapshot.children.forEach { snapshot ->
+                // Delete each reading session
+                snapshot.ref.removeValue().await()
+            }
+        }
     }
 }

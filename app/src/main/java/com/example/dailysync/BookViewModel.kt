@@ -119,6 +119,7 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
             showRemovingDialog = true
             delay(500)
             repository.deleteItemById(id)
+            repository.deleteReadingSessionsByItemId(id)
             showRemovingDialog = false
             // Navigation logic if needed
             navController.popBackStack()
@@ -140,6 +141,7 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
     fun registerReadingSession(item: Items, currentPage: Int, durationMinutes: Int, date: Long) {
         val readingSession = ReadingSession(item.id, currentPage, durationMinutes, date)
         insertReadingSession(item, readingSession)
+        updateStatus(item)
     }
 
     private fun insertReadingSession(item: Items,readingSession: ReadingSession) {

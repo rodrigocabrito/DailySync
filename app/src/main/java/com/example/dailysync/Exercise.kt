@@ -9,9 +9,8 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.IgnoreExtraProperties
 import com.google.firebase.database.PropertyName
 import com.google.firebase.database.ValueEventListener
-import java.io.Serializable
-import java.time.Instant
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 @IgnoreExtraProperties
 @Parcelize

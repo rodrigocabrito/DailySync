@@ -24,9 +24,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -37,26 +42,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import coil.compose.rememberImagePainter
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun Profile(navController: NavController, auth: FirebaseAuth) {
 
@@ -65,6 +76,9 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
     val storage = FirebaseStorage.getInstance()
     val storageRef: StorageReference = storage.reference.child("profile_images")
+
+    val database: FirebaseDatabase = FirebaseDatabase.getInstance()
+    val usersRef: DatabaseReference = database.getReference("users")
 
 
     val imageUrlState = remember { mutableStateOf<String?>(null) }
@@ -111,12 +125,11 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
             Spacer(modifier = Modifier.weight(1f))
 
             Icon(
-                painter = painterResource(id = R.drawable.notification_icon),  // Replace R.drawable.ic_notification with your actual notification icon
+                painter = painterResource(id = R.drawable.notification_icon),
                 contentDescription = "Notification Icon",
                 modifier = Modifier
                     .size(24.dp)
                     .clickable {
-                        // Handle click on the notification icon
                         // TODO: Add your notification icon click logic
                     }
             )
@@ -126,8 +139,8 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
 
         // body
         Image(
-            painter = imageUrlState.value?.let { rememberImagePainter(data = it) }
-                ?: rememberImagePainter(data = R.drawable.default_profile),
+            painter = imageUrlState.value?.let { rememberAsyncImagePainter(model = it) }
+                ?: rememberAsyncImagePainter(model = R.drawable.default_profile),
             contentScale = ContentScale.Crop,
             contentDescription = "Profile Image",
             modifier = Modifier
@@ -183,54 +196,88 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-            )
-            {
+                    .fillMaxWidth()
+            ) {
                 name?.let {
+                    var newName by remember { mutableStateOf(it) }
+
+                    // TextField
                     TextField(
-                        value = it,
-                        onValueChange = { name = it },
+                        value = newName,
+                        onValueChange = { newName = it },
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = Color.DarkGray,
                             unfocusedTextColor = Color.DarkGray,
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White,
-                            cursorColor = Color(0xFF0455BF),
                             focusedIndicatorColor = Color(0xFF0455BF),
-                            unfocusedIndicatorColor = Color(0xFF0455BF)
+                            unfocusedIndicatorColor = Color(0xFF0455BF),
+                            cursorColor = Color(0xFF0455BF),
+                            focusedLabelColor = Color.DarkGray,
+                            unfocusedLabelColor = Color.DarkGray,
+                            focusedContainerColor = Color(Color(0xFFBAE8EE).toArgb()),
+                            unfocusedContainerColor = Color(Color(0xFFBAE8EE).toArgb())
                         ),
-                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
-                    )
-                }
-                Spacer(modifier = Modifier.width(5.dp))
-                Icon(
-                    painter = painterResource(id = R.drawable.complete_icon),
-                    contentDescription = "Edit Icon",
-                    tint = Color.Unspecified,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterVertically)
-                        .clickable {
-                            auth.currentUser
-                                ?.updateProfile(
-                                    UserProfileChangeRequest
-                                        .Builder()
-                                        .setDisplayName(name)
-                                        .build()
+                        textStyle = LocalTextStyle.current.copy(fontSize = 16.sp),
+                        keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                // Update the name in the Realtime Database when Done action is performed
+                                auth.currentUser?.uid?.let { userId ->
+                                    usersRef.child(userId).child("name").setValue(newName)
+                                }
 
-                                )
-                                ?.addOnCompleteListener { updateTask ->
+                                // Dismiss the keyboard and update the profile
+                                auth.currentUser?.updateProfile(
+                                    UserProfileChangeRequest.Builder().setDisplayName(newName).build()
+                                )?.addOnCompleteListener { updateTask ->
                                     if (updateTask.isSuccessful) {
                                         showNameChange = false
                                     } else {
-                                        // Name Update failed
                                         // Handle the error, log, or notify the user
                                     }
                                 }
+                            }
+                        ),
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
 
-                        }
-                )
+                    Spacer(modifier = Modifier.width((-2).dp))
+
+                    // Confirm Icon Button
+                    Icon(
+                        painter = painterResource(id = R.drawable.complete_icon),
+                        contentDescription = "Confirm Icon",
+                        tint = Color(0xFF0455BF),
+                        modifier = Modifier
+                            .size(24.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                // Similar logic as onDone to update the name
+                                auth.currentUser?.uid?.let { userId ->
+                                    usersRef.child(userId).child("name").setValue(newName)
+                                }
+
+                                auth.currentUser?.updateProfile(
+                                    UserProfileChangeRequest.Builder().setDisplayName(newName).build()
+                                )?.addOnCompleteListener { updateTask ->
+                                    if (updateTask.isSuccessful) {
+                                        showNameChange = false
+                                    } else {
+                                        // Handle the error, log, or notify the user
+                                    }
+                                }
+                            }
+                    )
+                }
             }
         }
+
+
+
+
 
         //TODO Add change email and password
 
@@ -438,129 +485,66 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
         }
 
 
-
         Spacer(modifier = Modifier.weight(1f))
-        // footer
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
+        NavigationBar(containerColor = Color(0xFFBCD7E4)
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.home_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
-                }
-            }
+                        .size(45.dp)
+                ) },
+                onClick = {navController.navigate(Screens.Home.route)},
+                selected = false
+            )
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.report_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
+                    modifier = Modifier
+                        .size(40.dp)
+                ) },
+                onClick = {navController.navigate(Screens.Reports.route)},
+                selected = false
+            )
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.community_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
+                    modifier = Modifier
+                        .size(55.dp)
+                ) },
+                onClick = {navController.navigate(Screens.Community.route)},
+                selected = false
+            )
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.profile_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
+                    modifier = Modifier
+                        .size(40.dp)
+                ) },
+                onClick = {},
+                selected = true
+            )
+
         }
     }
 }

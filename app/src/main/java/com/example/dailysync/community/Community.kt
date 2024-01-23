@@ -27,6 +27,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -138,127 +141,65 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
 
 
         // footer
-        Spacer(modifier = Modifier.weight(1f))
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
+        NavigationBar(containerColor = Color(0xFFBCD7E4)
         ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.home_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
-                }
-            }
+                        .size(45.dp)
+                ) },
+                onClick = {navController.navigate(Screens.Home.route)},
+                selected = false
+            )
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.report_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
+                    modifier = Modifier
+                        .size(40.dp)
+                ) },
+                onClick = {navController.navigate(Screens.Reports.route)},
+                selected = false
+            )
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.community_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
+                    modifier = Modifier
+                        .size(55.dp)
+                ) },
+                onClick = {},
+                selected = true
+            )
+            NavigationBarItem(
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color(0xFF68ADD1)
+                ),
+                icon = { Icon(
+                    painter = painterResource(id = R.drawable.profile_icon),
+                    contentDescription = null,
+                    tint = Color(0xFF021D3F),
+                    modifier = Modifier
+                        .size(40.dp)
+                ) },
+                onClick = {navController.navigate(Screens.Profile.route)},
+                selected = false
+            )
+
         }
     }
 }

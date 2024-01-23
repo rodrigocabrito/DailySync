@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,12 +21,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -47,7 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -55,13 +54,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
-import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -117,14 +116,9 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
                     location?.let {
                         currentLatLng = LatLng(it.latitude, it.longitude)
 
-                        // Log the current coordinates
-                        Log.e("Location", "Latitude: ${it.latitude}, Longitude: ${it.longitude}")
-
                         mapView?.getMapAsync { googleMap ->
-                            // Move camera to the current location
-                            googleMap.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
-                            )
+
+                            moveToCurrentLocation(googleMap, currentLatLng)
 
                             // Enable blue dot on "My location"
                             googleMap.isMyLocationEnabled = true
@@ -140,6 +134,12 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
 
                             // Add the marker to the map
                             googleMap.addMarker(markerOptions)
+
+                            googleMap.setOnMyLocationButtonClickListener {
+                                // Move the camera to the current location when the button is clicked
+                                moveToCurrentLocation(googleMap, currentLatLng)
+                                true
+                            }
                         }
                     }
                 }
@@ -168,6 +168,8 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
                                 .title("My Location")
 
                             googleMap.addMarker(markerOptions)
+
+
                         }
                     }
                 }
@@ -206,30 +208,26 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 16.dp, top = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(8.dp) // Adjust the spacing as needed
         ) {
             IconButton(
                 onClick = {
                     navController.popBackStack()
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xFF0A361C)
                 )
             ) { Icon(Icons.Default.ArrowBack, "Back") }
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    navController.navigate(Screens.Home.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xFF0A361C)
                 )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.Home, "Home")
             }
         }
 
@@ -238,8 +236,6 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
         Text(text = title, fontSize = 30.sp, color = Color(0xFF0A361C))
 
         Spacer(modifier = Modifier.height(26.dp))
-
-        // TODO GPS IMAGE STARTING AT CURRENT LOCATION
 
         // Initialize Google Map when the view is first composed
         AndroidView(
@@ -283,28 +279,34 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
             )
         }
 
-        // Show the AlertDialog if showDialog is true
         if (showDialog) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
                 onDismissRequest = {
-                    // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialog = false
                 },
-                text = { Text("Are you ready to start your ${title}?") },
+                text = { Text("Are you ready to start your ${title}?", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Yes")
+                        Text("Yes", color = Color(0xFF0A361C))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = cancelAction) {
-                        Text("Cancel")
+                        Text("Cancel", color = Color(0xFF0A361C))
                     }
                 }
             )
         }
 
     }
+}
+
+private fun moveToCurrentLocation(googleMap: GoogleMap, currentLatLng: LatLng) {
+    googleMap.animateCamera(
+        CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+    )
 }
 
 fun getGreenCircleBitmap(): Bitmap {

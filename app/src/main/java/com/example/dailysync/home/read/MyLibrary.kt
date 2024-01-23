@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -102,25 +103,47 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
         Scaffold(
             topBar = {
                 Column (modifier = Modifier.background(Color.White) ){
-                    Row{
-                        IconButton(
-                            onClick = {
-                                navController.popBackStack()
-                                bookViewModel.clearLoadItemsList()
-                            },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = Color(0xFF362305)
-                            )
-                        ) { Icon(Icons.Default.ArrowBack, "Back") }
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp, vertical = 15.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    navController.popBackStack()
+                                    bookViewModel.clearLoadItemsList()
+                                },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = Color(0xFF362305)
+                                )
+                            ) {
+                                Icon(Icons.Default.ArrowBack, "Back")
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Screens.Home.route)
+                                },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    contentColor = Color(0xFF362305)
+                                )
+                            ) {
+                                Icon(Icons.Default.Home, "Home")
+                            }
+                        }
+
                         Text(
                             text = "My Library",
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
+                                .align(Alignment.Center),
                             textAlign = TextAlign.Center,
                             style = TextStyle(
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 20.sp,
+                                fontSize = 25.sp,
                                 color = Color(0xFF362305)
                             )
                         )
@@ -146,7 +169,7 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
             content = {
 
 
-                Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(top =  70.dp)){// background color do corpo sem nada
+                Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(top =  90.dp)){// background color do corpo sem nada
                     // Content of the composable
                     Row (modifier = Modifier.padding(start = 15.dp, end = 15.dp)){
                         createCategoryButton("All", selectedCategory) {

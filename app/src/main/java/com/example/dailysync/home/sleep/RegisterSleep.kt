@@ -20,10 +20,14 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -46,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.Sleep
+import com.example.dailysync.home.read.RegisterReadingSessionPopup
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
@@ -133,28 +138,44 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                     navController.popBackStack()
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xF1301E58)
                 )
             ) { Icon(Icons.Default.ArrowBack, "Back") }
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    navController.navigate(Screens.Home.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xF1301E58)
                 )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp)
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            FloatingActionButton(
+                modifier = Modifier
+                    .size(60.dp)
+                    .border(2.dp, Color(0xF14B3283), RoundedCornerShape(15.dp)),
+                onClick = {
+                    navController.navigate(Screens.DefineSleepSchedule.route)
+                },
+                containerColor = Color(0xFFCCBCEE),
+                contentColor = Color(0xF1301E58),
+            ) {
+                Icon(
+                    modifier = Modifier.size(25.dp),
+                    painter = painterResource(id = R.drawable.schedule),
+                    contentDescription = "Start or register reading session",
                 )
+
             }
         }
 
+        Spacer(modifier = Modifier.height(30.dp))
         // body
-        Text(text = "Register Sleep", fontSize = 20.sp)
+        Text(text = "Register Sleep", fontSize = 30.sp, color = Color(0xF1301E58))
 
         Spacer(modifier = Modifier.height(26.dp))
 
@@ -168,14 +189,14 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                     Color(android.graphics.Color.parseColor("#CCBCEE")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
         ) {
             Text(
                 "\uD83D\uDECF Bed Time",
+                color = Color(0xF1301E58),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .height(35.dp)
-
                     .wrapContentSize(Alignment.Center)
             )
         }
@@ -184,7 +205,7 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .background(Color.Transparent)
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
         ){
             //hours
             Column (
@@ -244,7 +265,7 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                 }
             }
 
-            Divider(color = Color(0xFFA17FEB), modifier = Modifier.width(1.dp).height(168.dp))
+            Divider(color = Color(0xF14B3283), modifier = Modifier.width(2.dp).height(168.dp))
 
             // minutes
             Column (
@@ -316,14 +337,14 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                     Color(android.graphics.Color.parseColor("#CCBCEE")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
         ) {
             Text(
                 "⏰ Awake Time",
+                color = Color(0xF1301E58),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .height(35.dp)
-
                     .wrapContentSize(Alignment.Center)
             )
         }
@@ -334,7 +355,7 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                 .fillMaxWidth()
                 .padding(16.dp)
                 .background(Color.Transparent)
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
         ){
             //hours
             Column (
@@ -395,7 +416,7 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                 }
             }
 
-            Divider(color = Color(0xFFA17FEB), modifier = Modifier.width(1.dp).height(168.dp))
+            Divider(color = Color(0xF14B3283), modifier = Modifier.width(2.dp).height(168.dp))
 
             // minutes
             Column (
@@ -468,11 +489,12 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
                 .clickable {
                     showDialog = true
                 }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
         ) {
             Text(
                 "Save",
                 fontSize = 20.sp,
+                color = Color(0xF1301E58),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxHeight()
@@ -480,22 +502,25 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
             )
         }
 
+
         // Show the AlertDialog Pop Up
         if (showDialog) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFCCBCEE),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialog = false
                 },
-                text = { Text("Do you want to save this Sleep?") },
+                text = { Text("Do you want to save this Sleep?",color = Color(0xF1301E58)) },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Yes")
+                        Text("Yes",color = Color(0xF1301E58))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = cancelAction) {
-                        Text("Cancel")
+                        Text("Cancel",color = Color(0xF1301E58))
                     }
                 }
             )
@@ -504,143 +529,22 @@ fun RegisterSleep(navController: NavController, auth: FirebaseAuth) {
         // Show the AlertDialog Pop Up
         if (showDialogSave) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFCCBCEE),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialogSave = false
                 },
-                text = { Text("Your sleep was saved successfully!") },
+                text = { Text("Your sleep was saved successfully!",color = Color(0xF1301E58)) },
                 confirmButton = {
                     TextButton(onClick = confirmActionSaved) {
-                        Text("OK")
+                        Text("OK",color = Color(0xF1301E58))
                     }
                 }
             )
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-
-        // footer
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
-                }
-            }
-        }
     }
 }
 

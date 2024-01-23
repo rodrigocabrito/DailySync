@@ -18,9 +18,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -78,24 +80,47 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    navController.popBackStack()
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xF1301E58)
+                )
+            ) { Icon(Icons.Default.ArrowBack, "Back") }
+
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xF1301E58)
                 )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp)
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            FloatingActionButton(
+                modifier = Modifier
+                    .size(60.dp)
+                    .border(2.dp, Color(0xF14B3283), RoundedCornerShape(15.dp)),
+                onClick = {
+                    navController.navigate(Screens.RegisterSleep.route)
+                },
+                containerColor = Color(0xFFCCBCEE),
+                contentColor = Color(0xF1301E58),
+            ) {
+                Icon(
+                    modifier = Modifier.size(35.dp),
+                    painter = painterResource(id = R.drawable.register_sleep),
+                    contentDescription = "Start or register reading session",
                 )
             }
         }
 
         // body
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        Text(text = "Define Sleep Schedule", fontSize = 20.sp)
+        Text(text = "Define Sleep Schedule", fontSize = 30.sp, color = Color(0xF1301E58))
 
         Spacer(modifier = Modifier.height(90.dp))
 
@@ -108,7 +133,7 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                     Color(android.graphics.Color.parseColor("#F3F3F3")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp)),
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(15.dp)),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -183,7 +208,7 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                     Color(android.graphics.Color.parseColor("#F3F3F3")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp)),
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(15.dp)),
         ) {
             Column(
                 modifier = Modifier
@@ -213,7 +238,7 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
 
                 Spacer(modifier = Modifier.height(5.dp))
 
-                Divider(color = Color(0xFFDDDDDD), thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                Divider(color = Color(0xFFDDDDDD), thickness = 2.dp, modifier = Modifier.fillMaxWidth())
 
                 TextButton(onClick = {
                     navController.navigate(Screens.EditSleepSchedule.route
@@ -229,131 +254,6 @@ fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTim
                         textAlign = TextAlign.Start,
                         color = Color(0xFF5931B0)
                     )
-                }
-            }
-        }
-        
-        Spacer(modifier = Modifier.height(220.dp))
-
-        // footer
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
                 }
             }
         }

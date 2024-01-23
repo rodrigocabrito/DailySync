@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -21,12 +20,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -62,13 +60,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import androidx.navigation.NavController
 import com.example.dailysync.ExerciseViewModel
-import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
@@ -90,6 +88,9 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
     var elapsedTime by remember { mutableLongStateOf(0L) }
     var isChronometerRunning by remember { mutableStateOf(true) }
     var averagePace by remember { mutableFloatStateOf(0.0f) }
+
+    var showDialogHomeCancel by remember { mutableStateOf(false) }
+    var showDialogBackCancel by remember { mutableStateOf(false) }
 
     var polylineOptions = remember {
         PolylineOptions()
@@ -148,7 +149,10 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
     // Press Cancel (Pop Up)
     val cancelAction: () -> Unit = {
         showDialog = false
+        showDialogHomeCancel = false
+        showDialogBackCancel = false
     }
+
 
     DisposableEffect(context) {
         // Request location permission if not granted
@@ -168,9 +172,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
                         mapView?.getMapAsync { googleMap ->
                             // Move camera to the current location
-                            googleMap.moveCamera(
-                                CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
-                            )
+                            moveToCurrentLocation(googleMap, currentLatLng)
 
                             // Enable blue dot on "My location"
                             googleMap.isMyLocationEnabled = true
@@ -199,6 +201,12 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                             }
 
                             lastLocation = it
+
+                            googleMap.setOnMyLocationButtonClickListener {
+                                // Move the camera to the current location when the button is clicked
+                                moveToCurrentLocation(googleMap, currentLatLng)
+                                true
+                            }
                         }
                     }
                 }
@@ -245,6 +253,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
                             lastLocation = location
 
+                            // Move the camera to the current location when the location is updated
+                            moveToCurrentLocation(googleMap, currentLatLng)
                         }
                     }
                 }
@@ -283,30 +293,26 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 16.dp, top = 10.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(8.dp) // Adjust the spacing as needed
         ) {
             IconButton(
                 onClick = {
-                    navController.popBackStack()
+                    showDialogBackCancel = true
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xFF0A361C)
                 )
             ) { Icon(Icons.Default.ArrowBack, "Back") }
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    showDialogHomeCancel = true
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xFF0A361C)
                 )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.Home, "Home")
             }
         }
 
@@ -430,11 +436,13 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
         // Show the AlertDialog Pop Up
         if (showDialog) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialog = false
                 },
-                text = { Text("Do you want to finish your $title?") },
+                text = { Text("Do you want to finish your $title?", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
                 confirmButton = {
                     TextButton(onClick = {
                         captureMapSnapshot(mapView, polylineOptions) { capturedBitmap ->
@@ -452,12 +460,52 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                                 .replace("{distance}", "$distance")
                         )
                     }) {
-                        Text("Yes")
+                        Text("Yes", color = Color(0xFF0A361C))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = cancelAction) {
-                        Text("Cancel")
+                        Text("Cancel", color = Color(0xFF0A361C))
+                    }
+                }
+            )
+        }
+        if (showDialogHomeCancel) {
+            AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
+                onDismissRequest = {
+                    showDialogHomeCancel = false
+                },
+                text = { Text("Are you sure you want to cancel your $title?", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
+                confirmButton = {
+                    TextButton(onClick = { navController.navigate(Screens.Home.route) }) {
+                        Text("Yes", color =Color(0xFF0A361C))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = cancelAction) {
+                        Text("No", color =Color(0xFF0A361C))
+                    }
+                }
+            )
+        }
+        if (showDialogBackCancel) {
+            AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFA2F0C1),
+                onDismissRequest = {
+                    showDialogBackCancel = false
+                },
+                text = { Text("Are you sure you want to cancel your $title?", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
+                confirmButton = {
+                    TextButton(onClick = { navController.popBackStack() }) {
+                        Text("Yes", color =Color(0xFF0A361C))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = cancelAction) {
+                        Text("No", color =Color(0xFF0A361C))
                     }
                 }
             )
@@ -522,6 +570,12 @@ private fun captureMapSnapshot(
     }
 }
 
+private fun moveToCurrentLocation(googleMap: GoogleMap, currentLatLng: LatLng) {
+    googleMap.animateCamera(
+        CameraUpdateFactory.newLatLngZoom(currentLatLng, 15f)
+    )
+}
+
 private fun formatTime(elapsedTime: Long): String {
     val totalSeconds = elapsedTime / 1000
     val hours = totalSeconds / 3600
@@ -532,13 +586,17 @@ private fun formatTime(elapsedTime: Long): String {
 }
 
 // Function to calculate average pace
-private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float { //TODO min/km instead of km/min
+private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float {
     // Convert elapsed time to minutes
     val elapsedMinutes = elapsedTime / 1000f / 60f
-    // Calculate average pace in km/min
-    return if (elapsedMinutes > 0) distance / elapsedMinutes else 0.0f
+    // Calculate average pace in min/km
+    return if (elapsedMinutes > 0) elapsedMinutes / distance else 0.0f
 }
 
 private fun formatAveragePace(averagePace: Float): String {
-    return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
+    return if (averagePace < 60) {
+        String.format(Locale.getDefault(), "%.1f min/km", averagePace)
+    } else {
+        "-:-- min/km"
+    }
 }
