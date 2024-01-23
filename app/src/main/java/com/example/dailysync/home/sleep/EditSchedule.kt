@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
@@ -182,31 +183,28 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     navController.popBackStack()
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xF1301E58)
                 )
             ) { Icon(Icons.Default.ArrowBack, "Back") }
-
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    navController.navigate(Screens.Home.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color.Black
+                    contentColor = Color(0xF1301E58)
                 )
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.notification_icon),
-                    contentDescription = "Notifications",
-                    modifier = Modifier.size(24.dp)
-                )
+                Icon(Icons.Default.Home, "Home")
             }
+
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         // body
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(30.dp))
 
-        Text(text = "Edit Sleep Schedule", fontSize = 20.sp)
+        Text(text = "Edit Sleep Schedule", fontSize = 30.sp, color = Color(0xF1301E58))
 
         Spacer(modifier = Modifier.height(36.dp))
 
@@ -220,10 +218,11 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Color(android.graphics.Color.parseColor("#CCBCEE")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(8.dp)),
         ) {
             Text(
                 "\uD83D\uDECF Bed Time",
+                color = Color(0xF1301E58),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .height(35.dp)
@@ -236,7 +235,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 .fillMaxWidth()
                 .padding(16.dp)
                 .background(Color.Transparent)
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(15.dp)),
         ){
             //hours
             Column (
@@ -298,7 +297,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 }
             }
 
-            Divider(color = Color(0xFFA17FEB), modifier = Modifier.width(1.dp).height(168.dp))
+            Divider(color = Color(0xF14B3283), modifier = Modifier.width(2.dp).height(168.dp))
 
             // minutes
             Column (
@@ -370,10 +369,11 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                     Color(android.graphics.Color.parseColor("#CCBCEE")),
                     shape = RoundedCornerShape(8.dp)
                 )
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(8.dp)),
         ) {
             Text(
                 "⏰ Awake Time",
+                color = Color(0xF1301E58),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .height(35.dp)
@@ -388,7 +388,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 .fillMaxWidth()
                 .padding(16.dp)
                 .background(Color.Transparent)
-                .border(1.dp, Color(0xFFA17FEB), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(15.dp)),
         ){
             //hours
             Column (
@@ -449,7 +449,7 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 }
             }
 
-            Divider(color = Color(0xFFA17FEB), modifier = Modifier.width(1.dp).height(168.dp))
+            Divider(color = Color(0xF14B3283), modifier = Modifier.width(2.dp).height(168.dp))
 
             // minutes
             Column (
@@ -522,10 +522,11 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
                 .clickable {
                     showDialog = true
                 }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xF14B3283), RoundedCornerShape(8.dp)),
         ) {
             Text(
                 "Save",
+                color = Color(0xF1301E58),
                 fontSize = 20.sp,
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -537,19 +538,21 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
         // Show the AlertDialog Pop Up
         if (showDialog) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFCCBCEE),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialog = false
                 },
-                text = { Text("Do you want to save this sleep schedule?") },
+                text = { Text("Do you want to save this sleep schedule?",color = Color(0xF1301E58)) },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("Yes")
+                        Text("Yes",color = Color(0xF1301E58))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = cancelAction) {
-                        Text("Cancel")
+                        Text("Cancel",color = Color(0xF1301E58))
                     }
                 }
             )
@@ -558,14 +561,16 @@ fun EditSleepSchedule(navController: NavController, auth: FirebaseAuth, targetSh
         // Show the AlertDialog Pop Up
         if (showDialogSave) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFCCBCEE),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showDialogSave = false
                 },
-                text = { Text("Your sleep schedule was saved successfully!") },
+                text = { Text("Your sleep schedule was saved successfully!",color = Color(0xF1301E58)) },
                 confirmButton = {
                     TextButton(onClick = confirmActionSaved) {
-                        Text("OK")
+                        Text("OK",color = Color(0xF1301E58))
                     }
                 }
             )

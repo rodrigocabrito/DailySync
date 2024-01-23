@@ -586,13 +586,17 @@ private fun formatTime(elapsedTime: Long): String {
 }
 
 // Function to calculate average pace
-private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float { //TODO min/km instead of km/min
+private fun calculateAveragePace(distance: Float, elapsedTime: Long): Float {
     // Convert elapsed time to minutes
     val elapsedMinutes = elapsedTime / 1000f / 60f
-    // Calculate average pace in km/min
-    return if (elapsedMinutes > 0) distance / elapsedMinutes else 0.0f
+    // Calculate average pace in min/km
+    return if (elapsedMinutes > 0) elapsedMinutes / distance else 0.0f
 }
 
 private fun formatAveragePace(averagePace: Float): String {
-    return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
+    return if (averagePace < 60) {
+        String.format(Locale.getDefault(), "%.1f min/km", averagePace)
+    } else {
+        "-:-- min/km"
+    }
 }

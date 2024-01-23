@@ -302,7 +302,6 @@ fun SaveExercise(navController: NavController,
                     .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
                 contentAlignment = Alignment.Center
             ) {
-                // TODO: FORMAT DISTANCE
                 Column (
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(start = 8.dp)
