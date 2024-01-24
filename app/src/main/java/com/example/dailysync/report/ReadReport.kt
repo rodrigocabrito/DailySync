@@ -282,7 +282,7 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                 modifier = Modifier
                     .height(150.dp)
                     .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp)),
-                barChartData = barChart(
+                barChartData = barChartRead(
                     selectedPeriod,
                     auth
                 )
@@ -908,7 +908,7 @@ private fun ShowReadList(auth: FirebaseAuth) {
 
 @RequiresApi(34)
 @Composable
-private fun barChart(
+fun barChartRead(
     selectedPeriod: Int,
     auth: FirebaseAuth
 ): BarChartData {

@@ -305,7 +305,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
                 modifier = Modifier
                     .height(150.dp)
                     .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
-                barChartData = barChart(
+                barChartData = barChartExercise(
                     selectedExercise,
                     selectedPeriod,
                     auth
@@ -1002,7 +1002,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
 
 @RequiresApi(34)
 @Composable
-private fun barChart(
+fun barChartExercise(
     selectedExercise: Int,
     selectedPeriod: Int,
     auth: FirebaseAuth

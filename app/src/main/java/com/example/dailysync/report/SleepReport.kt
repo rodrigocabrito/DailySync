@@ -256,7 +256,7 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
                 modifier = Modifier
                     .height(150.dp)
                     .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
-                barChartData = barChart(
+                barChartData = barChartSleep(
                     selectedPeriod,
                     auth
                 )
@@ -683,7 +683,7 @@ private fun ShowSleepList(auth: FirebaseAuth) {
 
 @RequiresApi(34)
 @Composable
-private fun barChart(
+fun barChartSleep(
     selectedPeriod: Int,
     auth: FirebaseAuth
 ):BarChartData {
