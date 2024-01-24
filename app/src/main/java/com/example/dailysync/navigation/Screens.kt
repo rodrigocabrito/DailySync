@@ -34,8 +34,8 @@ sealed class Screens(val route: String) {
 
     // Report
     object ExerciseReport : Screens("exercise_report/{selectedExercise}/{selectedPeriod}")
-    object SleepReport : Screens("sleep_report")
-    object ReadReport : Screens("read_report")
+    object SleepReport : Screens("sleep_report/{selectedPeriod}")
+    object ReadReport : Screens("read_report/{selectedPeriod}")
 
     // Community
     object SelectToShare : Screens("select_to_share")

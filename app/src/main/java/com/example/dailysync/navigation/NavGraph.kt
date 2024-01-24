@@ -184,11 +184,17 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
                 ExerciseReport(navController = navController, selectedExercise, selectedPeriod, auth = auth)
             }
         }
-        composable(Screens.SleepReport.route){
-            SleepReport(navController = navController, auth = auth)
+        composable(Screens.SleepReport.route + "?selectedPeriod={selectedPeriod}"){navBackStack ->
+            val selectedPeriod: Int = navBackStack.arguments?.getString("selectedPeriod")?.toIntOrNull() ?: 1
+            if (Build.VERSION.SDK_INT >= 34) {
+                SleepReport(navController = navController, selectedPeriod, auth = auth)
+            }
         }
-        composable(Screens.ReadReport.route){
-            ReadReport(navController = navController, auth = auth)
+        composable(Screens.ReadReport.route + "?selectedPeriod={selectedPeriod}"){navBackStack ->
+            val selectedPeriod: Int = navBackStack.arguments?.getString("selectedPeriod")?.toIntOrNull() ?: 1
+            if (Build.VERSION.SDK_INT >= 34) {
+                ReadReport(navController = navController, selectedPeriod, auth = auth)
+            }
         }
 
         // ##################################################################################################################################################################################
