@@ -675,7 +675,8 @@ private fun loadTargetAverage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFFDFC295), shape = RoundedCornerShape(17.dp))
-                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(17.dp))
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(17.dp)),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "Define your $period goal",
@@ -684,7 +685,7 @@ private fun loadTargetAverage(
                         .padding(start = 20.dp, top = 14.dp)
                 )
 
-                Spacer(modifier = Modifier.width(135.dp))
+
 
                 TextButton(
                     onClick = {

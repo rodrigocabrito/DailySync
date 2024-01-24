@@ -712,7 +712,8 @@ fun loadGoalAverage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFFA2F0C1), shape = RoundedCornerShape(17.dp))
-                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(17.dp))
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(17.dp)),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
                     text = "Define your $period goal",
@@ -721,7 +722,7 @@ fun loadGoalAverage(
                         .padding(start = 20.dp, top = 14.dp)
                 )
 
-                Spacer(modifier = Modifier.width(135.dp))
+
 
                 TextButton(
                     onClick = {
