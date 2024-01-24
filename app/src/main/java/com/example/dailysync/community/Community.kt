@@ -108,45 +108,28 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
         Text(text = "Community")
 
         Spacer(modifier = Modifier.height(20.dp))
+        
+        Box(modifier = Modifier.fillMaxSize()) {
+            //Show Community Posts
+            CommunityPosts()
 
-        //Show Community Posts
-        CommunityPosts()
-
-        //Button Share Your Own
-        /*Box(
-            modifier = Modifier
-                .width(300.dp)
-                .height(50.dp)
-                .padding(16.dp)
-                .background(
-                    Color(android.graphics.Color.parseColor("#A2D6F0")),
-                    shape = RoundedCornerShape(8.dp)
+            //Button Share Your Own
+            ExtendedFloatingActionButton(
+                onClick = { navController.navigate(Screens.SelectToShare.route) },
+                icon = { Icon(
+                    painter =painterResource(id = R.drawable.share_icon
+                    ),
+                    "share icon",
+                    modifier = Modifier
+                        .size(40.dp)
                 )
-                .clickable {
-                    navController.navigate(Screens.SelectToShare.route)
-                }
-                .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
-        ) {
-            Text(
-                "Share Your Own",
-                fontSize = 20.sp,
+                },
+                text = { Text(text = "Share Your Own") },
                 modifier = Modifier
-                    .align(Alignment.Center)
-                    .fillMaxHeight()
-                    .wrapContentSize(Alignment.Center)
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
             )
-        }*/
-        /*/ExtendedFloatingActionButton(
-            onClick = { navController.navigate(Screens.SelectToShare.route) },
-            icon = { Icon(
-                modifier = Modifier.size(35.dp),
-                painterResource(id = R.drawable.share_icon
-                ), "share icon") },
-            text = { Text(text = "Share Your Own") },
-        )*/
-
-
-
+        }
 
         // footer
         NavigationBar(containerColor = Color(0xFFBCD7E4)
