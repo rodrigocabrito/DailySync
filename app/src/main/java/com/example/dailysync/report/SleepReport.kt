@@ -847,7 +847,7 @@ private fun getBarChartDataUpdated(
                         point = point,
                         color = Color(0xF14B3283),
                         dataCategoryOptions = dataCategoryOptions,
-                        label = "$dayOfWeek"
+                        label = "$dayOfWeek".substring(0,3)
                     )
                 )
                 dayOfWeek = dayOfWeek.plus(1)
@@ -966,14 +966,14 @@ private fun getBarChartDataUpdated(
                 )
             }
         } else {
-            for (i in 0 until listSize) {
-                val point = Point(i.toFloat(), 0.toFloat())
+            for (index in 0 until listSize) {
+                val point = Point(index.toFloat(), 0.toFloat())
                 list.add(
                     BarData(
                         point = point,
                         color = Color(0xF14B3283),
                         dataCategoryOptions = dataCategoryOptions,
-                        label = i.toString()
+                        label = monthlyList[index]
                     )
                 )
             }
