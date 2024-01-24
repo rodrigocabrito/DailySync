@@ -1,6 +1,5 @@
 package com.example.dailysync.report
 
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +33,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +46,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -60,8 +57,6 @@ import co.yml.charts.ui.barchart.models.BarChartData
 import co.yml.charts.ui.barchart.models.BarData
 import co.yml.charts.ui.barchart.models.BarStyle
 import com.example.dailysync.R
-import com.example.dailysync.Sleep
-import com.example.dailysync.SleepTarget
 import com.example.dailysync.bookModels.ReadingSession
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
@@ -81,7 +76,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
-// TODO ALL
 
 @RequiresApi(34)
 @Composable
@@ -91,6 +85,9 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
     var reportPeriodMonthly by remember { mutableStateOf(false) }
 
     var selectedPeriod by remember { mutableIntStateOf(selectedPeriodShow) }                // 1 = Daily, 2 = Weekly, 3 = Monthly
+
+    var editGoalPopUpVisible by remember { mutableStateOf(false) }
+    var showConfirmationSavedPopUp by remember { mutableStateOf(false) }
 
     if (selectedPeriod == 1) {
         reportPeriodDaily = true
@@ -106,6 +103,41 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
         reportPeriodDaily = false
         reportPeriodWeekly = false
         reportPeriodMonthly = true
+    }
+
+    // Press OK (Pop Up)
+    val confirmEditAction: (String, String) -> Unit = { goalPath, textFieldValue ->
+        editGoalPopUpVisible = false
+        showConfirmationSavedPopUp = false
+
+        val database = Firebase.database
+        val userId = auth.currentUser?.uid
+
+        val goalToChangeRef = database.getReference("users").child(userId!!)
+
+        // Create a map with the key-value pair to update
+        val updates = hashMapOf<String, Any>(goalPath to textFieldValue.toDouble())
+
+        // Update the value in the database
+        goalToChangeRef.updateChildren(updates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    showConfirmationSavedPopUp = false
+                } else {
+                    // Handle the update failure
+                    println("Failed to update value: ${task.exception?.message}")
+                }
+            }
+    }
+
+    // Press Cancel (Pop Up)
+    val cancelEditAction: () -> Unit = {
+        editGoalPopUpVisible = false
+    }
+    // Press Yes (Pop Up)
+    val confirmEditActionYes: () -> Unit = {
+        editGoalPopUpVisible = false
+        showConfirmationSavedPopUp = true
     }
 
     var target by remember { mutableIntStateOf(0) }
@@ -232,7 +264,7 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
             Text(
                 text = "Read",
                 fontSize = 20.sp,
-                color = Color(0xFF4F1E7E),
+                color = Color(0xFF593D14),
                 fontWeight = FontWeight.Bold
             )
         }
@@ -244,12 +276,12 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
                 .height(150.dp)
-                .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
+                .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp))
         ) {
             BarChart(
                 modifier = Modifier
                     .height(150.dp)
-                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp)),
                 barChartData = barChart(
                     selectedPeriod,
                     auth
@@ -266,7 +298,81 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
         ) {
 
-            target = loadTargetAverage(selectedPeriod, navController, auth)
+            target = loadTargetAverage( {editGoalPopUpVisible = true },
+                    selectedPeriod, auth)
+        }
+
+        val period = if (reportPeriodDaily) "daily" else if (reportPeriodWeekly) "weekly" else "monthly"
+        var textFieldValue by remember { mutableStateOf("") }
+        val goalPeriod = when (selectedPeriod) {
+            1 -> "daily"
+            2 -> "weekly"
+            else -> "monthly"
+        }
+        val goalPath = goalPeriod + "ReadGoal"
+
+        if (editGoalPopUpVisible) {
+
+            textFieldValue = ""
+
+            AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(25.dp)),
+                containerColor = Color(0xFFDFC295),
+                onDismissRequest = { editGoalPopUpVisible = false },
+                title = {
+                    Text(
+                        text = "Edit your $period goal",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = Color(0xFF593D14)
+                    )
+                },
+                text = {
+                    Column {
+                        OutlinedTextField(
+                            value = textFieldValue,
+                            textStyle = TextStyle(
+                                color = Color(0xFF593D14)
+                            ),
+                            onValueChange = { textFieldValue = it },
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Number
+                            ),
+                            label = { Text("New Goal", color = Color(0xFF593D14)) }
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = { confirmEditActionYes() }
+                    ) {
+                        Text("Save",color = Color(0xFF593D14))
+                    }
+                },
+                dismissButton = {
+                    TextButton(
+                        onClick = { cancelEditAction() }
+                    ) {
+                        Text("Cancel",color = Color(0xFF593D14))
+                    }
+                }
+            )
+        }
+
+        if (showConfirmationSavedPopUp) {
+            AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(25.dp)),
+                onDismissRequest = {
+                    // Handle dialog dismiss (e.g., when tapping outside the dialog)
+                    showConfirmationSavedPopUp = false
+                },
+                text = { Text("Your goal was updated successfully!") },
+                confirmButton = {
+                    TextButton(onClick = { confirmEditAction(goalPath, textFieldValue) }) {
+                        Text("OK")
+                    }
+                }
+            )
         }
 
         val avg = getAverage(auth)
@@ -306,9 +412,9 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
             )
 
             Icon(
-                painter = painterResource(id = R.drawable.ic_error),            // TODO change icon
+                painter = painterResource(id = R.drawable.history),
                 contentDescription = null,
-                tint = Color(0xFF4F1E7E),
+                tint = Color.Unspecified,
                 modifier = Modifier
                     .size(40.dp)
                     .padding(start = 5.dp, top = 3.dp)
@@ -321,8 +427,8 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
 
 @Composable
 private fun loadTargetAverage(
+    onDismiss: () -> Unit,
     selectedPeriod: Int,                    // 1 - Daily, 2 - Weekly, 3 - Monthly
-    navController: NavController,
     auth: FirebaseAuth
 ): Int {
 
@@ -335,7 +441,6 @@ private fun loadTargetAverage(
     val goalPath = period.toLowerCase(Locale.ROOT) + "ReadGoal"
 
     var goal by remember { mutableIntStateOf(0) }
-
     var showDefineGoalPopUpVisible by remember { mutableStateOf(false) }
     var showConfirmationDefinedPopUp by remember { mutableStateOf(false) }
     var textFieldValue by remember { mutableStateOf("") }
@@ -408,14 +513,15 @@ private fun loadTargetAverage(
         textFieldValue = ""
 
         AlertDialog(
-            containerColor = Color(0xFFA2F0C1),
+            containerColor = Color(0xFFDFC295),
+            modifier = Modifier.border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(25.dp)),
             onDismissRequest = { showDefineGoalPopUpVisible = false },
             title = {
                 Text(
                     text = "Define your $period goal",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    color = Color(0xFF154E1C)
+                    color = Color(0xFF593D14)
                 )
             },
             text = {
@@ -423,13 +529,13 @@ private fun loadTargetAverage(
                     OutlinedTextField(
                         value = textFieldValue,
                         textStyle = TextStyle(
-                            color = Color(0xFF154E1C)
+                            color = Color(0xFF593D14)
                         ),
                         onValueChange = { textFieldValue = it },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number
                         ),
-                        label = { Text("New Goal", color = Color(0xFF154E1C)) }
+                        label = { Text("New Goal", color = Color(0xFF593D14)) }
                     )
                 }
             },
@@ -437,14 +543,14 @@ private fun loadTargetAverage(
                 TextButton(
                     onClick = { confirmDefineActionYes() }
                 ) {
-                    Text("Save",color = Color(0xFF154E1C))
+                    Text("Save",color = Color(0xFF593D14))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { cancelDefineAction() }
                 ) {
-                    Text("Cancel",color = Color(0xFF154E1C))
+                    Text("Cancel",color = Color(0xFF593D14))
                 }
             }
         )
@@ -452,6 +558,7 @@ private fun loadTargetAverage(
 
     if (showConfirmationDefinedPopUp) {
         AlertDialog(
+            modifier = Modifier.border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(25.dp)),
             onDismissRequest = {
                 // Handle dialog dismiss (e.g., when tapping outside the dialog)
                 showConfirmationDefinedPopUp = false
@@ -473,8 +580,8 @@ private fun loadTargetAverage(
         ) {
             Box(                                // Show/Set goal
                 modifier = Modifier
-                    .background(Color(0xFFA17FEB), shape = RoundedCornerShape(17.dp))
-                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(17.dp))
+                    .background(Color(0xFFDFC295), shape = RoundedCornerShape(17.dp))
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(17.dp))
                     .weight(1f)
                     .height(48.dp)
             ) {
@@ -499,6 +606,18 @@ private fun loadTargetAverage(
                             .padding(top = 16.dp),
                         textAlign = TextAlign.End
                     )
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.pencil_icon),
+                        contentDescription = "Edit Icon",
+                        tint = Color.Black,
+                        modifier = Modifier
+                            .size(27.dp)
+                            .padding(top = 15.dp)
+                            .clickable {
+                                onDismiss()
+                            }
+                    )
                 }
             }
 
@@ -506,8 +625,8 @@ private fun loadTargetAverage(
 
             Box(                                // Average
                 modifier = Modifier
-                    .background(Color(0xFFA17FEB), shape = RoundedCornerShape(17.dp))
-                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(17.dp))
+                    .background(Color(0xFFDFC295), shape = RoundedCornerShape(17.dp))
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(17.dp))
                     .weight(1f)
                     .height(48.dp)
             ) {
@@ -526,7 +645,7 @@ private fun loadTargetAverage(
                     Spacer(modifier = Modifier.width(30.dp))
 
                     Text(
-                        text = getAverage(auth).toString(),
+                        text = getAverage(auth).toString() + "  pages",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.ExtraBold,
                         modifier = Modifier
@@ -541,8 +660,8 @@ private fun loadTargetAverage(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFA17FEB), shape = RoundedCornerShape(17.dp))
-                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(17.dp))
+                    .background(Color(0xFFDFC295), shape = RoundedCornerShape(17.dp))
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(17.dp))
             ) {
                 Text(
                     text = "Define your $period goal",
@@ -574,7 +693,7 @@ private fun loadTargetAverage(
 @Composable
 private fun getDailyGoal(auth: FirebaseAuth): Int {
 
-    var goal = 0
+    var goal by remember { mutableIntStateOf(0)}
 
     DisposableEffect(auth) {
         val database = Firebase.database
@@ -689,10 +808,10 @@ private fun ShowReadList(auth: FirebaseAuth) {
                     .height(70.dp)
                     .padding(6.dp)
                     .background(
-                        Color(0xFFA17FEB),
+                        Color(0xFFDFC295),
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(12.dp))
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(12.dp))
                     .clickable { },
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
@@ -702,7 +821,7 @@ private fun ShowReadList(auth: FirebaseAuth) {
                         text = bookName,
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
+                            fontSize = if(bookName.length > 20) 12.sp else 15.sp
                         )
                     )
                     Text(
@@ -717,7 +836,7 @@ private fun ShowReadList(auth: FirebaseAuth) {
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "$read.pagesRead",
+                        text = "${read.pagesRead}",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -755,18 +874,20 @@ private fun ShowReadList(auth: FirebaseAuth) {
 
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     val goal = getDailyGoal(auth)
-                    val goalAchieved = read.pagesRead > goal
+                    val goalAchieved = read.pagesRead >= goal
                     if (goalAchieved) {
                         Icon(
-                            painter = painterResource(id = R.drawable.complete_icon),            // TODO change icon
+                            painter = painterResource(id = R.drawable.green_check_icon),
                             contentDescription = "targetAchievedCheck",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(20.dp)
                         )
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_error),            // TODO change icon
+                            painter = painterResource(id = R.drawable.red_x_icon),
                             contentDescription = "targetAchievedCheck",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(20.dp)
                         )
@@ -835,7 +956,7 @@ private fun barChart(
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
         .steps(barData.size - 1)
-        .backgroundColor(Color(0xFFA17FEB))
+        .backgroundColor(Color(0xFFDFC295))
         .bottomPadding(20.dp)
         .labelAndAxisLinePadding(8.dp)
         .axisLabelAngle(if (selectedPeriod == 1) 0f else 30f)
@@ -846,7 +967,7 @@ private fun barChart(
 
     val yAxisData = AxisData.Builder()
         .steps(yStepSize)
-        .backgroundColor(Color(0xFFA17FEB))
+        .backgroundColor(Color(0xFFDFC295))
         .labelAndAxisLinePadding(10.dp)
         .axisOffset(20.dp)
         .labelData { index -> (index * (maxRange / yStepSize)).toString() }
@@ -856,7 +977,7 @@ private fun barChart(
         chartData = barData,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
-        backgroundColor = Color(0xFFA17FEB),
+        backgroundColor = Color(0xFFDFC295),
         barStyle = BarStyle(
             paddingBetweenBars = if (selectedPeriod == 1) 26.dp else if (selectedPeriod == 2) 16.dp else 13.dp,
             barWidth = if (selectedPeriod == 1) 21.dp else if (selectedPeriod == 2) 16.dp else 13.dp
@@ -893,7 +1014,7 @@ private fun getBarChartDataUpdated(
                     list.add(
                         BarData(
                             point = point,
-                            color = if (control == size - 1 ) Color(0xFF4F1E7E) else Color(0xF14B3283),
+                            color = if (control == size - 1 ) Color(0xFF593D14) else Color(0xFF91641F),
                             dataCategoryOptions = dataCategoryOptions,
                             label = "$dayOfWeek".substring(0,3)
                         )
@@ -905,7 +1026,7 @@ private fun getBarChartDataUpdated(
                     list.add(
                         BarData(
                             point = point,
-                            color = Color(0xF14B3283),
+                            color = Color(0xFF91641F),
                             dataCategoryOptions = dataCategoryOptions,
                             label = "$dayOfWeek".substring(0,3)
                         )
@@ -920,7 +1041,7 @@ private fun getBarChartDataUpdated(
                 list.add(
                     BarData(
                         point = point,
-                        color = Color(0xF14B3283),
+                        color = Color(0xFF91641F),
                         dataCategoryOptions = dataCategoryOptions,
                         label = "$dayOfWeek"
                     )
@@ -958,7 +1079,7 @@ private fun getBarChartDataUpdated(
                     list.add(
                         BarData(
                             point = point,
-                            color = if (control == size - 1 ) Color(0xFF4F1E7E) else Color(0xF14B3283),
+                            color = if (control == size - 1 ) Color(0xFF593D14) else Color(0xFF91641F),
                             dataCategoryOptions = dataCategoryOptions,
                             label = "${dayAndMonth.dayOfMonth}/$month"
                         )
@@ -970,7 +1091,7 @@ private fun getBarChartDataUpdated(
                     list.add(
                         BarData(
                             point = point,
-                            color = Color(0xF14B3283),
+                            color = Color(0xFF91641F),
                             dataCategoryOptions = dataCategoryOptions,
                             label = "${dayAndMonth.dayOfMonth}/$month"
                         )
@@ -999,7 +1120,7 @@ private fun getBarChartDataUpdated(
                 list.add(
                     BarData(
                         point = point,
-                        color = Color(0xF14B3283),
+                        color = Color(0xFF91641F),
                         dataCategoryOptions = dataCategoryOptions,
                         label = "${dayAndMonth.dayOfMonth}/$month"
                     )
@@ -1031,7 +1152,7 @@ private fun getBarChartDataUpdated(
                 list.add(
                     BarData(
                         point = point,
-                        color = if (index == control) Color(0xFF4F1E7E) else Color(0xF14B3283),
+                        color = if (index == control) Color(0xFF593D14) else Color(0xFF91641F),
                         dataCategoryOptions = dataCategoryOptions,
                         label = monthlyList[index]
                     )
@@ -1043,7 +1164,7 @@ private fun getBarChartDataUpdated(
                 list.add(
                     BarData(
                         point = point,
-                        color = Color(0xF14B3283),
+                        color = Color(0xFF91641F),
                         dataCategoryOptions = dataCategoryOptions,
                         label = i.toString()
                     )
@@ -1052,24 +1173,6 @@ private fun getBarChartDataUpdated(
         }
     }
     return list
-}
-
-private fun getHourDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int): Int {
-    val totalMinutes1 = hour1 * 60 + minute1
-    val totalMinutes2 = hour2 * 60 + minute2
-
-    val differenceMinutes = (totalMinutes2 - totalMinutes1 + 24 * 60) % (24 * 60)
-
-    return differenceMinutes / 60
-}
-
-private fun getMinDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int): Int {
-    val totalMinutes1 = hour1 * 60 + minute1
-    val totalMinutes2 = hour2 * 60 + minute2
-
-    val differenceMinutes = (totalMinutes2 - totalMinutes1 + 24 * 60) % (24 * 60)
-
-    return differenceMinutes % 60
 }
 
 private fun sumTimeRead(reads: List<ReadingSession>): Double {
@@ -1188,8 +1291,6 @@ private fun sumTimeReadMonth(reads: List<ReadingSession>, monthIndex: Int): Doub
         (sleepYear == currentYear) && (sleepMonth == month)
     }
 
-    Log.e("monthSleeps", monthSleeps.toString())
-
     var timeRead = 0.0
     for (i in monthSleeps.indices) {
         timeRead += monthSleeps[i].pagesRead
@@ -1205,11 +1306,11 @@ private fun convertDate(date: Long): String {
 }
 
 private fun formatDuration(minutes: Int): String {
-    if (minutes >= 60) {
+    return if (minutes >= 60) {
         val hours = minutes / 60
         val remainingMinutes = minutes % 60
-        return String.format("%dh:%02dmin", hours, remainingMinutes)
+        String.format("%dh:%02dmin", hours, remainingMinutes)
     } else {
-        return String.format("%d min", minutes)
+        String.format("%d min", minutes)
     }
 }
