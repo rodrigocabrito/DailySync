@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -63,6 +64,19 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
 
             IconButton(
                 onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = {
                     navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
@@ -77,7 +91,7 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
             }
         }
 
-        Text(text = "Select What to Share")
+        Text(text = "Select What to Share", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -96,7 +110,7 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
                                 .replace(oldValue = "{type}", newValue = "Exercise")
                             )
                         }
-                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                        .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp))
                 ) {
                     Row(
                         modifier = Modifier
@@ -140,7 +154,7 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
                                 .replace(oldValue = "{type}", newValue = "Sleep")
                             )
                         }
-                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                        .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))
                 ) {
                     Row(
                         modifier = Modifier
@@ -184,7 +198,7 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
                                 .replace(oldValue = "{type}", newValue = "Read")
                             )
                         }
-                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp))
+                        .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp))
                 ) {
                     Row(
                         modifier = Modifier
@@ -211,130 +225,6 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
                             )
                         }
                     }
-                }
-            }
-        }
-
-        // footer
-        Spacer(modifier = Modifier.weight(1f))
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
                 }
             }
         }

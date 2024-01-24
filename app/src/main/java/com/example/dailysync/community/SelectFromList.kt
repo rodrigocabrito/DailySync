@@ -1,40 +1,30 @@
 package com.example.dailysync.community
 
-import android.content.Context
-import android.os.Debug
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableTarget
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,39 +34,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.dailysync.CommunityPost
 import com.example.dailysync.Exercise
-import com.example.dailysync.FirebaseExerciseDataManager
 import com.example.dailysync.R
 import com.example.dailysync.Sleep
 import com.example.dailysync.bookModels.ReadingSession
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.database
-import java.lang.Integer.parseInt
-import java.text.SimpleDateFormat
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale
-import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
-import com.example.dailysync.CommunityPost
-import com.google.firebase.database.ktx.database
 
 
 @Composable
@@ -101,6 +79,18 @@ fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: Strin
                     contentColor = Color.Black
                 )
             ) { Icon(Icons.Default.ArrowBack, "Back") }
+            IconButton(
+                onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
 
             IconButton(
                 onClick = {
@@ -118,149 +108,25 @@ fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: Strin
             }
         }
 
-        Text(text = type)
+        Text(text = type, fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(20.dp))
 
         // list
         if (type == "Exercise") {
-            ShowExerciseList(auth = auth)
+            ShowExerciseList(auth = auth, navController = navController)
         } else if (type == "Sleep") {
-            ShowSleepList(auth = auth)
+            ShowSleepList(auth = auth, navController = navController)
         } else if(type == "Read") {
-            ShowReadingList(auth = auth)
+            ShowReadingList(auth = auth, navController = navController)
         }
 
-
-        // footer
-        Spacer(modifier = Modifier.weight(1f))
-        Row(
-            modifier = Modifier
-                .padding(top = 10.dp)
-                .fillMaxWidth()
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Home.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.home_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(6.dp))
-                    Text( "Home")
-
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Reports.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.report_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(35.dp)
-                            .align(Alignment.CenterHorizontally)
-                            .padding(top = 10.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text( text ="Report")
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#2C8CBC")))
-                    .clickable {
-                        navController.navigate(Screens.Community.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.community_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(45.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Text( text = "Community",
-                        fontSize = 14.sp)
-                }
-            }
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(Color(android.graphics.Color.parseColor("#A2D6F0")))
-                    .clickable {
-                        navController.navigate(Screens.Profile.route)
-                    }
-                    .border(1.dp, Color.Black)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 10.dp),
-                    verticalArrangement = Arrangement.Center, // Center vertically
-                    horizontalAlignment = Alignment.CenterHorizontally // Center horizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.profile_icon),
-                        contentDescription = null,
-                        tint = Color.Black,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Text( "Profile")
-                }
-            }
-        }
     }
 }
 
 
 @Composable
-fun ShowExerciseList(auth: FirebaseAuth) {
+fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val exerciseWalkPath = database.getReference("users/$userId/Walk")
@@ -331,7 +197,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                     exerciseType = "${exerciseData[index].type}",
                     distance = "${String.format("%.2f", exerciseData[index].distance)}km",
                     time = "${ConvertMilisecond(exerciseData[index].time)}",
-                    rhythm = "${exerciseData[index].averagePace}min/Km",
+                    rhythm = "${roundToDecimalPlaces(exerciseData[index].averagePace.toString().toDouble(), 2)}min/Km",
                     bedTime = "",
                     wakeTime = "",
                     sleepTime = "",
@@ -344,6 +210,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                 communityRef.child(postId!!).setValue(communityPostData[0])
                 communityPostData = emptyList() // Reset the list
                 showDialog = false
+                navController.navigate(Screens.Community.route)
             },
             cancelAction = {
                 Log.d("Teste", "Clicou Não")
@@ -368,7 +235,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         index = exerciseData.indexOf(exercise)
                         showDialog = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                    .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
             ) {
@@ -453,7 +320,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.averagePace}min/Km",
+                        text = "${roundToDecimalPlaces(exercise.averagePace.toString().toDouble(), 2)}min/Km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -465,7 +332,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
 }
 
 @Composable
-fun ShowSleepList(auth: FirebaseAuth) {
+fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val sleepPath = database.getReference("users/$userId/Sleep")
@@ -551,6 +418,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
                 communityRef.child(postId!!).setValue(communityPostData[0])
                 communityPostData = emptyList() // Reset the list
                 showDialog = false
+                navController.navigate(Screens.Community.route)
             },
             cancelAction = {
                 Log.d("Teste", "Clicou Não")
@@ -575,7 +443,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
                         index = sleepData.indexOf(sleep)
                         showDialog = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                    .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -665,7 +533,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
 }
 
 @Composable
-fun ShowReadingList(auth: FirebaseAuth) {
+fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val readingPath = database.getReference("users/$userId/books/readingSessions")
@@ -732,7 +600,7 @@ fun ShowReadingList(auth: FirebaseAuth) {
                     bedTime = "",
                     wakeTime = "",
                     sleepTime = "",
-                    bookName = "${bookNames[readingData[index].itemId]}",
+                    bookName = "${bookNames[readingData[index].itemId]?.let { truncateString(it, 13) }}",
                     pagesRead = readingData[index].pagesRead,
                     timeSpent = "${readingData[index].durationMinutes}min"
                 )
@@ -741,6 +609,7 @@ fun ShowReadingList(auth: FirebaseAuth) {
                 communityRef.child(postId!!).setValue(communityPostData[0])
                 communityPostData = emptyList() // Reset the list
                 showDialog = false
+                navController.navigate(Screens.Community.route)
             },
             cancelAction = {
                 Log.d("Teste", "Clicou Não")
@@ -767,13 +636,13 @@ fun ShowReadingList(auth: FirebaseAuth) {
                         index = readingData.indexOf(reading)
                         showDialog = true
                     }
-                    .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                    .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp)),
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = bookName,
+                        text = "${truncateString(bookName, 13)}",
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
@@ -819,6 +688,23 @@ fun ShowReadingList(auth: FirebaseAuth) {
             }
         }
     }
+}
+
+fun truncateString(input: String, maxLength: Int): String {
+    return if (input.length <= maxLength) {
+        input
+    } else {
+        input.substring(0, maxLength - 3) + "..."
+    }
+}
+
+fun roundToDecimalPlaces(number: Double, decimalPlaces: Int): Float {
+    require(decimalPlaces >= 0) { "Decimal places must be non-negative" }
+
+    val bigDecimal = BigDecimal(number)
+        .setScale(decimalPlaces, RoundingMode.HALF_UP)
+
+    return bigDecimal.toFloat()
 }
 
 fun ConvertMilisecond(milisecond: Long): String {

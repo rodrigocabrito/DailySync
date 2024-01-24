@@ -1,10 +1,8 @@
 package com.example.dailysync.community
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,25 +14,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,20 +41,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.dailysync.CommunityPost
-import com.example.dailysync.Exercise
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.database
 import com.google.firebase.storage.storage
@@ -91,6 +79,19 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
 
             IconButton(
                 onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = {
                     navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
@@ -105,7 +106,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
             }
         }
 
-        Text(text = "Community")
+        Text(text = "Community", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(20.dp))
         
@@ -115,6 +116,8 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
 
             //Button Share Your Own
             ExtendedFloatingActionButton(
+                containerColor = Color(0xFF11435C),
+                contentColor = Color(0xFFBCD7E4),
                 onClick = { navController.navigate(Screens.SelectToShare.route) },
                 icon = { Icon(
                     painter =painterResource(id = R.drawable.share_icon
@@ -128,6 +131,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .padding(16.dp)
+                    .border(2.dp, Color(0xFFBCD7E4), RoundedCornerShape(15.dp))
             )
         }
 
@@ -229,7 +233,7 @@ fun CommunityPosts() {
                             Color(android.graphics.Color.parseColor("#A2F0C1")),
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                        .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
@@ -311,7 +315,7 @@ fun CommunityPosts() {
                             Color(android.graphics.Color.parseColor("#CCBCEE")),
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                        .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
@@ -393,7 +397,7 @@ fun CommunityPosts() {
                             Color(android.graphics.Color.parseColor("#F5D4A2")),
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+                        .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp)),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                 ){
