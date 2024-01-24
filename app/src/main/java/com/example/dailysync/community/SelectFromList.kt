@@ -77,6 +77,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.dailysync.CommunityPost
 import com.google.firebase.database.ktx.database
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 
 @Composable
@@ -124,11 +126,11 @@ fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: Strin
 
         // list
         if (type == "Exercise") {
-            ShowExerciseList(auth = auth)
+            ShowExerciseList(auth = auth, navController = navController)
         } else if (type == "Sleep") {
-            ShowSleepList(auth = auth)
+            ShowSleepList(auth = auth, navController = navController)
         } else if(type == "Read") {
-            ShowReadingList(auth = auth)
+            ShowReadingList(auth = auth, navController = navController)
         }
 
 
@@ -260,7 +262,7 @@ fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: Strin
 
 
 @Composable
-fun ShowExerciseList(auth: FirebaseAuth) {
+fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val exerciseWalkPath = database.getReference("users/$userId/Walk")
@@ -331,7 +333,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                     exerciseType = "${exerciseData[index].type}",
                     distance = "${String.format("%.2f", exerciseData[index].distance)}km",
                     time = "${ConvertMilisecond(exerciseData[index].time)}",
-                    rhythm = "${exerciseData[index].averagePace}min/Km",
+                    rhythm = "${roundToDecimalPlaces(exerciseData[index].averagePace.toString().toDouble(), 2)}min/Km",
                     bedTime = "",
                     wakeTime = "",
                     sleepTime = "",
@@ -344,6 +346,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                 communityRef.child(postId!!).setValue(communityPostData[0])
                 communityPostData = emptyList() // Reset the list
                 showDialog = false
+                navController.navigate(Screens.Community.route)
             },
             cancelAction = {
                 Log.d("Teste", "Clicou Não")
@@ -453,7 +456,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.averagePace}min/Km",
+                        text = "${roundToDecimalPlaces(exercise.averagePace.toString().toDouble(), 2)}min/Km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -465,7 +468,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
 }
 
 @Composable
-fun ShowSleepList(auth: FirebaseAuth) {
+fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val sleepPath = database.getReference("users/$userId/Sleep")
@@ -551,6 +554,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
                 communityRef.child(postId!!).setValue(communityPostData[0])
                 communityPostData = emptyList() // Reset the list
                 showDialog = false
+                navController.navigate(Screens.Community.route)
             },
             cancelAction = {
                 Log.d("Teste", "Clicou Não")
@@ -665,7 +669,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
 }
 
 @Composable
-fun ShowReadingList(auth: FirebaseAuth) {
+fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
     val database = Firebase.database
     val userId = auth.currentUser?.uid
     val readingPath = database.getReference("users/$userId/books/readingSessions")
@@ -741,6 +745,7 @@ fun ShowReadingList(auth: FirebaseAuth) {
                 communityRef.child(postId!!).setValue(communityPostData[0])
                 communityPostData = emptyList() // Reset the list
                 showDialog = false
+                navController.navigate(Screens.Community.route)
             },
             cancelAction = {
                 Log.d("Teste", "Clicou Não")
@@ -819,6 +824,15 @@ fun ShowReadingList(auth: FirebaseAuth) {
             }
         }
     }
+}
+
+fun roundToDecimalPlaces(number: Double, decimalPlaces: Int): Float {
+    require(decimalPlaces >= 0) { "Decimal places must be non-negative" }
+
+    val bigDecimal = BigDecimal(number)
+        .setScale(decimalPlaces, RoundingMode.HALF_UP)
+
+    return bigDecimal.toFloat()
 }
 
 fun ConvertMilisecond(milisecond: Long): String {
