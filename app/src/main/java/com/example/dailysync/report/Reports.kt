@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -111,7 +112,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
         }
 
         val title = if (reportPeriodDaily) "Daily" else if (reportPeriodWeekly) "Weekly" else "Monthly"
-        Text(text = "Your $title Report", fontSize = 20.sp)
+        Text(text = "Your $title Report", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -211,7 +212,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
             Text(
                 text = titleChart,
                 fontSize = 20.sp,
-                modifier = Modifier.weight(0.3f),
+                modifier = Modifier.weight(0.5f),
                 color = Color(0xFF154E1C),
                 fontWeight = FontWeight.Bold
             )
@@ -235,11 +236,11 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                     .weight(0.2f)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_error),// TODO change icon or color
+                    painter = painterResource(id = R.drawable.view_details),
                     contentDescription = null,
                     tint = Color(0xFF154E1C),
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(25.dp)
                 )
             }
 
@@ -301,11 +302,11 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                     .height(25.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_error),                // TODO change icon or color
+                    painter = painterResource(id = R.drawable.view_details),
                     contentDescription = null,
-                    tint = Color(0xFF154E1C),
+                    tint = Color(0xF14B3283),
                     modifier = Modifier
-                        .size(35.dp)
+                        .size(25.dp)
                 )
             }
         }
@@ -314,6 +315,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
                 .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
         ) {
             BarChart(
@@ -910,7 +912,7 @@ private fun barChart(
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
         .steps(barData.size - 1)
-        .backgroundColor(if (activity == 1) Color(0xFFA2F0C1) else if (activity == 2) Color(0xFFA17FEB) else Color(0xFFE5AE5A))
+        .backgroundColor(if (activity == 1) Color(0xFFA2F0C1) else if (activity == 2) Color(0xFFCCBCEE) else Color(0xFFE5AE5A))
         .bottomPadding(20.dp)
         .labelAndAxisLinePadding(8.dp)
         .axisLabelAngle(if (reportPeriodDaily) 0f else if (reportPeriodWeekly) 0f else 30f)
@@ -921,7 +923,7 @@ private fun barChart(
 
     val yAxisData = AxisData.Builder()
         .steps(yStepSize)
-        .backgroundColor(if (activity == 1) Color(0xFFA2F0C1) else if (activity == 2) Color(0xFFA17FEB) else Color(0xFFE5AE5A))
+        .backgroundColor(if (activity == 1) Color(0xFFA2F0C1) else if (activity == 2) Color(0xFFCCBCEE) else Color(0xFFE5AE5A))
         .labelAndAxisLinePadding(10.dp)
         .axisOffset(20.dp)
         .labelData { index -> (index * (maxRange / yStepSize)).toString() }
@@ -931,7 +933,7 @@ private fun barChart(
         chartData = barData,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
-        backgroundColor = if (activity == 1) Color(0xFFA2F0C1) else if (activity == 2) Color(0xFFA17FEB) else Color(0xFFE5AE5A),
+        backgroundColor = if (activity == 1) Color(0xFFA2F0C1) else if (activity == 2) Color(0xFFCCBCEE) else Color(0xFFE5AE5A),
         barStyle = BarStyle(
             paddingBetweenBars = if (reportPeriodDaily) 26.dp else if (reportPeriodWeekly) 16.dp else 13.dp,
             barWidth = if (reportPeriodDaily) 21.dp else if (reportPeriodWeekly) 16.dp else 13.dp

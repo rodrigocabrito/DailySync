@@ -138,7 +138,7 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
             sessionReference.child("itemId").setValue(item.id)
 
             // Set other session details
-            sessionReference.child("currentPage").setValue(session.pagesRead)
+            sessionReference.child("pagesRead").setValue(session.pagesRead)
             sessionReference.child("durationMinutes").setValue(session.durationMinutes)
             sessionReference.child("date").setValue(session.date)
         }

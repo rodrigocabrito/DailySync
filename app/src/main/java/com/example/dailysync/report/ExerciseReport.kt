@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -175,6 +176,19 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
 
             IconButton(
                 onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = {
                     navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
@@ -189,7 +203,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
             }
         }
 
-        Text(text = "Exercise Report", fontSize = 20.sp)
+        Text(text = "Exercise Report", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -427,7 +441,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
             )
 
             Icon(
-                painter = painterResource(id = R.drawable.ic_error),            // TODO change icon
+                painter = painterResource(id = R.drawable.history),            // TODO change icon
                 contentDescription = null,
                 tint = Color(0xFF154E1C),
                 modifier = Modifier

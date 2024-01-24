@@ -22,6 +22,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -127,6 +129,19 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
 
             IconButton(
                 onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = {
                     navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
@@ -141,7 +156,7 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
             }
         }
 
-        Text(text = "Sleep Report", fontSize = 20.sp)
+        Text(text = "Sleep Report", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -300,7 +315,7 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
             )
 
             Icon(
-                painter = painterResource(id = R.drawable.ic_error),            // TODO change icon
+                painter = painterResource(id = R.drawable.history),            // TODO change icon
                 contentDescription = null,
                 tint = Color(0xFF4F1E7E),
                 modifier = Modifier
@@ -365,7 +380,7 @@ private fun loadTargetAverage(
         ) {
             Box(                                // Show/Set goal
                 modifier = Modifier
-                    .background(Color(0xFFA17FEB), shape = RoundedCornerShape(17.dp))
+                    .background(Color(0xFFCCBCEE), shape = RoundedCornerShape(17.dp))
                     .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(17.dp))
                     .weight(1f)
                     .height(48.dp)
@@ -399,7 +414,7 @@ private fun loadTargetAverage(
 
             Box(                                // Average
                 modifier = Modifier
-                    .background(Color(0xFFA17FEB), shape = RoundedCornerShape(17.dp))
+                    .background(Color(0xFFCCBCEE), shape = RoundedCornerShape(17.dp))
                     .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(17.dp))
                     .weight(1f)
                     .height(48.dp)
@@ -436,7 +451,7 @@ private fun loadTargetAverage(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(Color(0xFFA17FEB), shape = RoundedCornerShape(17.dp))
+                    .background(Color(0xFFCCBCEE), shape = RoundedCornerShape(17.dp))
                     .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(17.dp))
             ) {
                 Text(
@@ -586,7 +601,7 @@ private fun ShowSleepList(auth: FirebaseAuth) {
                     .height(70.dp)
                     .padding(6.dp)
                     .background(
-                        Color(0xFFA17FEB),
+                        Color(0xFFCCBCEE),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(12.dp))
@@ -720,7 +735,7 @@ private fun barChart(
     val xAxisData = AxisData.Builder()
         .axisStepSize(30.dp)
         .steps(barData.size - 1)
-        .backgroundColor(Color(0xFFA17FEB))
+        .backgroundColor(Color(0xFFCCBCEE))
         .bottomPadding(20.dp)
         .labelAndAxisLinePadding(8.dp)
         .axisLabelAngle(if (selectedPeriod == 1) 0f else 30f)
@@ -731,7 +746,7 @@ private fun barChart(
 
     val yAxisData = AxisData.Builder()
         .steps(yStepSize)
-        .backgroundColor(Color(0xFFA17FEB))
+        .backgroundColor(Color(0xFFCCBCEE))
         .labelAndAxisLinePadding(10.dp)
         .axisOffset(20.dp)
         .labelData { index -> (index * (maxRange / yStepSize)).toString() }
@@ -741,7 +756,7 @@ private fun barChart(
         chartData = barData,
         xAxisData = xAxisData,
         yAxisData = yAxisData,
-        backgroundColor = Color(0xFFA17FEB),
+        backgroundColor = Color(0xFFCCBCEE),
         barStyle = BarStyle(
             paddingBetweenBars = if (selectedPeriod == 1) 26.dp else if (selectedPeriod == 2) 16.dp else 13.dp,
             barWidth = if (selectedPeriod == 1) 21.dp else if (selectedPeriod == 2) 16.dp else 13.dp
@@ -773,7 +788,9 @@ private fun getBarChartDataUpdated(
 
             for (i in 0 until listSize) {
                 if (control < size) {
-                    val point = Point(i.toFloat(), "%.2f".format(sumTimeSlept(splitByDay[i])).toFloat())
+
+                    val distanceString = "%.2f".format(sumTimeSlept(splitByDay[i])).replace(",", ".")
+                    val point = Point(i.toFloat(), distanceString.toFloat())
 
                     list.add(
                         BarData(
@@ -838,7 +855,9 @@ private fun getBarChartDataUpdated(
             for (i in 0 until listSize) {
                 if (control < size) {
 
-                    val point = Point(i.toFloat(), "%.2f".format(sumTimeSlept(splitByWeek[i])).toFloat())
+
+                    val distanceString = "%.2f".format(sumTimeSlept(splitByWeek[i])).replace(",", ".")
+                    val point = Point(i.toFloat(), distanceString.toFloat())
 
                     list.add(
                         BarData(
@@ -911,7 +930,8 @@ private fun getBarChartDataUpdated(
 
             for (index in 0 until listSize) {
 
-                val point = Point(index.toFloat(), "%.2f".format(sumTimeSleptMonth(sleeps, index)).toFloat())
+                val distanceString = "%.2f".format(sumTimeSleptMonth(sleeps, index)).replace(",", ".")
+                val point = Point(index.toFloat(), distanceString.toFloat())
 
                 list.add(
                     BarData(
