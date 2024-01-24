@@ -329,9 +329,9 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                     profilePhoto = "${auth.currentUser?.uid}.jpg",
                     date = "${ConvertDate(date = exerciseData[index].date)}",
                     exerciseType = "${exerciseData[index].type}",
-                    distance = "${exerciseData[index].distance}",
-                    time = "${exerciseData[index].time}min",
-                    rhythm = "${exerciseData[index].averagePace}",
+                    distance = "${String.format("%.2f", exerciseData[index].distance)}km",
+                    time = "${ConvertMilisecond(exerciseData[index].time)}",
+                    rhythm = "${exerciseData[index].averagePace}min/Km",
                     bedTime = "",
                     wakeTime = "",
                     sleepTime = "",
@@ -423,7 +423,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.distance}",
+                        text = "${String.format("%.2f", exercise.distance)}km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -438,7 +438,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.time}",
+                        text = "${ConvertMilisecond(exercise.time)}",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -453,7 +453,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.averagePace}",
+                        text = "${exercise.averagePace}min/Km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -821,7 +821,12 @@ fun ShowReadingList(auth: FirebaseAuth) {
     }
 }
 
-
+fun ConvertMilisecond(milisecond: Long): String {
+    val totalSeconds = milisecond / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "${minutes}m${seconds}s"
+}
 
 fun ConvertDate(date: Long): String {
     val instant = Instant.ofEpochMilli(date)
