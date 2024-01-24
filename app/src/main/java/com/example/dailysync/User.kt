@@ -3,7 +3,7 @@ package com.example.dailysync
 import android.net.Uri
 
 data class User(
-    val password: String = "",
+    val name: String = "",
     val photoUri: Uri? = null,
 
     val runDailyGoal: Double = 0.0,
