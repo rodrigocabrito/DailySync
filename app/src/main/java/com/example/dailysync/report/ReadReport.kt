@@ -7,6 +7,6 @@ import com.google.firebase.auth.FirebaseAuth
 // TODO ALL
 
 @Composable
-fun ReadReport(navController: NavController, auth: FirebaseAuth) {
+fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: FirebaseAuth) {
 
 }
