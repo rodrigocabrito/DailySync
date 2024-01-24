@@ -72,6 +72,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 // TODO change user to have default goals
 
@@ -288,7 +289,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
                 modifier = Modifier
                     .height(150.dp)
                     .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
-                barChartData = drawChart(
+                barChartData = barChart(
                     selectedExercise,
                     selectedPeriod,
                     auth
@@ -719,13 +720,12 @@ fun loadGoalAverage(
 }
 
 @Composable
-fun getDailyGoal(selectedExercise: Int, auth: FirebaseAuth): Double {
+private fun getDailyGoal(selectedExercise: Int, auth: FirebaseAuth): Double {
 
     var goal = 0.0
     DisposableEffect(auth) {
         val database = Firebase.database
         val userId = auth.currentUser?.uid
-
 
         val exercise = when (selectedExercise) {
             1 -> "run"
@@ -761,7 +761,7 @@ fun getDailyGoal(selectedExercise: Int, auth: FirebaseAuth): Double {
 }
 
 @Composable
-fun getAverage(selectedExercise: Int, auth: FirebaseAuth): Double {
+private fun getAverage(selectedExercise: Int, auth: FirebaseAuth): Double {
     val database = com.google.firebase.Firebase.database
     val userId = auth.currentUser?.uid
     var exerciseData: List<Exercise> by remember { mutableStateOf(emptyList()) }
@@ -792,7 +792,7 @@ fun getAverage(selectedExercise: Int, auth: FirebaseAuth): Double {
     return calculateAverageDistance(exerciseData).toDouble()
 }
 
-fun calculateAverageDistance(exercises: List<Exercise>): Float {
+private fun calculateAverageDistance(exercises: List<Exercise>): Float {
     if (exercises.isEmpty()) {
         return 0.0f // or any default value when the list is empty
     }
@@ -802,12 +802,12 @@ fun calculateAverageDistance(exercises: List<Exercise>): Float {
 }
 
 
-fun isDecimalPartZero(number: Double): Boolean {
+private fun isDecimalPartZero(number: Double): Boolean {
     return number % 1.0 == 0.0
 }
 
 @Composable
-fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
+private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
     val database = com.google.firebase.Firebase.database
     val userId = auth.currentUser?.uid
     var exerciseData: List<Exercise> by remember { mutableStateOf(emptyList()) }
@@ -842,18 +842,14 @@ fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp)
+                    .height(70.dp)
                     .padding(6.dp)
                     .background(
                         Color(0xFFA2F0C1),
                         shape = RoundedCornerShape(12.dp)
                     )
                     .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(12.dp))
-                    .clickable {
-                        /*navController.navigate(Screens.SelectFromList.route
-                            .replace(oldValue = "{type}", newValue = "Exercise")
-                        )*/
-                    },
+                    .clickable { },
                 horizontalArrangement = Arrangement.SpaceAround,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -982,7 +978,7 @@ fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
 
 @RequiresApi(34)
 @Composable
-fun drawChart(
+private fun barChart(
     selectedExercise: Int,
     selectedPeriod: Int,
     auth: FirebaseAuth
@@ -1029,7 +1025,7 @@ fun drawChart(
 
     Log.e("Max Range After", maxRange.toString())
 
-    val barData = getBarChartDataUpdated2(
+    val barData = getBarChartDataUpdated(
         exerciseData,
         barChartListSize,
         DataCategoryOptions(),
@@ -1073,7 +1069,7 @@ fun drawChart(
 
 @RequiresApi(34)
 @Composable
-fun getBarChartDataUpdated2(
+private fun getBarChartDataUpdated(
     exercises: List<Exercise>,
     listSize: Int,
     dataCategoryOptions: DataCategoryOptions,
@@ -1097,7 +1093,7 @@ fun getBarChartDataUpdated2(
                     list.add(
                         BarData(
                             point = point,
-                            color = if (control == size-1 ) Color(0xFF1A8B47) else Color(0xFF1A8B47),
+                            color = if (control == size-1 ) Color(0xFF154E1C) else Color(0xFF1A8B47),
                             dataCategoryOptions = dataCategoryOptions,
                             label = "$dayOfWeek".substring(0,3)
                         )
@@ -1162,7 +1158,7 @@ fun getBarChartDataUpdated2(
                     list.add(
                         BarData(
                             point = point,
-                            color = if (control == size-1 ) Color(0xFF1A8B47) else Color(0xFF1A8B47),
+                            color = if (control == size-1 ) Color(0xFF154E1C) else Color(0xFF1A8B47),
                             dataCategoryOptions = dataCategoryOptions,
                             label = "${dayAndMonth.dayOfMonth}/$month"
                         )
@@ -1213,6 +1209,21 @@ fun getBarChartDataUpdated2(
         }
     } else {                                      // Run Monthly
         if (exercises.isNotEmpty()) {
+            val control = when (LocalDate.now().month) {
+                Month.JANUARY -> 0
+                Month.FEBRUARY -> 1
+                Month.MARCH -> 2
+                Month.APRIL -> 3
+                Month.MAY -> 4
+                Month.JUNE -> 5
+                Month.JULY -> 6
+                Month.AUGUST -> 7
+                Month.SEPTEMBER -> 8
+                Month.OCTOBER -> 9
+                Month.NOVEMBER ->  10
+                else ->  11
+            }
+
             for (index in 0 until listSize) {
 
                 val point = Point(index.toFloat(), "%.2f".format(sumDistancesMonth(exercises, index)).toFloat())
@@ -1220,7 +1231,7 @@ fun getBarChartDataUpdated2(
                 list.add(
                     BarData(
                         point = point,
-                        color = Color(0xFF1A8B47),
+                        color = if (index == control) Color(0xFF154E1C) else Color(0xFF1A8B47),
                         dataCategoryOptions = dataCategoryOptions,
                         label = monthlyList[index]
                     )
@@ -1232,7 +1243,7 @@ fun getBarChartDataUpdated2(
                 list.add(
                     BarData(
                         point = point,
-                        color = Color(0xF14B3283),
+                        color = Color(0xFF1A8B47),
                         dataCategoryOptions = dataCategoryOptions,
                         label = i.toString()
                     )
@@ -1241,4 +1252,117 @@ fun getBarChartDataUpdated2(
         }
     }
     return list
+}
+@RequiresApi(34)
+private fun splitExercisesByWeek(exercises: List<Exercise>): List<ArrayList<Exercise>> {
+    // Initialize the result list
+    val result = mutableListOf<ArrayList<Exercise>>()
+
+    // Get the current date
+    val currentDate = LocalDate.now()
+
+    // Iterate through exercises and split them by recent weeks
+    var currentWeekList = arrayListOf<Exercise>()
+    var currentWeekStart = LocalDate.MIN
+
+    for (exercise in exercises) {
+        val exerciseDate = LocalDate.ofInstant(Instant.ofEpochMilli(exercise.date), ZoneId.systemDefault())
+
+        // Calculate the difference in weeks
+        val weeksDifference = ChronoUnit.WEEKS.between(exerciseDate, currentDate)
+
+        if (exerciseDate.isAfter(currentWeekStart) &&
+            exerciseDate.dayOfWeek == DayOfWeek.MONDAY &&
+            weeksDifference <= 9
+        ) {
+            // Start a new week within the recent 9 weeks
+            if (currentWeekList.isNotEmpty()) {
+                result.add(currentWeekList)
+            }
+            currentWeekList = arrayListOf(exercise)
+            currentWeekStart = exerciseDate
+        } else if (weeksDifference <= 9) {
+            // Add exercise to the current week within the recent 9 weeks
+            currentWeekList.add(exercise)
+        }
+    }
+
+    // Add the last week if not empty
+    if (currentWeekList.isNotEmpty()) {
+        result.add(currentWeekList)
+    }
+
+    return result.takeLast(10)
+}
+
+@RequiresApi(34)
+private fun sumDistancesMonth(exercises: List<Exercise>, monthIndex: Int): Double {
+    // Get the current year
+    val currentYear = LocalDate.now().year
+
+    val month = when (monthIndex) {
+        0 -> Month.JANUARY
+        1 -> Month.FEBRUARY
+        2 -> Month.MARCH
+        3 -> Month.APRIL
+        4 -> Month.MAY
+        5 -> Month.JUNE
+        6 -> Month.JULY
+        7 -> Month.AUGUST
+        8 -> Month.SEPTEMBER
+        9 -> Month.OCTOBER
+        10 -> Month.NOVEMBER
+        else -> Month.DECEMBER
+    }
+
+    // Filter exercises for the month specified of the current year
+    val monthExercises = exercises.filter { exercise ->
+        val exerciseYear = LocalDate.ofInstant(Instant.ofEpochMilli(exercise.date), ZoneId.systemDefault()).year
+        val exerciseMonth = LocalDate.ofInstant(Instant.ofEpochMilli(exercise.date), ZoneId.systemDefault()).month
+        (exerciseYear == currentYear) && (exerciseMonth == month)
+    }
+
+    return monthExercises.sumOf { it.distance.toDouble() }
+}
+
+private fun sumDistances(exercises: ArrayList<Exercise>) : Double {
+    return exercises.sumOf { it.distance.toDouble() }
+}
+
+@RequiresApi(34)
+private fun splitExercisesByDay(exercises: List<Exercise>): List<ArrayList<Exercise>> {
+    // Initialize the result list
+    val result = mutableListOf<ArrayList<Exercise>>()
+    // Get the current date
+    val currentDate = LocalDate.now()
+
+    // Iterate through exercises and split them by recent days
+    var currentDayList = arrayListOf<Exercise>()
+    var currentDay = LocalDate.MIN
+
+    for (exercise in exercises) {
+        val exerciseDate = LocalDate.ofInstant(Instant.ofEpochMilli(exercise.date), ZoneId.systemDefault())
+
+        // Calculate the difference in days
+        val daysDifference = ChronoUnit.DAYS.between(exerciseDate, currentDate)
+
+        if (exerciseDate.isEqual(currentDay) && daysDifference <= 6) {
+            // Add exercise to the current day within the recent 6 days
+            currentDayList.add(exercise)
+        } else if (exerciseDate.isAfter(currentDay) && daysDifference <= 6) {
+            // Start a new day within the recent 6 days
+            if (currentDayList.isNotEmpty()) {
+                result.add(currentDayList)
+            }
+            currentDayList = arrayListOf(exercise)
+            currentDay = exerciseDate
+        }
+    }
+
+    // Add the last day if not empty
+    if (currentDayList.isNotEmpty()) {
+        result.add(currentDayList)
+    }
+
+    return result.takeLast(7)
 }
