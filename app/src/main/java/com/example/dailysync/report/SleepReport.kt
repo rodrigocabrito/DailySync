@@ -1,6 +1,5 @@
 package com.example.dailysync.report
 
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -75,7 +73,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-// TODO change user to have default goals
 
 @RequiresApi(34)
 @Composable
@@ -315,9 +312,9 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
             )
 
             Icon(
-                painter = painterResource(id = R.drawable.history),            // TODO change icon
+                painter = painterResource(id = R.drawable.history),
                 contentDescription = null,
-                tint = Color(0xFF4F1E7E),
+                tint = Color.Unspecified,
                 modifier = Modifier
                     .size(40.dp)
                     .padding(start = 5.dp, top = 3.dp)
@@ -498,7 +495,7 @@ private fun loadTargetAverage(
 @Composable
 private fun getTarget(auth: FirebaseAuth): Int {
 
-    var target = 0
+    var target by remember { mutableIntStateOf(0)}
 
     DisposableEffect(auth) {
         val database = Firebase.database
@@ -633,7 +630,7 @@ private fun ShowSleepList(auth: FirebaseAuth) {
                             "${sleep.bedTimeHour}h00 - ${sleep.awakeTimeHour}h${sleep.awakeTimeMin}"
                         else if (sleep.awakeTimeMin == 0 && sleep.bedTimeMin != 0)
                             "${sleep.bedTimeHour}h${sleep.bedTimeMin} - ${sleep.awakeTimeHour}h00"
-                        else if (sleep.bedTimeMin == 0 && sleep.awakeTimeMin == 0)
+                        else if (sleep.bedTimeMin == 0)  // here awakeTimeMin has to be 0
                             "${sleep.bedTimeHour}h00 - ${sleep.awakeTimeHour}h00"
                         else
                             "${sleep.bedTimeHour}h${sleep.bedTimeMin} - ${sleep.awakeTimeHour}h${sleep.awakeTimeMin}",
@@ -652,19 +649,21 @@ private fun ShowSleepList(auth: FirebaseAuth) {
                     val hourSlept = getHourDifference(sleep.bedTimeHour, sleep.bedTimeMin, sleep.awakeTimeHour, sleep.awakeTimeMin)
                     val minSlept = getMinDifference(sleep.bedTimeHour, sleep.bedTimeMin, sleep.awakeTimeHour, sleep.awakeTimeMin)
 
-                    val targetAcheived = (if (minSlept == 30) (hourSlept*2)+1 else (hourSlept*2)) > target
+                    val targetAchieved = (if (minSlept == 30) (hourSlept*2)+1 else (hourSlept*2)) >= target
 
-                    if (targetAcheived) {
+                    if (targetAchieved) {
                         Icon(
-                            painter = painterResource(id = R.drawable.complete_icon),            // TODO change icon
+                            painter = painterResource(id = R.drawable.green_check_icon),
                             contentDescription = "targetAchievedCheck",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(20.dp)
                         )
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_error),            // TODO change icon
+                            painter = painterResource(id = R.drawable.red_x_icon),
                             contentDescription = "targetAchievedCheck",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(20.dp)
                         )
@@ -1096,8 +1095,6 @@ private fun sumTimeSleptMonth(sleeps: List<Sleep>, monthIndex: Int): Double {
         val sleepMonth = LocalDate.ofInstant(Instant.ofEpochMilli(sleep.date), ZoneId.systemDefault()).month
         (sleepYear == currentYear) && (sleepMonth == month)
     }
-
-    Log.e("monthSleeps", monthSleeps.toString())
 
     var timeSlept = 0.0
     for (i in monthSleeps.indices) {
