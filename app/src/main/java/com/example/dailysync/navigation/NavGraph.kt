@@ -54,9 +54,10 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         composable(route = Screens.Home.route){
             Home(navController = navController, auth = auth)
         }
-        composable(route = Screens.Reports.route){
+        composable(route = Screens.Reports.route + "?selectedExercise={selectedExercise}"){ navBackStack ->
+            val selectedExercise: Int = navBackStack.arguments?.getString("selectedExercise")?.toIntOrNull()?:1
             if (Build.VERSION.SDK_INT >= 34) {
-                Reports(navController = navController, auth = auth)
+                Reports(navController = navController, selectedExercise, auth = auth)
             }
         }
         composable(route = Screens.Community.route){
