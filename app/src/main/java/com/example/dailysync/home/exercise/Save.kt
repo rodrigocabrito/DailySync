@@ -2,7 +2,6 @@ package com.example.dailysync.home.exercise
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -78,7 +77,6 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import java.io.ByteArrayOutputStream
 import java.time.Instant
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -546,7 +544,7 @@ fun SaveExercise(navController: NavController,
                 text = { Text("Your $title was cancelled!", color =Color(0xFF0A361C), fontWeight = FontWeight.Bold) },
                 confirmButton = {
                     TextButton(onClick = confirmAction) {
-                        Text("OK", color =Color(0xFF0A361C))
+                        Text("OK", color = Color(0xFF0A361C))
                     }
                 }
             )
@@ -603,7 +601,7 @@ fun CameraPreview(
                             }
 
                         cameraProvider.bindToLifecycle(
-                            (context as androidx.activity.ComponentActivity),
+                            (context),
                             cameraSelector,
                             preview,
                             imageAnalysis
@@ -667,10 +665,4 @@ private fun uploadImageToFirebaseStorage(exerciseId: String, imageUri: Uri) {
             val downloadUrl = taskSnapshot.storage.downloadUrl
             // TODO: Handle the download URL as needed (e.g., update user profile)
         }
-}
-
-fun Bitmap.toByteArray(): ByteArray {
-    val stream = ByteArrayOutputStream()
-    compress(Bitmap.CompressFormat.JPEG, 100, stream)
-    return stream.toByteArray()
 }
