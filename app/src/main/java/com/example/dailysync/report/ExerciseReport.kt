@@ -1013,7 +1013,7 @@ fun barChartExercise(
     var exerciseData: List<Exercise> by remember { mutableStateOf(emptyList()) }
 
     val barChartListSize = if (selectedPeriod == 1) 7 else if (selectedPeriod == 2) 10 else 12
-    val yStepSize = 5
+    var yStepSize = 4
 
     val category = when (selectedExercise) {
         1 -> "Run"
@@ -1047,6 +1047,7 @@ fun barChartExercise(
         for (i in 0 until barChartListSize) {
             if (control < size) {
                 if (maxRange < sumDistances(splitByDay[i])) {
+                    Log.e("Max Range Daily", sumDistances(splitByDay[i]).toString())
                     maxRange = sumDistances(splitByDay[i]).toInt()
                 }
                 control++
@@ -1059,6 +1060,7 @@ fun barChartExercise(
         for (i in 0 until barChartListSize) {
             if (control < size) {
                 if (maxRange < sumDistances(splitByWeek[i])) {
+                    Log.e("Max Range Weekly", sumDistances(splitByWeek[i]).toString())
                     maxRange = sumDistances(splitByWeek[i]).toInt()
                 }
                 control++
@@ -1067,11 +1069,16 @@ fun barChartExercise(
     } else {
         for (i in 0 until barChartListSize) {
             if (maxRange < sumDistancesMonth(exerciseData, i)) {
+                Log.e("Max Range Monthly", sumDistancesMonth(exerciseData, i).toString())
                 maxRange = sumDistancesMonth(exerciseData, i).toInt()
             }
         }
     }
     maxRange = (maxRange*1.2).toInt()
+
+    if (maxRange == 0) {
+        maxRange = 1
+    }
 
     val barData = getBarChartDataUpdated(
         exerciseData,
@@ -1097,7 +1104,14 @@ fun barChartExercise(
         .backgroundColor(Color(0xFFA2F0C1))
         .labelAndAxisLinePadding(10.dp)
         .axisOffset(10.dp)
-        .labelData { index -> (index * (maxRange / yStepSize)).toString() + " km" }
+        .labelData { index ->
+            while (yStepSize > maxRange) {
+                yStepSize--
+            }
+            if(yStepSize == 0){
+                yStepSize = 1
+            }
+            (index * (maxRange / yStepSize)).toString() + " km" }
         .build()
 
     return BarChartData(

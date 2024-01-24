@@ -693,7 +693,7 @@ fun barChartSleep(
     var sleepData: List<Sleep> by remember { mutableStateOf(emptyList()) }
 
     val barChartListSize = if (selectedPeriod == 1) 7 else if (selectedPeriod == 2) 10 else 12
-    val yStepSize = 5
+    var yStepSize = 5
 
     val sleepPath = database.getReference("users/$userId/Sleep")
 
@@ -748,6 +748,10 @@ fun barChartSleep(
 
     maxRange = (maxRange*1.2).toInt()
 
+    if (maxRange == 0) {
+        maxRange = 1
+    }
+
     val barData = getBarChartDataUpdated(
         sleepData,
         barChartListSize,
@@ -772,8 +776,14 @@ fun barChartSleep(
         .backgroundColor(Color(0xFFCCBCEE))
         .labelAndAxisLinePadding(10.dp)
         .axisOffset(20.dp)
-        .labelData { index -> (index * ((maxRange / yStepSize))/2).toString() + "h" }
-        .axisLabelDescription { _ -> "Hours (h)" }
+        .labelData { index ->
+            while (yStepSize > maxRange) {
+                yStepSize--
+            }
+            if(yStepSize == 0){
+                yStepSize = 1
+            }
+            (index * ((maxRange / yStepSize))/2).toString() + "h" }
         .build()
 
     return BarChartData(

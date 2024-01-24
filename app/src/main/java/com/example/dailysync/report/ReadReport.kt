@@ -932,7 +932,7 @@ fun barChartRead(
     var readData: List<ReadingSession> by remember { mutableStateOf(emptyList()) }
 
     val barChartListSize = if (selectedPeriod == 1) 7 else if (selectedPeriod == 2) 10 else 12
-    val yStepSize = 5
+    var yStepSize = 5
 
     val readPath = database.getReference("users/$userId/books/readingSessions")
 
@@ -985,6 +985,9 @@ fun barChartRead(
         }
     }
     maxRange = (maxRange*1.2).toInt()
+    if (maxRange == 0) {
+        maxRange = 1
+    }
 
     val barData = getBarChartDataUpdated(
         readData,
@@ -1010,7 +1013,14 @@ fun barChartRead(
         .backgroundColor(Color(0xFFDFC295))
         .labelAndAxisLinePadding(9.dp)
         .axisOffset(20.dp)
-        .labelData { index -> (index * (maxRange / yStepSize)).toString() + "p"}
+        .labelData { index ->
+            while (yStepSize > maxRange) {
+                yStepSize--
+            }
+            if(yStepSize == 0){
+                yStepSize = 1
+            }
+            (index * (maxRange / yStepSize)).toString() + "p"}
         .build()
 
     return BarChartData(
