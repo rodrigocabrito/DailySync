@@ -938,13 +938,38 @@ fun barChartRead(
     }
 
     var maxRange = 0
-    for (read in readData) {
-        if (read.pagesRead > maxRange) {
-            maxRange = read.pagesRead
+    if (selectedPeriod == 1) {
+        val splitByDay = splitReadsByDay(readData)
+        val size = splitByDay.size
+        var control = 0
+        for (i in 0 until barChartListSize) {
+            if (control < size) {
+                if (maxRange < sumTimeRead(splitByDay[i])) {
+                    maxRange = sumTimeRead(splitByDay[i]).toInt()
+                }
+                control++
+            }
+        }
+    } else if (selectedPeriod == 2) {
+        val splitByWeek = splitReadsByWeek(readData)
+        val size = splitByWeek.size
+        var control = 0
+        for (i in 0 until barChartListSize) {
+            if (control < size) {
+                if (maxRange < sumTimeRead(splitByWeek[i])) {
+                    maxRange = sumTimeRead(splitByWeek[i]).toInt()
+                }
+                control++
+            }
+        }
+    } else {
+        for (i in 0 until barChartListSize) {
+            if (maxRange < sumTimeReadMonth(readData, i)) {
+                maxRange = sumTimeReadMonth(readData, i).toInt()
+            }
         }
     }
-
-    maxRange += 10
+    maxRange = (maxRange*1.2).toInt()
 
     val barData = getBarChartDataUpdated(
         readData,
@@ -968,9 +993,9 @@ fun barChartRead(
     val yAxisData = AxisData.Builder()
         .steps(yStepSize)
         .backgroundColor(Color(0xFFDFC295))
-        .labelAndAxisLinePadding(10.dp)
+        .labelAndAxisLinePadding(9.dp)
         .axisOffset(20.dp)
-        .labelData { index -> (index * (maxRange / yStepSize)).toString() }
+        .labelData { index -> (index * (maxRange / yStepSize)).toString() + "p"}
         .build()
 
     return BarChartData(

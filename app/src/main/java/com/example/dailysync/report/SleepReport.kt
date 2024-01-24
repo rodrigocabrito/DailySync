@@ -713,16 +713,39 @@ fun barChartSleep(
     }
 
     var maxRange = 0
-    for (sleep in sleepData) {
-        val hourSlept = getHourDifference(sleep.bedTimeHour, sleep.bedTimeMin, sleep.awakeTimeHour, sleep.awakeTimeMin)
-        val minSlept = getMinDifference(sleep.bedTimeHour, sleep.bedTimeMin, sleep.awakeTimeHour, sleep.awakeTimeMin)
-        val timeSlept = (if (minSlept == 30) (hourSlept*2)+1 else (hourSlept*2))
-        if (timeSlept > maxRange) {
-            maxRange = timeSlept
+    if (selectedPeriod == 1) {
+        val splitByDay = splitSleepsByDay(sleepData)
+        val size = splitByDay.size
+        var control = 0
+        for (i in 0 until barChartListSize) {
+            if (control < size) {
+                if (maxRange < sumTimeSlept(splitByDay[i])) {
+                    maxRange = sumTimeSlept(splitByDay[i]).toInt()
+                }
+                control++
+            }
+        }
+    } else if (selectedPeriod == 2) {
+        val splitByWeek = splitSleepsByWeek(sleepData)
+        val size = splitByWeek.size
+        var control = 0
+        for (i in 0 until barChartListSize) {
+            if (control < size) {
+                if (maxRange < sumTimeSlept(splitByWeek[i])) {
+                    maxRange = sumTimeSlept(splitByWeek[i]).toInt()
+                }
+                control++
+            }
+        }
+    } else {
+        for (i in 0 until barChartListSize) {
+            if (maxRange < sumTimeSleptMonth(sleepData, i)) {
+                maxRange = sumTimeSleptMonth(sleepData, i).toInt()
+            }
         }
     }
 
-    maxRange += 2
+    maxRange = (maxRange*1.2).toInt()
 
     val barData = getBarChartDataUpdated(
         sleepData,
@@ -748,7 +771,8 @@ fun barChartSleep(
         .backgroundColor(Color(0xFFCCBCEE))
         .labelAndAxisLinePadding(10.dp)
         .axisOffset(20.dp)
-        .labelData { index -> (index * (maxRange / yStepSize)).toString() }
+        .labelData { index -> (index * ((maxRange / yStepSize))/2).toString() + "h" }
+        .axisLabelDescription { _ -> "Hours (h)" }
         .build()
 
     return BarChartData(

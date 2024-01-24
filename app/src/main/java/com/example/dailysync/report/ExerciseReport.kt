@@ -1037,17 +1037,40 @@ fun barChartExercise(
             }
         }
     }
+
     var maxRange = 0
-    for (exercise in exerciseData) {
-        if (exercise.distance.toInt() > maxRange) {
-            maxRange = exercise.distance.toInt()
+    if (selectedPeriod == 1) {
+        val splitByDay = splitExercisesByDay(exerciseData)
+        val size = splitByDay.size
+        var control = 0
+        for (i in 0 until barChartListSize) {
+            if (control < size) {
+                if (maxRange < sumDistances(splitByDay[i])) {
+                    maxRange = sumDistances(splitByDay[i]).toInt()
+                }
+                control++
+            }
+        }
+    } else if (selectedPeriod == 2) {
+        val splitByWeek = splitExercisesByWeek(exerciseData)
+        val size = splitByWeek.size
+        var control = 0
+        for (i in 0 until barChartListSize) {
+            if (control < size) {
+                if (maxRange < sumDistances(splitByWeek[i])) {
+                    maxRange = sumDistances(splitByWeek[i]).toInt()
+                }
+                control++
+            }
+        }
+    } else {
+        for (i in 0 until barChartListSize) {
+            if (maxRange < sumDistancesMonth(exerciseData, i)) {
+                maxRange = sumDistancesMonth(exerciseData, i).toInt()
+            }
         }
     }
-    Log.e("Max Range", maxRange.toString())
-
     maxRange = (maxRange*1.2).toInt()
-
-    Log.e("Max Range After", maxRange.toString())
 
     val barData = getBarChartDataUpdated(
         exerciseData,
@@ -1072,8 +1095,8 @@ fun barChartExercise(
         .steps(yStepSize)
         .backgroundColor(Color(0xFFA2F0C1))
         .labelAndAxisLinePadding(10.dp)
-        .axisOffset(20.dp)
-        .labelData { index -> (index * (maxRange / yStepSize)).toString() }
+        .axisOffset(10.dp)
+        .labelData { index -> (index * (maxRange / yStepSize)).toString() + " km" }
         .build()
 
     return BarChartData(
