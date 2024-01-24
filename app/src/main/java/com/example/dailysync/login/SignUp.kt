@@ -153,7 +153,7 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
                                     // User registration successful
                                     val userId = auth.currentUser?.uid
                                     userId?.let { uid ->
-                                        val user = User(name, email, password)
+                                        val user = User(name)
                                         val profileUpdate = UserProfileChangeRequest.Builder()
                                             .setDisplayName(name)
                                             .build()
