@@ -218,19 +218,16 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
 
             IconButton(
                 onClick = {
-                    val route = Screens.ExerciseReport.route
-                        .replace(
-                            oldValue = "{selectedExercise}",
-                            newValue = selectedExercise.toString()
-                        )
-                        .replace(
-                            oldValue = "{selectedPeriod}",
-                            newValue = selectedPeriod.toString()
-                        )
-
-                    Log.e("Route", route.toString())
                     navController.navigate(
-                        route
+                        Screens.ExerciseReport.route
+                            .replace(
+                                oldValue = "{selectedExercise}",
+                                newValue = selectedExercise.toString()
+                            )
+                            .replace(
+                                oldValue = "{selectedPeriod}",
+                                newValue = selectedPeriod.toString()
+                            )
                     )
                 },
                 modifier = Modifier
@@ -238,7 +235,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                     .weight(0.2f)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_error),
+                    painter = painterResource(id = R.drawable.ic_error),// TODO change icon or color
                     contentDescription = null,
                     tint = Color(0xFF154E1C),
                     modifier = Modifier
@@ -276,21 +273,47 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 barChartData = barChart(1, selectedExercise, reportPeriodDaily, reportPeriodWeekly, auth))
         }
 
-        /*
-        Text(
-            text = "Sleep",
-            fontSize = 20.sp,
-            color = Color(0xFF4F1E7E),
-            fontWeight = FontWeight.Bold
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Sleep",
+                fontSize = 20.sp,
+                color = Color(0xFF4F1E7E),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(start = 40.dp)
+            )
+            IconButton(
+                onClick = {
+                    navController.navigate(
+                        Screens.SleepReport.route
+                            .replace(
+                                oldValue = "{selectedPeriod}",
+                                newValue = selectedPeriod.toString()
+                            )
+                    )
+                },
+                modifier = Modifier
+                    .height(25.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_error),                // TODO change icon or color
+                    contentDescription = null,
+                    tint = Color(0xFF154E1C),
+                    modifier = Modifier
+                        .size(35.dp)
+                )
+            }
+        }
 
         Box(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
-                .clickable {
-                    navController.navigate(Screens.SleepReport.route)           // TODO get args?
-                }
                 .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
         ) {
             BarChart(
@@ -299,21 +322,18 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 barChartData = barChart(2, selectedExercise, reportPeriodDaily, reportPeriodWeekly, auth))
         }
 
+        /*
         Text(
             text = "Read",
             fontSize = 20.sp,
             color = Color(0xFF64610F),
             fontWeight = FontWeight.Bold
-        )*/
+        )
 
-        /*
         Box(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
                 .fillMaxWidth()
-                .clickable {
-                    navController.navigate(Screens.ReadReport.route)            // TODO get args?
-                }
                 .border(2.dp, Color(0xFF91641F), shape = RoundedCornerShape(8.dp)),
         ) {
             BarChart(
@@ -391,7 +411,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
 
 // TODO receive the ordered list
 @RequiresApi(34)
-fun getBarChartDataUpdated(
+private fun getBarChartDataUpdated(
     listOfRuns: List<Exercise>,
     listOfWalks: List<Exercise>,
     listOfCycles: List<Exercise>,
@@ -407,11 +427,6 @@ fun getBarChartDataUpdated(
 ): List<BarData> {
     val list = arrayListOf<BarData>()
     val monthlyList = arrayListOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-
-    //Log.e("Recebida - List Of Runs", listOfRuns.toString())
-    //Log.e("Recebida - List Of Walks", listOfWalks.toString())
-    //Log.e("Recebida - List Of Cycles", listOfCycles.toString())
-    //Log.e("List Of Runs", listOfSleeps.toString())
 
     if (activity == 1) {
       if (reportPeriodDaily) {                      // Run Daily
@@ -644,7 +659,7 @@ fun getBarChartDataUpdated(
 }
 
 @RequiresApi(34)
-fun barChart(
+private fun barChart(
     activity: Int,
     selectedExercise: Int,
     reportPeriodDaily: Boolean,
@@ -813,7 +828,7 @@ inline fun <reified T : Any> orderList(
 }
 
 @RequiresApi(34)
-fun sumDistancesMonth(exercises: List<Exercise>, monthIndex: Int): Double {
+private fun sumDistancesMonth(exercises: List<Exercise>, monthIndex: Int): Double {
     // Get the current year
     val currentYear = LocalDate.now().year
 
@@ -844,7 +859,7 @@ fun sumDistancesMonth(exercises: List<Exercise>, monthIndex: Int): Double {
 }
 
 @RequiresApi(34)
-fun sumTimeSleptMonth(sleeps: List<Sleep>, monthIndex: Int): Double {
+private fun sumTimeSleptMonth(sleeps: List<Sleep>, monthIndex: Int): Double {
     // Get the current year
     val currentYear = LocalDate.now().year
 
@@ -882,7 +897,7 @@ fun sumTimeSleptMonth(sleeps: List<Sleep>, monthIndex: Int): Double {
 }
 
 @RequiresApi(34)
-fun splitExercisesByWeek(exercises: List<Exercise>): List<ArrayList<Exercise>> {
+private fun splitExercisesByWeek(exercises: List<Exercise>): List<ArrayList<Exercise>> {
     // Initialize the result list
     val result = mutableListOf<ArrayList<Exercise>>()
 
@@ -924,7 +939,7 @@ fun splitExercisesByWeek(exercises: List<Exercise>): List<ArrayList<Exercise>> {
 }
 
 @RequiresApi(34)
-fun splitSleepsByWeek(sleeps: List<Sleep>): List<ArrayList<Sleep>> {
+private fun splitSleepsByWeek(sleeps: List<Sleep>): List<ArrayList<Sleep>> {
     // Initialize the result list
     val result = mutableListOf<ArrayList<Sleep>>()
 
@@ -965,12 +980,12 @@ fun splitSleepsByWeek(sleeps: List<Sleep>): List<ArrayList<Sleep>> {
     return result.takeLast(10)
 }
 
-fun sumDistances(exercises: ArrayList<Exercise>) : Double {
+private fun sumDistances(exercises: ArrayList<Exercise>) : Double {
     return exercises.sumOf { it.distance.toDouble() }
 }
 
 @RequiresApi(34)
-fun splitExercisesByDay(exercises: List<Exercise>): List<ArrayList<Exercise>> {
+private fun splitExercisesByDay(exercises: List<Exercise>): List<ArrayList<Exercise>> {
     // Initialize the result list
     val result = mutableListOf<ArrayList<Exercise>>()
     // Get the current date
@@ -1008,7 +1023,7 @@ fun splitExercisesByDay(exercises: List<Exercise>): List<ArrayList<Exercise>> {
 }
 
 @RequiresApi(34)
-fun splitSleepsByDay(sleeps: List<Sleep>): List<ArrayList<Sleep>> {
+private fun splitSleepsByDay(sleeps: List<Sleep>): List<ArrayList<Sleep>> {
     // Initialize the result list
     val result = mutableListOf<ArrayList<Sleep>>()
 
@@ -1046,7 +1061,7 @@ fun splitSleepsByDay(sleeps: List<Sleep>): List<ArrayList<Sleep>> {
     return result.takeLast(7)
 }
 
-fun sumTimeSlept(sleeps: List<Sleep>) : Double {
+private fun sumTimeSlept(sleeps: List<Sleep>) : Double {
     var timeSlept = 0.0
     for (i in sleeps.indices) {
         if (sleeps[i].minSlept == 30) {
