@@ -20,21 +20,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +42,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -249,7 +244,7 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
                 modifier = Modifier
                     .height(150.dp)
                     .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp)),
-                barChartData = drawChart(
+                barChartData = barChart(
                     selectedPeriod,
                     auth
                 )
@@ -486,7 +481,7 @@ private fun loadTargetAverage(
 }
 
 @Composable
-fun getTarget(auth: FirebaseAuth): Int {
+private fun getTarget(auth: FirebaseAuth): Int {
 
     var target = 0
 
@@ -522,7 +517,7 @@ fun getTarget(auth: FirebaseAuth): Int {
 }
 
 @Composable
-fun getAverage(auth: FirebaseAuth): Int {
+private fun getAverage(auth: FirebaseAuth): Int {
     val database = com.google.firebase.Firebase.database
     val userId = auth.currentUser?.uid
     var sleepData: List<Sleep> by remember { mutableStateOf(emptyList()) }
@@ -547,7 +542,7 @@ fun getAverage(auth: FirebaseAuth): Int {
     return calculateAverageSleepTime(sleepData)
 }
 
-fun calculateAverageSleepTime(sleeps: List<Sleep>): Int {
+private fun calculateAverageSleepTime(sleeps: List<Sleep>): Int {
 
     if (sleeps.isEmpty()) {
         return 0
@@ -559,7 +554,7 @@ fun calculateAverageSleepTime(sleeps: List<Sleep>): Int {
 }
 
 @Composable
-fun ShowSleepList(auth: FirebaseAuth) {
+private fun ShowSleepList(auth: FirebaseAuth) {
     val database = com.google.firebase.Firebase.database
     val userId = auth.currentUser?.uid
     var sleepData: List<Sleep> by remember { mutableStateOf(emptyList()) }
@@ -601,7 +596,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = ConvertDate(sleep.date),
+                        text = convertDate(sleep.date),
                         style = TextStyle(
                             color = Color.Black,
                             fontSize = 15.sp
@@ -674,7 +669,7 @@ fun ShowSleepList(auth: FirebaseAuth) {
 
 @RequiresApi(34)
 @Composable
-fun drawChart(
+private fun barChart(
     selectedPeriod: Int,
     auth: FirebaseAuth
 ):BarChartData {
@@ -715,7 +710,7 @@ fun drawChart(
 
     maxRange += 2
 
-    val barData = getBarChartDataUpdated2(
+    val barData = getBarChartDataUpdated(
         sleepData,
         barChartListSize,
         DataCategoryOptions(),
@@ -759,7 +754,7 @@ fun drawChart(
 
 @RequiresApi(34)
 @Composable
-fun getBarChartDataUpdated2(
+private fun getBarChartDataUpdated(
     sleeps: List<Sleep>,
     listSize: Int,
     dataCategoryOptions: DataCategoryOptions,
@@ -1095,7 +1090,7 @@ private fun sumTimeSleptMonth(sleeps: List<Sleep>, monthIndex: Int): Double {
     return timeSlept
 }
 
-private fun ConvertDate(date: Long): String {
+private fun convertDate(date: Long): String {
     val instant = Instant.ofEpochMilli(date)
     val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")

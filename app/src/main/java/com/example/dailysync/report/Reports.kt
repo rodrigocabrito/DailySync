@@ -322,13 +322,43 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 barChartData = barChart(2, selectedExercise, reportPeriodDaily, reportPeriodWeekly, auth))
         }
 
-        /*
-        Text(
-            text = "Read",
-            fontSize = 20.sp,
-            color = Color(0xFF64610F),
-            fontWeight = FontWeight.Bold
-        )
+
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 10.dp),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Read",
+                fontSize = 20.sp,
+                color = Color(0xFF4F1E7E),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(start = 40.dp)
+            )
+            IconButton(
+                onClick = {
+                    navController.navigate(
+                        Screens.ReadReport.route
+                            .replace(
+                                oldValue = "{selectedPeriod}",
+                                newValue = selectedPeriod.toString()
+                            )
+                    )
+                },
+                modifier = Modifier
+                    .height(25.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_error),                // TODO change icon or color
+                    contentDescription = null,
+                    tint = Color(0xFF154E1C),
+                    modifier = Modifier
+                        .size(35.dp)
+                )
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -340,7 +370,7 @@ fun Reports(navController: NavController, auth: FirebaseAuth) {
                 modifier = Modifier
                     .height(150.dp),
                 barChartData = barChart(3, selectedExercise, reportPeriodDaily, reportPeriodWeekly, auth))
-        }*/
+        }
 
         //fix footer in the bottom
         Spacer(modifier = Modifier.weight(1f))
@@ -646,11 +676,106 @@ private fun getBarChartDataUpdated(
     } else {                                        // Read// TODO ALL
         // TODO Read
         if (reportPeriodDaily) {
+            val splitSleepsByDay = splitSleepsByDay(listOfSleeps)
+            if (splitSleepsByDay.isNotEmpty()) {
+                //Log.e("Not empty sleep daily", "idk")
 
+                for (i in 0 until listSize) {
+
+                    val dayOfWeek = LocalDate.ofInstant(Instant.ofEpochMilli(splitSleepsByDay[i][0].date), ZoneId.systemDefault()).dayOfWeek
+
+                    val point = Point(i.toFloat(), "%.2f".format(sumTimeSlept(splitSleepsByDay[i])).toFloat())
+
+                    list.add(
+                        BarData(
+                            point = point,
+                            color = Color(0xF14B3283),
+                            dataCategoryOptions = dataCategoryOptions,
+                            label = "$dayOfWeek"
+                        )
+                    )
+                }
+            } else {
+                //Log.e(" empty sleep daily", "idk")
+                for (i in 0 until listSize) {
+                    val point = Point(i.toFloat(), 0.toFloat())
+                    list.add(
+                        BarData(
+                            point = point,
+                            color = Color(0xF14B3283),
+                            dataCategoryOptions = dataCategoryOptions,
+                            label = i.toString()
+                        )
+                    )
+                }
+            }
         } else if (reportPeriodWeekly) {
+            val splitSleepsByWeek = splitSleepsByWeek(listOfSleeps)
+            if (splitSleepsByWeek.isNotEmpty()) {
+                //Log.e("Not empty sleep weekly", "idk")
+                for (i in 0 until listSize) {
 
+                    val sleepDay = LocalDate.ofInstant(Instant.ofEpochMilli(splitSleepsByWeek[i][0].date), ZoneId.systemDefault()).dayOfMonth
+                    val sleepMonth = LocalDate.ofInstant(Instant.ofEpochMilli(splitSleepsByWeek[i][0].date), ZoneId.systemDefault()).month
+
+                    val point = Point(
+                        i.toFloat(),
+                        "%.2f".format(Random.nextDouble(1.0, maxRange.toDouble())).toFloat()
+                    )
+
+                    list.add(
+                        BarData(
+                            point = point,
+                            color = Color(0xF14B3283),
+                            dataCategoryOptions = dataCategoryOptions,
+                            label = "$sleepDay/$sleepMonth"
+                        )
+                    )
+                }
+            } else {
+                //Log.e(" empty sleep weekly", "idk")
+                for (i in 0 until listSize) {
+                    val point = Point(i.toFloat(), 0.toFloat())
+                    list.add(
+                        BarData(
+                            point = point,
+                            color = Color(0xF14B3283),
+                            dataCategoryOptions = dataCategoryOptions,
+                            label = i.toString()
+                        )
+                    )
+                }
+            }
         } else {
+            if (listOfSleeps.isNotEmpty()) {
+                //Log.e("Not empty sleep monthly", "idk")
+                for (i in 0 until listSize) {
 
+                    val point = Point(i.toFloat(), "%.2f".format(sumTimeSleptMonth(listOfSleeps, i)).toFloat())
+
+                    list.add(
+                        BarData(
+                            point = point,
+                            color = Color(0xF14B3283),
+                            dataCategoryOptions = dataCategoryOptions,
+                            label = monthlyList[i]
+                        )
+                    )
+                }
+            } else {
+                //Log.e(" empty sleep monthly", "idk")
+                for (i in 0 until listSize) {
+                    val point = Point(i.toFloat(), 0.toFloat())
+                    list.add(
+                        BarData(
+                            point = point,
+                            color = Color(0xF14B3283),
+                            dataCategoryOptions = dataCategoryOptions,
+                            label = i.toString()
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -732,6 +857,18 @@ private fun barChart(
 
     } else {    // Read
         // TODO read
+        val firebaseDataManager = FirebaseSleepDataManager()
+        //Log.e("Antes do get Sleeps", "Antes")
+        firebaseDataManager.getSleeps(userId.toString()) { sleeps ->
+            for (sleep in sleeps) {
+                val sleepTime = if (sleep.minSlept == 30) sleep.hourSlept + 1 else sleep.hourSlept
+                if (sleepTime > maxRange)
+                    maxRange = sleepTime
+
+                listOfSleeps.add(sleep)
+            }
+            //Log.e("List of Sleeps no fim do ciclo", listOfSleeps.toString())
+        }
     }
 
     //Log.e("List of Runs", listOfRuns.toString())
