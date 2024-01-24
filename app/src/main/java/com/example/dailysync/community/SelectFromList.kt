@@ -736,7 +736,7 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
                     bedTime = "",
                     wakeTime = "",
                     sleepTime = "",
-                    bookName = "${bookNames[readingData[index].itemId]}",
+                    bookName = "${bookNames[readingData[index].itemId]?.let { truncateString(it, 13) }}",
                     pagesRead = readingData[index].pagesRead,
                     timeSpent = "${readingData[index].durationMinutes}min"
                 )
@@ -778,7 +778,7 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = bookName,
+                        text = "${truncateString(bookName, 13)}",
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
@@ -823,6 +823,14 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
                 }
             }
         }
+    }
+}
+
+fun truncateString(input: String, maxLength: Int): String {
+    return if (input.length <= maxLength) {
+        input
+    } else {
+        input.substring(0, maxLength - 3) + "..."
     }
 }
 
