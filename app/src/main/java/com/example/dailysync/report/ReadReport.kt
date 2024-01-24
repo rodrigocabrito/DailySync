@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -165,6 +166,19 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
 
             IconButton(
                 onClick = {
+                    navController.navigate(Screens.Home.route)
+                },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color.Black
+                )
+            ) {
+                Icon(Icons.Default.Home, "Home")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconButton(
+                onClick = {
                     navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
@@ -179,7 +193,7 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
             }
         }
 
-        Text(text = "Read Report", fontSize = 20.sp)
+        Text(text = "Read Report", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(10.dp))
 
@@ -1034,8 +1048,8 @@ private fun getBarChartDataUpdated(
 
             for (i in 0 until listSize) {
                 if (control < size) {
-                    val point = Point(i.toFloat(), "%.2f".format(sumTimeRead(splitByDay[i])).toFloat())
-
+                    val distanceString = "%.2f".format(sumTimeRead(splitByDay[i])).replace(",", ".")
+                    val point = Point(i.toFloat(), distanceString.toFloat())
                     list.add(
                         BarData(
                             point = point,
@@ -1099,7 +1113,8 @@ private fun getBarChartDataUpdated(
             for (i in 0 until listSize) {
                 if (control < size) {
 
-                    val point = Point(i.toFloat(), "%.2f".format(sumTimeRead(splitByWeek[i])).toFloat())
+                    val distanceString = "%.2f".format(sumTimeRead(splitByWeek[i])).replace(",", ".")
+                    val point = Point(i.toFloat(), distanceString.toFloat())
 
                     list.add(
                         BarData(
@@ -1172,7 +1187,8 @@ private fun getBarChartDataUpdated(
 
             for (index in 0 until listSize) {
 
-                val point = Point(index.toFloat(), "%.2f".format(sumTimeReadMonth(reads, index)).toFloat())
+                val distanceString = "%.2f".format(sumTimeReadMonth(reads, index)).replace(",", ".")
+                val point = Point(index.toFloat(), distanceString.toFloat())
 
                 list.add(
                     BarData(

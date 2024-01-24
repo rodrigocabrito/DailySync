@@ -156,8 +156,8 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
                     onClick = {
                         navController.navigate(Screens.Search.route)
                     },
-                    containerColor = Color(0xFF11435C),
-                    contentColor = Color(0xFF053628),
+                    containerColor = Color(0xFFF5D4A2),
+                    contentColor = Color(0xFF362305),
                 ) {
                     Icon(
                         modifier = Modifier.size(30.dp),

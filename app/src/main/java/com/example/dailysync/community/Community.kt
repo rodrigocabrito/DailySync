@@ -221,7 +221,7 @@ fun CommunityPosts() {
         }
     }
 
-    LazyColumn(modifier = Modifier.fillMaxHeight()) {
+    LazyColumn(modifier = Modifier.fillMaxHeight(0.89f)) {
         items(items = communityPostData, itemContent = { item ->
             if(item.type == "Exercise") {
                 Row(
