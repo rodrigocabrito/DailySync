@@ -631,7 +631,11 @@ private fun formatTime(elapsedTime: Long): String {
 }
 
 private fun formatAveragePace(averagePace: Float): String {
-    return String.format(Locale.getDefault(), "%.1f km/min", averagePace)
+    return if (averagePace < 60) {
+        String.format(Locale.getDefault(), "%.1f min/km", averagePace)
+    } else {
+        "-:-- min/km"
+    }
 }
 
 private fun openGallery(pickImage: ActivityResultLauncher<Intent>) {

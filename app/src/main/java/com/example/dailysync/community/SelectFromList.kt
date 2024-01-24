@@ -75,6 +75,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import com.example.dailysync.CommunityPost
+import com.google.firebase.database.ktx.database
 
 
 @Composable
@@ -265,6 +267,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
     val exerciseRunPath = database.getReference("users/$userId/Run")
     val exerciseCyclePath = database.getReference("users/$userId/Cycle")
     var exerciseData: List<Exercise> by remember { mutableStateOf(emptyList()) }
+    var communityPostData: List<CommunityPost> by remember { mutableStateOf(emptyList()) }
 
     var index by remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
@@ -316,9 +319,30 @@ fun ShowExerciseList(auth: FirebaseAuth) {
     if(showDialog){
         ShowAlertDialog(
             showDialog = showDialog,
-            message = "Do you want to share this sleeping session?",
+            message = "Do you want to share this exercise session?",
             confirmAction = {
-                Log.d("Teste", "${exerciseData[index].time}")
+                val communityRef = database.getReference("community")
+
+                communityPostData += CommunityPost(
+                    userName = "${auth.currentUser?.displayName}",
+                    type = "Exercise",
+                    profilePhoto = "${auth.currentUser?.uid}.jpg",
+                    date = "${ConvertDate(date = exerciseData[index].date)}",
+                    exerciseType = "${exerciseData[index].type}",
+                    distance = "${String.format("%.2f", exerciseData[index].distance)}km",
+                    time = "${ConvertMilisecond(exerciseData[index].time)}",
+                    rhythm = "${exerciseData[index].averagePace}min/Km",
+                    bedTime = "",
+                    wakeTime = "",
+                    sleepTime = "",
+                    bookName = "",
+                    pagesRead = 0,
+                    timeSpent = "",
+                )
+                // Create a new unique ID for the workout
+                val postId = communityRef.push().key
+                communityRef.child(postId!!).setValue(communityPostData[0])
+                communityPostData = emptyList() // Reset the list
                 showDialog = false
             },
             cancelAction = {
@@ -399,7 +423,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.distance}",
+                        text = "${String.format("%.2f", exercise.distance)}km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -414,7 +438,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.time}",
+                        text = "${ConvertMilisecond(exercise.time)}",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -429,7 +453,7 @@ fun ShowExerciseList(auth: FirebaseAuth) {
                         )
                     )
                     Text(
-                        text = "${exercise.averagePace}",
+                        text = "${exercise.averagePace}min/Km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -449,6 +473,8 @@ fun ShowSleepList(auth: FirebaseAuth) {
 
     var index by remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
+
+    var communityPostData: List<CommunityPost> by remember { mutableStateOf(emptyList()) }
 
     // Use LaunchedEffect to fetch data asynchronously
     LaunchedEffect(Unit) {
@@ -472,7 +498,58 @@ fun ShowSleepList(auth: FirebaseAuth) {
             showDialog = showDialog,
             message = "Do you want to share this sleeping session?",
             confirmAction = {
-                Log.d("Teste", "${sleepData[index].awakeTimeHour}")
+                val communityRef = database.getReference("community")
+
+                communityPostData += CommunityPost(
+                    userName = "${auth.currentUser?.displayName}",
+                    type = "Sleep",
+                    profilePhoto = "${auth.currentUser?.uid}.jpg",
+                    date = "${ConvertDate(date = sleepData[index].date)}",
+                    exerciseType = "",
+                    distance = "",
+                    time = "",
+                    rhythm = "",
+                    bedTime = "${
+                        if(sleepData[index].bedTimeHour<10 && sleepData[index].bedTimeMin<10){
+                            "0${sleepData[index].bedTimeHour}:0${sleepData[index].bedTimeMin}"
+                        }else if(sleepData[index].bedTimeHour<10 && sleepData[index].bedTimeMin>=10){
+                            "0${sleepData[index].bedTimeHour}:${sleepData[index].bedTimeMin}"
+                        }else if(sleepData[index].bedTimeHour>=10 && sleepData[index].bedTimeMin<10){
+                            "${sleepData[index].bedTimeHour}:0${sleepData[index].bedTimeMin}"
+                        }else{
+                            "${sleepData[index].bedTimeHour}:${sleepData[index].bedTimeMin}"
+                        }
+                    }",
+                    wakeTime = "${
+                        if(sleepData[index].awakeTimeHour<10 && sleepData[index].awakeTimeMin<10){
+                            "0${sleepData[index].awakeTimeHour}:0${sleepData[index].awakeTimeMin}"
+                        }else if(sleepData[index].awakeTimeHour<10 && sleepData[index].awakeTimeMin>=10){
+                            "0${sleepData[index].awakeTimeHour}:${sleepData[index].awakeTimeMin}"
+                        }else if(sleepData[index].awakeTimeHour>=10 && sleepData[index].awakeTimeMin<10){
+                            "${sleepData[index].awakeTimeHour}:0${sleepData[index].awakeTimeMin}"
+                        }else{
+                            "${sleepData[index].awakeTimeHour}:${sleepData[index].awakeTimeMin}"
+                        }
+                    }",
+                    sleepTime = "${
+                        if(sleepData[index].hourSlept<10 && sleepData[index].minSlept<10){
+                            "0${sleepData[index].hourSlept}:0${sleepData[index].minSlept}"
+                        }else if(sleepData[index].hourSlept<10 && sleepData[index].minSlept>=10){
+                            "0${sleepData[index].hourSlept}:${sleepData[index].minSlept}"
+                        }else if(sleepData[index].hourSlept>=10 && sleepData[index].minSlept<10){
+                            "${sleepData[index].hourSlept}:0${sleepData[index].minSlept}"
+                        }else{
+                            "${sleepData[index].hourSlept}:${sleepData[index].minSlept}"
+                        }
+                    }",
+                    bookName = "",
+                    pagesRead = 0,
+                    timeSpent = "",
+                )
+                // Create a new unique ID for the workout
+                val postId = communityRef.push().key
+                communityRef.child(postId!!).setValue(communityPostData[0])
+                communityPostData = emptyList() // Reset the list
                 showDialog = false
             },
             cancelAction = {
@@ -598,6 +675,8 @@ fun ShowReadingList(auth: FirebaseAuth) {
     var index by remember { mutableStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
+    var communityPostData: List<CommunityPost> by remember { mutableStateOf(emptyList()) }
+
     // Fetch data asynchronously
     DisposableEffect(userId) {
         val dataList = mutableListOf<ReadingSession>()
@@ -639,7 +718,28 @@ fun ShowReadingList(auth: FirebaseAuth) {
             showDialog = showDialog,
             message = "Do you want to share this reading session?",
             confirmAction = {
-                Log.d("Teste", "${readingData[index].durationMinutes}")
+                val communityRef = database.getReference("community")
+
+                communityPostData += CommunityPost(
+                    userName = "${auth.currentUser?.displayName}",
+                    type = "Read",
+                    profilePhoto = "${auth.currentUser?.uid}.jpg",
+                    date = "${ConvertDate(date = readingData[index].date)}",
+                    exerciseType = "",
+                    distance = "",
+                    time = "",
+                    rhythm = "",
+                    bedTime = "",
+                    wakeTime = "",
+                    sleepTime = "",
+                    bookName = "${bookNames[readingData[index].itemId]}",
+                    pagesRead = readingData[index].pagesRead,
+                    timeSpent = "${readingData[index].durationMinutes}min"
+                )
+                // Create a new unique ID for the workout
+                val postId = communityRef.push().key
+                communityRef.child(postId!!).setValue(communityPostData[0])
+                communityPostData = emptyList() // Reset the list
                 showDialog = false
             },
             cancelAction = {
@@ -721,7 +821,12 @@ fun ShowReadingList(auth: FirebaseAuth) {
     }
 }
 
-
+fun ConvertMilisecond(milisecond: Long): String {
+    val totalSeconds = milisecond / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "${minutes}m${seconds}s"
+}
 
 fun ConvertDate(date: Long): String {
     val instant = Instant.ofEpochMilli(date)

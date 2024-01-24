@@ -114,6 +114,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
             })
         }
 
+        //Button Share Your Own
         Box(
             modifier = Modifier
                 .width(300.dp)

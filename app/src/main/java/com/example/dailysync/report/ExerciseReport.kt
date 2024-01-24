@@ -73,6 +73,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 // TODO change user to have default goals
 
@@ -666,13 +667,14 @@ fun loadGoalAverage(
 
                     Spacer(modifier = Modifier.width(20.dp))
 
-                    val avg = if (getAverage(selectedExercise, auth) < 0 ) 0.0 else getAverage(selectedExercise, auth)
+                    val avg = if (getAverage(selectedExercise, auth) < 0) 0.0 else getAverage(selectedExercise, auth)
 
                     val formattedAvg = if (avg > 100) {
-                        String.format("%.0f", avg).toDouble()
+                        String.format(Locale.US, "%.0f", avg)
                     } else {
-                        String.format("%.1f", avg).toDouble()
-                    }
+                        String.format(Locale.US, "%.1f", avg)
+                    }.toDouble()
+
                     Text(
                         text = if (isDecimalPartZero(formattedAvg)) "${formattedAvg.toInt()} km" else "$formattedAvg km",
                         fontSize = 14.sp,
@@ -842,7 +844,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(70.dp)
+                    .height(80.dp)
                     .padding(6.dp)
                     .background(
                         Color(0xFFA2F0C1),
@@ -1088,8 +1090,8 @@ private fun getBarChartDataUpdated(
 
             for (i in 0 until listSize) {
                 if (control < size) {
-                    val point = Point(i.toFloat(), "%.2f".format(sumDistances(splitByDay[i])).toFloat())
-
+                    val distanceString = "%.2f".format(sumDistances(splitByDay[i])).replace(",", ".")
+                    val point = Point(i.toFloat(), distanceString.toFloat())
                     list.add(
                         BarData(
                             point = point,
@@ -1152,8 +1154,8 @@ private fun getBarChartDataUpdated(
 
             for (i in 0 until listSize) {
                 if (control < size) {
-
-                    val point = Point(i.toFloat(), "%.2f".format(sumDistances(splitByWeek[i])).toFloat())
+                    val distanceString = "%.2f".format(sumDistances(splitByWeek[i])).replace(",", ".")
+                    val point = Point(i.toFloat(), distanceString.toFloat())
 
                     list.add(
                         BarData(
@@ -1225,8 +1227,8 @@ private fun getBarChartDataUpdated(
             }
 
             for (index in 0 until listSize) {
-
-                val point = Point(index.toFloat(), "%.2f".format(sumDistancesMonth(exercises, index)).toFloat())
+                val distanceString = "%.2f".format(sumDistancesMonth(exercises, index)).replace(",", ".")
+                val point = Point(index.toFloat(), distanceString.toFloat())
 
                 list.add(
                     BarData(
@@ -1237,7 +1239,8 @@ private fun getBarChartDataUpdated(
                     )
                 )
             }
-        } else {
+        }
+        else {
             for (i in 0 until listSize) {
                 val point = Point(i.toFloat(), 0.toFloat())
                 list.add(

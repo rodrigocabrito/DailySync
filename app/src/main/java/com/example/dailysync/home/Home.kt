@@ -318,7 +318,7 @@ fun Home(navController: NavController, auth: FirebaseAuth) {
                             )
                             .clickable {
                                 navController.navigate(
-                                    Screens.RegisterSleep.route // TODO CHANGE ARGS
+                                    Screens.RegisterSleep.route
                                 )
                             }
                             .border(2.dp, Color(0xF14B3283), shape = RoundedCornerShape(8.dp))

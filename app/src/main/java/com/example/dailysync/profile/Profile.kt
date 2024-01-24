@@ -458,25 +458,26 @@ fun Profile(navController: NavController, auth: FirebaseAuth) {
                         .weight(1f)
                         .height(115.dp)
                         .background(
-                            Color(android.graphics.Color.parseColor("#CBF4F7")),
+                            Color(0xFFCBF4F7),
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
-                            //TODO Rate the app redirection
+                            auth.signOut()
+                            navController.navigate(Screens.Login.route)
                         }
                         .border(2.dp, Color(0xFFA2D6F0), shape = RoundedCornerShape(8.dp))
                 ) {
-                        Text(text = "Rate the app",
+                        Text(text = "Logout",
                             fontSize = 30.sp,
                             modifier = Modifier.padding(start = 8.dp, top = 15.dp),
 
                             )
                         Icon(
-                            painter = painterResource(id = R.drawable.star_icon),
+                            painter = painterResource(id = R.drawable.logout),
                             contentDescription = null,
-                            tint = Color.Unspecified,
+                            tint = Color(0xFF041342),
                             modifier = Modifier
-                                .size(70.dp)
+                                .size(50.dp)
                                 .align(Alignment.BottomEnd)
                                 .padding(bottom = 10.dp, end = 10.dp)
                         )

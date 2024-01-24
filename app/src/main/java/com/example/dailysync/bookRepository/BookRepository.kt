@@ -29,7 +29,14 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
         auth.addAuthStateListener { firebaseAuth ->
             // This block will be called when the authentication state changes
             userId = firebaseAuth.currentUser?.uid
-            database = FirebaseDatabase.getInstance().reference.child("users").child(userId!!).child("books")
+
+            // Update the database reference if userId is not null
+            if (userId != null) {
+                database = FirebaseDatabase.getInstance().reference.child("users").child(userId!!).child("books")
+            } else {
+                // Handle the case where userId is null (user is not authenticated)
+                database = FirebaseDatabase.getInstance().reference
+            }
         }
 
         // Initialize the database reference, but userId is initially null
