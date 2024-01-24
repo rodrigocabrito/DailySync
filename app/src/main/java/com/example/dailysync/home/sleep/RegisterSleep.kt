@@ -1,6 +1,5 @@
 package com.example.dailysync.home.sleep
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,8 +24,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,7 +47,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.Sleep
-import com.example.dailysync.home.read.RegisterReadingSessionPopup
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
@@ -582,10 +578,7 @@ private fun getHourDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int
 
     val differenceMinutes = (totalMinutes2 - totalMinutes1 + 24 * 60) % (24 * 60)
 
-    val hoursDifference = differenceMinutes / 60
-    val minutesDifference = differenceMinutes % 60
-
-    return hoursDifference
+    return differenceMinutes / 60
 }
 
 private fun getMinDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int): Int {
@@ -593,8 +586,6 @@ private fun getMinDifference(hour1: Int, minute1: Int, hour2: Int, minute2: Int)
     val totalMinutes2 = hour2 * 60 + minute2
 
     val differenceMinutes = (totalMinutes2 - totalMinutes1 + 24 * 60) % (24 * 60)
-
-    val hoursDifference = differenceMinutes / 60
 
     return differenceMinutes % 60
 }
