@@ -2,9 +2,7 @@ package com.example.dailysync
 
 import android.net.Uri
 
-data class User(                    // TODO REMOVE EMAIL/PASSWORD
-    val name: String = "",
-    val email: String = "",
+data class User(
     val password: String = "",
     val photoUri: Uri? = null,
 
