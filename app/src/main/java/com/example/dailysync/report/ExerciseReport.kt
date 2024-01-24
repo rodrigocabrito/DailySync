@@ -78,7 +78,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
-// TODO change user to have default goals
 
 @RequiresApi(34)
 @Composable
@@ -347,6 +346,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
             textFieldValue = ""
 
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
                 containerColor = Color(0xFFA2F0C1),
                 onDismissRequest = { editGoalPopUpVisible = false },
                 title = {
@@ -391,6 +391,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
 
         if (showConfirmationSavedPopUp) {
             AlertDialog(
+                modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
                 onDismissRequest = {
                     // Handle dialog dismiss (e.g., when tapping outside the dialog)
                     showConfirmationSavedPopUp = false
@@ -441,9 +442,9 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
             )
 
             Icon(
-                painter = painterResource(id = R.drawable.history),            // TODO change icon
+                painter = painterResource(id = R.drawable.history),
                 contentDescription = null,
-                tint = Color(0xFF154E1C),
+                tint = Color.Unspecified,
                 modifier = Modifier
                     .size(40.dp)
                     .padding(start = 5.dp, top = 3.dp)
@@ -554,6 +555,7 @@ fun loadGoalAverage(
         textFieldValue = ""
 
         AlertDialog(
+            modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
             containerColor = Color(0xFFA2F0C1),
             onDismissRequest = { showDefineGoalPopUpVisible = false },
             title = {
@@ -598,14 +600,16 @@ fun loadGoalAverage(
 
     if (showConfirmationDefinedPopUp) {
         AlertDialog(
+            modifier = Modifier.border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(25.dp)),
+            containerColor = Color(0xFFA2F0C1),
             onDismissRequest = {
                 // Handle dialog dismiss (e.g., when tapping outside the dialog)
                 showConfirmationDefinedPopUp = false
             },
-            text = { Text("Your goal was defined successfully!") },
+            text = { Text("Your goal was defined successfully!", color = Color(0xFF0A361C)) },
             confirmButton = {
                 TextButton(onClick = { confirmDefineAction(goalPath, textFieldValue) }) {
-                    Text("OK")
+                    Text("OK", color = Color(0xFF0A361C))
                 }
             }
         )
@@ -740,7 +744,7 @@ fun loadGoalAverage(
 @Composable
 private fun getDailyGoal(selectedExercise: Int, auth: FirebaseAuth): Double {
 
-    var goal = 0.0
+    var goal by remember { mutableDoubleStateOf(0.0)}
     DisposableEffect(auth) {
         val database = Firebase.database
         val userId = auth.currentUser?.uid
@@ -964,19 +968,21 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     val goal = getDailyGoal(selectedExercise, auth)
 
-                    val goalAchieved = exercise.distance > goal
+                    val goalAchieved = exercise.distance >= goal
 
                     if (goalAchieved) {
                         Icon(
-                            painter = painterResource(id = R.drawable.complete_icon),            // TODO change icon
+                            painter = painterResource(id = R.drawable.green_check_icon),
                             contentDescription = "goalAchievedCheck",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(20.dp)
                         )
                     } else {
                         Icon(
-                            painter = painterResource(id = R.drawable.ic_error),            // TODO change icon
+                            painter = painterResource(id = R.drawable.red_x_icon),
                             contentDescription = "goalAchievedCheck",
+                            tint = Color.Unspecified,
                             modifier = Modifier
                                 .size(20.dp)
                         )
