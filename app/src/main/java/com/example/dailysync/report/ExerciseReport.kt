@@ -70,8 +70,10 @@ import com.google.firebase.ktx.Firebase
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
 
@@ -840,7 +842,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
 
     // Display the data in a Column with dynamic Rows
     LazyColumn {
-        items(exerciseData) { exercise ->
+        items(exerciseData.reversed()) { exercise ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -889,7 +891,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
                         }
                     }
                     Text(
-                        text = "${exercise.date}",
+                        text = convertDate(exercise.date),
                         style = TextStyle(
                             color = Color.Gray,
                             fontSize = 10.sp
@@ -898,7 +900,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${exercise.distance}km",
+                        text = "${String.format("%.2f", exercise.distance)}km",
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -914,7 +916,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${exercise.averagePace}/km",
+                        text = formatAveragePace(exercise.averagePace),
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -930,7 +932,7 @@ private fun ShowExerciseList(selectedExercise: Int, auth: FirebaseAuth) {
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${exercise.time}", // TODO convert from Long to min and sec
+                        text = convertMillisecond(exercise.time),
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -1368,4 +1370,22 @@ private fun splitExercisesByDay(exercises: List<Exercise>): List<ArrayList<Exerc
     }
 
     return result.takeLast(7)
+}
+
+private fun convertDate(date: Long): String {
+    val instant = Instant.ofEpochMilli(date)
+    val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    return localDateTime.format(formatter)
+}
+
+private fun convertMillisecond(millisecond: Long): String {
+    val totalSeconds = millisecond / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "${minutes}m${seconds}s"
+}
+
+private fun formatAveragePace(averagePace: Float): String {
+    return String.format(Locale.getDefault(), "%.2f min/km", averagePace)
 }
