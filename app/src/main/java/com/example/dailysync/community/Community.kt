@@ -50,12 +50,11 @@ import com.example.dailysync.CommunityPost
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.database
 import com.google.firebase.storage.storage
 
 @Composable
-fun Community(navController: NavController, auth: FirebaseAuth) {
+fun Community(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -92,7 +91,7 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black
@@ -109,92 +108,107 @@ fun Community(navController: NavController, auth: FirebaseAuth) {
         Text(text = "Community", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(20.dp))
-        
-        Box(modifier = Modifier.fillMaxSize()) {
-            //Show Community Posts
-            CommunityPosts()
 
-            //Button Share Your Own
-            ExtendedFloatingActionButton(
-                containerColor = Color(0xFF11435C),
-                contentColor = Color(0xFFBCD7E4),
-                onClick = { navController.navigate(Screens.SelectToShare.route) },
-                icon = { Icon(
-                    painter =painterResource(id = R.drawable.share_icon
-                    ),
-                    "share icon",
+        Column (
+            modifier = Modifier
+                .fillMaxHeight()
+        ){
+            Box {
+                //Show Community Posts
+                CommunityPosts()
+
+                //Button Share Your Own
+                ExtendedFloatingActionButton(
+                    containerColor = Color(0xFF11435C),
+                    contentColor = Color(0xFFBCD7E4),
+                    onClick = { navController.navigate(Screens.SelectToShare.route) },
+                    icon = {
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.share_icon
+                            ),
+                            "share icon",
+                            modifier = Modifier
+                                .size(40.dp)
+                        )
+                    },
+                    text = { Text(text = "Share Your Own") },
                     modifier = Modifier
-                        .size(40.dp)
+                        .align(Alignment.BottomCenter)
+                        .padding(16.dp)
+                        .border(2.dp, Color(0xFFBCD7E4), RoundedCornerShape(15.dp))
                 )
-                },
-                text = { Text(text = "Share Your Own") },
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-                    .border(2.dp, Color(0xFFBCD7E4), RoundedCornerShape(15.dp))
-            )
-        }
+            }
 
-        // footer
-        NavigationBar(containerColor = Color(0xFFBCD7E4)
-        ) {
-            NavigationBarItem(
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF68ADD1)
-                ),
-                icon = { Icon(
-                    painter = painterResource(id = R.drawable.home_icon),
-                    contentDescription = null,
-                    tint = Color(0xFF021D3F),
-                    modifier = Modifier
-                        .size(45.dp)
-                ) },
-                onClick = {navController.navigate(Screens.Home.route)},
-                selected = false
-            )
-            NavigationBarItem(
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF68ADD1)
-                ),
-                icon = { Icon(
-                    painter = painterResource(id = R.drawable.report_icon),
-                    contentDescription = null,
-                    tint = Color(0xFF021D3F),
-                    modifier = Modifier
-                        .size(40.dp)
-                ) },
-                onClick = {navController.navigate(Screens.Reports.route)},
-                selected = false
-            )
-            NavigationBarItem(
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF68ADD1)
-                ),
-                icon = { Icon(
-                    painter = painterResource(id = R.drawable.community_icon),
-                    contentDescription = null,
-                    tint = Color(0xFF021D3F),
-                    modifier = Modifier
-                        .size(55.dp)
-                ) },
-                onClick = {},
-                selected = true
-            )
-            NavigationBarItem(
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color(0xFF68ADD1)
-                ),
-                icon = { Icon(
-                    painter = painterResource(id = R.drawable.profile_icon),
-                    contentDescription = null,
-                    tint = Color(0xFF021D3F),
-                    modifier = Modifier
-                        .size(40.dp)
-                ) },
-                onClick = {navController.navigate(Screens.Profile.route)},
-                selected = false
-            )
-
+            // footer
+            NavigationBar(
+                containerColor = Color(0xFFBCD7E4)
+            ) {
+                NavigationBarItem(
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color(0xFF68ADD1)
+                    ),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.home_icon),
+                            contentDescription = null,
+                            tint = Color(0xFF021D3F),
+                            modifier = Modifier
+                                .size(45.dp)
+                        )
+                    },
+                    onClick = { navController.navigate(Screens.Home.route) },
+                    selected = false
+                )
+                NavigationBarItem(
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color(0xFF68ADD1)
+                    ),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.report_icon),
+                            contentDescription = null,
+                            tint = Color(0xFF021D3F),
+                            modifier = Modifier
+                                .size(40.dp)
+                        )
+                    },
+                    onClick = { navController.navigate(Screens.Reports.route) },
+                    selected = false
+                )
+                NavigationBarItem(
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color(0xFF68ADD1)
+                    ),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.community_icon),
+                            contentDescription = null,
+                            tint = Color(0xFF021D3F),
+                            modifier = Modifier
+                                .size(55.dp)
+                        )
+                    },
+                    onClick = {},
+                    selected = true
+                )
+                NavigationBarItem(
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = Color(0xFF68ADD1)
+                    ),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.profile_icon),
+                            contentDescription = null,
+                            tint = Color(0xFF021D3F),
+                            modifier = Modifier
+                                .size(40.dp)
+                        )
+                    },
+                    onClick = { navController.navigate(Screens.Profile.route) },
+                    selected = false
+                )
+            }
         }
     }
 }
@@ -222,8 +236,8 @@ fun CommunityPosts() {
     }
 
     LazyColumn(modifier = Modifier.fillMaxHeight(0.89f)) {
-        items(items = communityPostData, itemContent = { item ->
-            if(item.type == "Exercise") {
+        items(items = communityPostData.reversed(), itemContent = { item ->
+            if (item.type == "Exercise") {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -275,7 +289,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.distance}",
+                                    text = item.distance,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -286,7 +300,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.time}",
+                                    text = item.time,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -297,7 +311,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.rhythm}",
+                                    text = item.rhythm,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -357,7 +371,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.bedTime}",
+                                    text = item.bedTime,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -368,7 +382,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.wakeTime}",
+                                    text = item.wakeTime,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -379,7 +393,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.sleepTime}",
+                                    text = item.sleepTime,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -439,7 +453,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.bookName}",
+                                    text = item.bookName,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )
@@ -461,7 +475,7 @@ fun CommunityPosts() {
                                     fontSize = 15.sp,
                                 )
                                 Text(
-                                    text = "${item.timeSpent}",
+                                    text = item.timeSpent,
                                     fontSize = 20.sp,
                                     fontWeight = FontWeight.Bold
                                 )

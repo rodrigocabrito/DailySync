@@ -54,14 +54,15 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         composable(route = Screens.Home.route){
             Home(navController = navController, auth = auth)
         }
-        composable(route = Screens.Reports.route + "?selectedExercise={selectedExercise}"){ navBackStack ->
+        composable(route = Screens.Reports.route + "?selectedExercise={selectedExercise}&selectedPeriod={selectedPeriod}"){ navBackStack ->
             val selectedExercise: Int = navBackStack.arguments?.getString("selectedExercise")?.toIntOrNull()?:1
+            val selectedPeriod: Int = navBackStack.arguments?.getString("selectedPeriod")?.toIntOrNull()?:1
             if (Build.VERSION.SDK_INT >= 34) {
-                Reports(navController = navController, selectedExercise, auth = auth)
+                Reports(navController = navController, selectedExercise, selectedPeriod, auth = auth)
             }
         }
         composable(route = Screens.Community.route){
-            Community(navController = navController, auth = auth)
+            Community(navController = navController)
         }
         composable(route = Screens.Profile.route){
             Profile(navController = navController, auth = auth)
@@ -73,12 +74,12 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         composable(route = Screens.StartExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
             val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
-            StartExercise(navController = navController, categoryShow = categoryShow, auth = auth)
+            StartExercise(navController = navController, categoryShow = categoryShow)
         }
         composable(route = Screens.DuringExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
             val categoryShow: Int = navBackStack.arguments?.getString("category")?.toIntOrNull()?:1
-            DuringExercise(navController = navController, categoryShow = categoryShow, auth = auth, viewModel = exerciseViewModel)
+            DuringExercise(navController = navController, categoryShow = categoryShow, viewModel = exerciseViewModel)
         }
         composable(route = Screens.SaveExercise.route + "?category={category}"){ navBackStack ->
             // extracting the argument
@@ -123,7 +124,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
                 }
             } ?: "7:00" // Default value if awakeTime is null
 
-            DefineSleepSchedule(navController = navController, auth = auth, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow, targetShow = targetShow)
+            DefineSleepSchedule(navController = navController, bedTimeShow = bedTimeShow, awakeTimeShow = awakeTimeShow, targetShow = targetShow)
         }
         composable(route = Screens.EditSleepSchedule.route + "?target={target}"){navBackStack ->
             // extracting the argument
@@ -201,7 +202,7 @@ fun NavGraph (navController: NavHostController, auth: FirebaseAuth, bookViewMode
         // ##################################################################################################################################################################################
         // Community
         composable(route = Screens.SelectToShare.route){
-            SelectToShare(navController = navController, auth = auth)
+            SelectToShare(navController = navController)
         }
         composable(route = Screens.SelectFromList.route + "?type={type}"){ navBackStack ->
             val type: String? = navBackStack.arguments?.getString("type")

@@ -1,9 +1,7 @@
 package com.example.dailysync.home.sleep
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,10 +42,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun DefineSleepSchedule(navController: NavController, auth: FirebaseAuth, bedTimeShow: String, awakeTimeShow: String, targetShow: Int) {
+fun DefineSleepSchedule(navController: NavController, bedTimeShow: String, awakeTimeShow: String, targetShow: Int) {
 
     var targetValue by remember { mutableIntStateOf(targetShow) }
 

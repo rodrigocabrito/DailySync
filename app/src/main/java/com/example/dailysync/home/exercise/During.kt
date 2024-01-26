@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.location.Location
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -73,7 +72,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -81,7 +79,7 @@ import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
-fun DuringExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth, viewModel: ExerciseViewModel) {
+fun DuringExercise(navController: NavController, categoryShow: Int, viewModel: ExerciseViewModel) {
 
     var mapView: MapView? by remember { mutableStateOf(null) }
     val category by remember { mutableIntStateOf(categoryShow) }
@@ -92,7 +90,7 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
     var showDialogHomeCancel by remember { mutableStateOf(false) }
     var showDialogBackCancel by remember { mutableStateOf(false) }
 
-    var polylineOptions = remember {
+    val polylineOptions = remember {
         PolylineOptions()
             .color(Color(0xFF4CAF50).toArgb())
             .width(10f) // Set the width of the polyline
@@ -124,28 +122,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
 
     var showDialog by remember { mutableStateOf(false) }
 
-    // Press Yes (Pop Up)
-    val confirmAction: () -> Unit = {
-        showDialog = false
-        navController.navigate(Screens.SaveExercise.route
-            .replace(
-                oldValue = "{category}",
-                newValue = categoryShow.toString()
-            )
-            .replace(
-                oldValue = "{time}",
-                newValue = "$elapsedTime"
-            )
-            .replace(
-                oldValue = "{averagePace}",
-                newValue = "$averagePace"
-            )
-            .replace(
-                oldValue = "{distance}",
-                newValue = "$distance"
-            ))
-    }
-
     // Press Cancel (Pop Up)
     val cancelAction: () -> Unit = {
         showDialog = false
@@ -166,9 +142,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                 .addOnSuccessListener { location ->
                     location?.let {
                         currentLatLng = LatLng(it.latitude, it.longitude)
-
-                        // Log the current coordinates
-                        Log.e("Location", "Latitude: ${it.latitude}, Longitude: ${it.longitude}")
 
                         mapView?.getMapAsync { googleMap ->
                             // Move camera to the current location
@@ -197,7 +170,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                             lastLocation?.let { last ->
                                 val distance2 = last.distanceTo(it)
                                 totalDistanceInMeters += distance2
-                                Log.e("Distance", "Total Distance: $totalDistanceInMeters meters")
                             }
 
                             lastLocation = it
@@ -210,8 +182,8 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                         }
                     }
                 }
-                .addOnFailureListener { e ->
-                    Log.e("Location", "Error getting location", e)
+                .addOnFailureListener {
+
                 }
             // Set up location updates
             val locationRequest = LocationRequest.create()
@@ -248,7 +220,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                                 val distance2 = last.distanceTo(location)
                                 totalDistanceInMeters += distance2
                                 distance = totalDistanceInMeters / 1000 // Convert to kilometers
-                                Log.e("Distance", "Total Distance: $totalDistanceInMeters meters")
                             }
 
                             lastLocation = location
@@ -447,7 +418,6 @@ fun DuringExercise(navController: NavController, categoryShow: Int, auth: Fireba
                     TextButton(onClick = {
                         captureMapSnapshot(mapView, polylineOptions) { capturedBitmap ->
                             viewModel.setMyBitmap(capturedBitmap)
-                            Log.d("BitmapCheck", "Captured Bitmap: $capturedBitmap")
                         }
 
                         showDialog = false

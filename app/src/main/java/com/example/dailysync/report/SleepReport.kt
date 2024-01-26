@@ -78,28 +78,7 @@ import java.time.temporal.ChronoUnit
 @Composable
 fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: FirebaseAuth) {
 
-    var reportPeriodDaily by remember { mutableStateOf(false) }
-    var reportPeriodWeekly by remember { mutableStateOf(false) }
-    var reportPeriodMonthly by remember { mutableStateOf(false) }
-
     var selectedPeriod by remember { mutableIntStateOf(selectedPeriodShow) }                // 1 = Daily, 2 = Weekly, 3 = Monthly
-
-
-    if (selectedPeriod == 1) {
-        reportPeriodDaily = true
-        reportPeriodWeekly = false
-        reportPeriodMonthly = false
-
-    } else if (selectedPeriod == 2) {
-        reportPeriodDaily = false
-        reportPeriodWeekly = true
-        reportPeriodMonthly = false
-
-    } else {
-        reportPeriodDaily = false
-        reportPeriodWeekly = false
-        reportPeriodMonthly = true
-    }
 
     var target by remember { mutableIntStateOf(0)}
 
@@ -139,7 +118,7 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black
@@ -170,13 +149,10 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = true
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = false
                         selectedPeriod = 1
                     }
                     .background(
-                        if (reportPeriodDaily) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 1) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -191,13 +167,10 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = true
-                        reportPeriodMonthly = false
                         selectedPeriod = 2
                     }
                     .background(
-                        if (reportPeriodWeekly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 2) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -212,13 +185,10 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = true
                         selectedPeriod = 3
                     }
                     .background(
-                        if (reportPeriodMonthly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 3) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -264,9 +234,6 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
         }
 
         // Goal & Average
-
-        selectedPeriod = if (reportPeriodDaily) 1 else if (reportPeriodWeekly) 2 else 3
-
         Row(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
@@ -278,7 +245,7 @@ fun SleepReport(navController: NavController, selectedPeriodShow: Int, auth: Fir
         val avg = getAverage(auth)
 
         if (target != 0) {
-            if (avg > target) {
+            if (avg >= target) {
 
                 Text(
                     text = "You are above your goal",
@@ -693,7 +660,7 @@ fun barChartSleep(
     var sleepData: List<Sleep> by remember { mutableStateOf(emptyList()) }
 
     val barChartListSize = if (selectedPeriod == 1) 7 else if (selectedPeriod == 2) 10 else 12
-    var yStepSize = 5
+    var yStepSize = 4
 
     val sleepPath = database.getReference("users/$userId/Sleep")
 

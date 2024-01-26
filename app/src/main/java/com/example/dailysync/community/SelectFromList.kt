@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -94,7 +95,7 @@ fun SelectFromList(navController: NavController, auth: FirebaseAuth, type: Strin
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black
@@ -135,7 +136,7 @@ fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
     var exerciseData: List<Exercise> by remember { mutableStateOf(emptyList()) }
     var communityPostData: List<CommunityPost> by remember { mutableStateOf(emptyList()) }
 
-    var index by remember { mutableStateOf(0) }
+    var index by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
     // Use LaunchedEffect to fetch data asynchronously
@@ -193,10 +194,10 @@ fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
                     userName = "${auth.currentUser?.displayName}",
                     type = "Exercise",
                     profilePhoto = "${auth.currentUser?.uid}.jpg",
-                    date = "${ConvertDate(date = exerciseData[index].date)}",
-                    exerciseType = "${exerciseData[index].type}",
+                    date = convertDate(date = exerciseData[index].date),
+                    exerciseType = exerciseData[index].type,
                     distance = "${String.format("%.2f", exerciseData[index].distance)}km",
-                    time = "${ConvertMilisecond(exerciseData[index].time)}",
+                    time = convertMillisecond(exerciseData[index].time),
                     rhythm = "${roundToDecimalPlaces(exerciseData[index].averagePace.toString().toDouble(), 2)}min/Km",
                     bedTime = "",
                     wakeTime = "",
@@ -213,7 +214,6 @@ fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
                 navController.navigate(Screens.Community.route)
             },
             cancelAction = {
-                Log.d("Teste", "Clicou Não")
                 showDialog = false
             }
         )
@@ -242,7 +242,7 @@ fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "${exercise.type}",
+                            text = exercise.type,
                             style = TextStyle(
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 15.sp
@@ -275,7 +275,7 @@ fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
                         }
                     }
                     Text(
-                        text = "${ConvertDate(date = exercise.date)}",
+                        text = convertDate(date = exercise.date),
                         style = TextStyle(
                             fontSize = 10.sp
                         )
@@ -305,7 +305,7 @@ fun ShowExerciseList(auth: FirebaseAuth, navController: NavController) {
                         )
                     )
                     Text(
-                        text = "${ConvertMilisecond(exercise.time)}",
+                        text = convertMillisecond(exercise.time),
                         style = TextStyle(
                             fontSize = 15.sp
                         )
@@ -338,7 +338,7 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
     val sleepPath = database.getReference("users/$userId/Sleep")
     var sleepData: List<Sleep> by remember { mutableStateOf(emptyList()) }
 
-    var index by remember { mutableStateOf(0) }
+    var index by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
     var communityPostData: List<CommunityPost> by remember { mutableStateOf(emptyList()) }
@@ -371,44 +371,41 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
                     userName = "${auth.currentUser?.displayName}",
                     type = "Sleep",
                     profilePhoto = "${auth.currentUser?.uid}.jpg",
-                    date = "${ConvertDate(date = sleepData[index].date)}",
+                    date = convertDate(date = sleepData[index].date),
                     exerciseType = "",
                     distance = "",
                     time = "",
                     rhythm = "",
-                    bedTime = "${
-                        if(sleepData[index].bedTimeHour<10 && sleepData[index].bedTimeMin<10){
-                            "0${sleepData[index].bedTimeHour}:0${sleepData[index].bedTimeMin}"
-                        }else if(sleepData[index].bedTimeHour<10 && sleepData[index].bedTimeMin>=10){
-                            "0${sleepData[index].bedTimeHour}:${sleepData[index].bedTimeMin}"
-                        }else if(sleepData[index].bedTimeHour>=10 && sleepData[index].bedTimeMin<10){
-                            "${sleepData[index].bedTimeHour}:0${sleepData[index].bedTimeMin}"
-                        }else{
-                            "${sleepData[index].bedTimeHour}:${sleepData[index].bedTimeMin}"
-                        }
-                    }",
-                    wakeTime = "${
-                        if(sleepData[index].awakeTimeHour<10 && sleepData[index].awakeTimeMin<10){
-                            "0${sleepData[index].awakeTimeHour}:0${sleepData[index].awakeTimeMin}"
-                        }else if(sleepData[index].awakeTimeHour<10 && sleepData[index].awakeTimeMin>=10){
-                            "0${sleepData[index].awakeTimeHour}:${sleepData[index].awakeTimeMin}"
-                        }else if(sleepData[index].awakeTimeHour>=10 && sleepData[index].awakeTimeMin<10){
-                            "${sleepData[index].awakeTimeHour}:0${sleepData[index].awakeTimeMin}"
-                        }else{
-                            "${sleepData[index].awakeTimeHour}:${sleepData[index].awakeTimeMin}"
-                        }
-                    }",
-                    sleepTime = "${
-                        if(sleepData[index].hourSlept<10 && sleepData[index].minSlept<10){
-                            "0${sleepData[index].hourSlept}:0${sleepData[index].minSlept}"
-                        }else if(sleepData[index].hourSlept<10 && sleepData[index].minSlept>=10){
-                            "0${sleepData[index].hourSlept}:${sleepData[index].minSlept}"
-                        }else if(sleepData[index].hourSlept>=10 && sleepData[index].minSlept<10){
-                            "${sleepData[index].hourSlept}:0${sleepData[index].minSlept}"
-                        }else{
-                            "${sleepData[index].hourSlept}:${sleepData[index].minSlept}"
-                        }
-                    }",
+
+                    bedTime = if (sleepData[index].bedTimeHour < 10 && sleepData[index].bedTimeMin < 10){
+                        "0${sleepData[index].bedTimeHour}:0${sleepData[index].bedTimeMin}"
+                    }else if (sleepData[index].bedTimeHour < 10 && sleepData[index].bedTimeMin >= 10){
+                        "0${sleepData[index].bedTimeHour}:${sleepData[index].bedTimeMin}"
+                    }else if (sleepData[index].bedTimeHour >= 10 && sleepData[index].bedTimeMin < 10){
+                        "${sleepData[index].bedTimeHour}:0${sleepData[index].bedTimeMin}"
+                    }else{
+                        "${sleepData[index].bedTimeHour}:${sleepData[index].bedTimeMin}"
+                    },
+
+                    wakeTime = if (sleepData[index].awakeTimeHour < 10 && sleepData[index].awakeTimeMin < 10){
+                        "0${sleepData[index].awakeTimeHour}:0${sleepData[index].awakeTimeMin}"
+                    }else if (sleepData[index].awakeTimeHour < 10 && sleepData[index].awakeTimeMin >= 10){
+                        "0${sleepData[index].awakeTimeHour}:${sleepData[index].awakeTimeMin}"
+                    }else if (sleepData[index].awakeTimeHour >= 10 && sleepData[index].awakeTimeMin < 10){
+                        "${sleepData[index].awakeTimeHour}:0${sleepData[index].awakeTimeMin}"
+                    }else{
+                        "${sleepData[index].awakeTimeHour}:${sleepData[index].awakeTimeMin}"
+                    },
+
+                    sleepTime = if (sleepData[index].hourSlept < 10 && sleepData[index].minSlept < 10){
+                        "0${sleepData[index].hourSlept}:0${sleepData[index].minSlept}"
+                    }else if (sleepData[index].hourSlept < 10 && sleepData[index].minSlept >= 10){
+                        "0${sleepData[index].hourSlept}:${sleepData[index].minSlept}"
+                    }else if (sleepData[index].hourSlept >= 10 && sleepData[index].minSlept < 10){
+                        "${sleepData[index].hourSlept}:0${sleepData[index].minSlept}"
+                    }else{
+                        "${sleepData[index].hourSlept}:${sleepData[index].minSlept}"
+                    },
                     bookName = "",
                     pagesRead = 0,
                     timeSpent = "",
@@ -421,7 +418,6 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
                 navController.navigate(Screens.Community.route)
             },
             cancelAction = {
-                Log.d("Teste", "Clicou Não")
                 showDialog = false
             }
         )
@@ -449,7 +445,7 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${ConvertDate(date = sleep.date)}",
+                        text = convertDate(date = sleep.date),
                         style = TextStyle(
                             fontSize = 10.sp
                         )
@@ -465,11 +461,11 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
                     )
                     Text(
                         text =
-                        if(sleep.bedTimeHour<10 && sleep.bedTimeMin<10){
+                        if(sleep.bedTimeHour < 10 && sleep.bedTimeMin < 10){
                             "0${sleep.bedTimeHour}:0${sleep.bedTimeMin}"
-                        }else if(sleep.bedTimeHour<10 && sleep.bedTimeMin>=10){
+                        }else if(sleep.bedTimeHour < 10 && sleep.bedTimeMin >= 10){
                             "0${sleep.bedTimeHour}:${sleep.bedTimeMin}"
-                        }else if(sleep.bedTimeHour>=10 && sleep.bedTimeMin<10){
+                        }else if(sleep.bedTimeHour >= 10 && sleep.bedTimeMin<10){
                             "${sleep.bedTimeHour}:0${sleep.bedTimeMin}"
                         }else{
                             "${sleep.bedTimeHour}:${sleep.bedTimeMin}"
@@ -489,11 +485,11 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
                     )
                     Text(
                         text =
-                        if(sleep.awakeTimeHour<10 && sleep.awakeTimeMin<10){
+                        if(sleep.awakeTimeHour < 10 && sleep.awakeTimeMin < 10){
                             "0${sleep.awakeTimeHour}:0${sleep.awakeTimeMin}"
-                        }else if(sleep.awakeTimeHour<10 && sleep.awakeTimeMin>=10){
+                        }else if(sleep.awakeTimeHour < 10 && sleep.awakeTimeMin >= 10){
                             "0${sleep.awakeTimeHour}:${sleep.awakeTimeMin}"
-                        }else if(sleep.awakeTimeHour>=10 && sleep.awakeTimeMin<10){
+                        }else if(sleep.awakeTimeHour >= 10 && sleep.awakeTimeMin < 10){
                             "${sleep.awakeTimeHour}:0${sleep.awakeTimeMin}"
                         }else{
                             "${sleep.awakeTimeHour}:${sleep.awakeTimeMin}"
@@ -513,11 +509,11 @@ fun ShowSleepList(auth: FirebaseAuth, navController: NavController) {
                     )
                     Text(
                         text =
-                        if(sleep.hourSlept<10 && sleep.minSlept<10){
+                        if(sleep.hourSlept < 10 && sleep.minSlept < 10){
                             "0${sleep.hourSlept}:0${sleep.minSlept}"
-                        }else if(sleep.hourSlept<10 && sleep.minSlept>=10){
+                        }else if(sleep.hourSlept < 10 && sleep.minSlept >= 10){
                             "0${sleep.hourSlept}:${sleep.minSlept}"
-                        }else if(sleep.hourSlept>=10 && sleep.minSlept<10){
+                        }else if(sleep.hourSlept >= 10 && sleep.minSlept < 10){
                             "${sleep.hourSlept}:0${sleep.minSlept}"
                         }else{
                              "${sleep.hourSlept}:${sleep.minSlept}"
@@ -540,7 +536,7 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
     var readingData by remember { mutableStateOf<List<ReadingSession>>(emptyList()) }
     var bookNames by remember { mutableStateOf<Map<String, String>>(emptyMap()) }
 
-    var index by remember { mutableStateOf(0) }
+    var index by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
     var communityPostData: List<CommunityPost> by remember { mutableStateOf(emptyList()) }
@@ -592,7 +588,7 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
                     userName = "${auth.currentUser?.displayName}",
                     type = "Read",
                     profilePhoto = "${auth.currentUser?.uid}.jpg",
-                    date = "${ConvertDate(date = readingData[index].date)}",
+                    date = convertDate(date = readingData[index].date),
                     exerciseType = "",
                     distance = "",
                     time = "",
@@ -612,7 +608,6 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
                 navController.navigate(Screens.Community.route)
             },
             cancelAction = {
-                Log.d("Teste", "Clicou Não")
                 showDialog = false
             }
         )
@@ -621,7 +616,7 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
     // Display the data in a Column with dynamic Rows
     Column {
         for (reading in readingData) {
-            ConvertDate(date = reading.date)
+            convertDate(date = reading.date)
             val bookName = bookNames[reading.itemId] ?: "Unknown Book"
             Row(
                 modifier = Modifier
@@ -642,14 +637,14 @@ fun ShowReadingList(auth: FirebaseAuth, navController: NavController) {
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
-                        text = "${truncateString(bookName, 13)}",
+                        text = truncateString(bookName, 13),
                         style = TextStyle(
                             fontWeight = FontWeight.Bold,
                             fontSize = 15.sp
                         )
                     )
                     Text(
-                        text = "${ConvertDate(date = reading.date)}",
+                        text = convertDate(date = reading.date),
                         style = TextStyle(
                             fontSize = 10.sp
                         )
@@ -707,14 +702,14 @@ fun roundToDecimalPlaces(number: Double, decimalPlaces: Int): Float {
     return bigDecimal.toFloat()
 }
 
-fun ConvertMilisecond(milisecond: Long): String {
-    val totalSeconds = milisecond / 1000
+fun convertMillisecond(millisecond: Long): String {
+    val totalSeconds = millisecond / 1000
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return "${minutes}m${seconds}s"
 }
 
-fun ConvertDate(date: Long): String {
+fun convertDate(date: Long): String {
     val instant = Instant.ofEpochMilli(date)
     val localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")

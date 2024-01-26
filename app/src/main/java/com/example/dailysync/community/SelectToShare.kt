@@ -37,10 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
+fun SelectToShare(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize(),
@@ -77,7 +76,7 @@ fun SelectToShare(navController: NavController, auth: FirebaseAuth) {
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black

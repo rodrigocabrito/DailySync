@@ -1,7 +1,6 @@
 package com.example.dailysync.home.read
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,7 +52,6 @@ import com.example.dailysync.bookModels.Status
 import com.example.dailysync.navigation.Screens
 
 // Composable
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
@@ -172,7 +169,7 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
                 Column(modifier = Modifier.fillMaxSize().background(Color.White).padding(top =  90.dp)){// background color do corpo sem nada
                     // Content of the composable
                     Row (modifier = Modifier.padding(start = 15.dp, end = 15.dp)){
-                        createCategoryButton("All", selectedCategory) {
+                        CreateCategoryButton("All", selectedCategory) {
                             selectedCategory = "All"
                             loadItemsByCategory(selectedCategory)
 
@@ -180,28 +177,28 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        createCategoryButton("To Read", selectedCategory) {
+                        CreateCategoryButton("To Read", selectedCategory) {
                             selectedCategory = "To Read"
                             loadItemsByCategory(selectedCategory)
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        createCategoryButton("Finished", selectedCategory) {
+                        CreateCategoryButton("Finished", selectedCategory) {
                             selectedCategory = "Finished"
                             loadItemsByCategory(selectedCategory)
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
 
-                        createCategoryButton("Reading", selectedCategory) {
+                        CreateCategoryButton("Reading", selectedCategory) {
                             selectedCategory = "Reading"
                             loadItemsByCategory(selectedCategory)
                         }
                     }
                     when {
                         libraryItems.isNotEmpty() -> {
-                            DisplayItemsList(items = libraryItems, navController = navController, title = "To Read")
+                            DisplayItemsList(items = libraryItems, navController = navController)
                         }
                         else -> {
                             Column(
@@ -231,9 +228,8 @@ fun MyLibrary(navController: NavHostController, bookViewModel: BookViewModel) {
 
 }
 @Composable
-fun DisplayItemsList(navController: NavHostController, items: List<Items>, title: String) {
+fun DisplayItemsList(navController: NavHostController, items: List<Items>) {
 
-    Log.d("Size", items.size.toString())
     if(items.isNotEmpty()) {
         LazyColumn(
             contentPadding = PaddingValues(horizontal = 25.dp, vertical = 18.dp),
@@ -268,7 +264,7 @@ fun DisplayItemsList(navController: NavHostController, items: List<Items>, title
 }
 
 @Composable
-fun createCategoryButton(
+fun CreateCategoryButton(
     category: String,
     selectedCategory: String,
     onClick: () -> Unit

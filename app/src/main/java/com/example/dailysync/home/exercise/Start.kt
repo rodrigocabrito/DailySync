@@ -6,7 +6,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Looper
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -65,11 +64,10 @@ import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
-fun StartExercise(navController: NavController, categoryShow: Int, auth: FirebaseAuth) {
+fun StartExercise(navController: NavController, categoryShow: Int) {
 
     val category by remember { mutableIntStateOf(categoryShow) }
     var mapView: MapView? by remember { mutableStateOf(null) }
@@ -143,8 +141,8 @@ fun StartExercise(navController: NavController, categoryShow: Int, auth: Firebas
                         }
                     }
                 }
-                .addOnFailureListener { e ->
-                    Log.e("Location", "Error getting location", e)
+                .addOnFailureListener {
+
                 }
             // Set up location updates
             val locationRequest = LocationRequest.create()

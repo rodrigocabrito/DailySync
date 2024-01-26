@@ -1,7 +1,6 @@
 package com.example.dailysync.home.read
 
 import android.content.Intent
-import android.util.Log
 import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.Canvas
@@ -685,8 +684,6 @@ fun CircularRing(percentage: Int?) {
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val strokeWidth = 15f // Adjust the stroke width as needed
-            val center = size.width / 2f
-            val radius = size.width / 2f - strokeWidth / 2
             val startAngle = 270f // Start angle at the top
             val sweepAngle = percentage?.toFloat()?.let { it * 3.6f } ?: 0f // Convert percentage to degrees (100% -> 360f)
 
@@ -728,9 +725,6 @@ fun CircularRing(percentage: Int?) {
 
 @Composable
 fun ReadingSessionBookDetails(item: Items, bookViewModel: BookViewModel, navController: NavHostController) {
-
-    val currentPage = item.currentPage
-    val totalPages = item.volumeInfo?.pageCount
 
     var elapsedTime by remember { mutableLongStateOf(0L) }
     var isChronometerRunning by remember { mutableStateOf(false) }

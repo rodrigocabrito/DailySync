@@ -8,7 +8,7 @@ sealed class Screens(val route: String) {
 
     // Footer
     object Home : Screens("home_screen")
-    object Reports : Screens("reports_screen/{selectedExercise}")
+    object Reports : Screens("reports_screen/{selectedExercise}/{selectedPeriod}")
     object Community : Screens("community_screen")
     object Profile : Screens("profile_screen")
 
@@ -32,7 +32,7 @@ sealed class Screens(val route: String) {
     // Notifications
     object Notifications : Screens("notifications")
 
-    // Report
+    // Report Info
     object ExerciseReport : Screens("exercise_report/{selectedExercise}/{selectedPeriod}")
     object SleepReport : Screens("sleep_report/{selectedPeriod}")
     object ReadReport : Screens("read_report/{selectedPeriod}")

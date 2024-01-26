@@ -346,7 +346,6 @@ fun SaveExercise(navController: NavController,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
-                            // TODO ACCESS PHONE GALLERY
                             openGallery(launcher)
                         }
                         .border(2.dp, Color(0xFFA2F0C1), shape = RoundedCornerShape(8.dp)),
@@ -386,7 +385,6 @@ fun SaveExercise(navController: NavController,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .clickable {
-                            // TODO ACCESS PHONE CAMERA
                             // isCameraPreviewVisible = true
                         }
                         .border(2.dp, Color(0xFFA2F0C1), shape = RoundedCornerShape(8.dp)),
@@ -663,6 +661,5 @@ private fun uploadImageToFirebaseStorage(exerciseId: String, imageUri: Uri) {
         .addOnSuccessListener { taskSnapshot ->
             // Image uploaded successfully, you can get the download URL if needed
             val downloadUrl = taskSnapshot.storage.downloadUrl
-            // TODO: Handle the download URL as needed (e.g., update user profile)
         }
 }

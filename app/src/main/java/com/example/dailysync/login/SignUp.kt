@@ -31,7 +31,6 @@ fun SignUp(navController: NavHostController, auth: FirebaseAuth) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("")}
-    var isLoading by remember { mutableStateOf(false) }
     var emailError by remember { mutableStateOf(false) }
     var nameError by remember { mutableStateOf(false) }
     var passwordError by remember { mutableStateOf(false) }

@@ -85,18 +85,6 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
         }
     }
 
-    fun insertItem(item: Items) {
-        viewModelScope.launch {
-            repository.insertItem(item)
-        }
-    }
-
-    fun clearDatabase() {
-        viewModelScope.launch {
-            repository.deleteAll()
-        }
-    }
-
     fun getItemsByStatus(status: Status, callback: (List<Items>) -> Unit) {
         viewModelScope.launch {
             repository.getItemsByStatus(status, callback)
@@ -127,13 +115,11 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
     }
 
     private fun handleException(exception: Throwable) {
-        if (exception != null) {
-            if (!Internet.isAvailable()) {
-                errorType.value = Internet.ErrorType.INTERNET
-            } else {
-                exception.message?.let {
-                    errorType.value = Internet.ErrorType.EXCEPTION
-                }
+        if (!Internet.isAvailable()) {
+            errorType.value = Internet.ErrorType.INTERNET
+        } else {
+            exception.message?.let {
+                errorType.value = Internet.ErrorType.EXCEPTION
             }
         }
     }
@@ -149,16 +135,7 @@ class BookViewModel(private val repository: BookRepository) : ViewModel() {
             repository.insertReadingSession(item, readingSession)
         }
     }
-
-    fun getReadingSessions(item: Items, callback: (List<ReadingSession>) -> Unit) {
-        viewModelScope.launch {
-            val sessions = repository.getReadingSessionsForItem(item)
-            callback(sessions)
-        }
-    }
 }
-
-
 
 class BookViewModelFactory(private val repository: BookRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

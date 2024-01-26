@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -44,7 +43,7 @@ fun ReadingSession(navController: NavHostController, bookViewModel: BookViewMode
     Scaffold(
         modifier = Modifier.background(Color.White).padding(top = 15.dp),
         topBar = {
-            TopBarSession(navController, item)
+            TopBarSession(navController)
         },
     ) {
         Surface(
@@ -58,7 +57,7 @@ fun ReadingSession(navController: NavHostController, bookViewModel: BookViewMode
 }
 
 @Composable
-fun TopBarSession(navController: NavHostController, item: Items?) {
+fun TopBarSession(navController: NavHostController) {
     val titleIconModifier = Modifier
         .fillMaxHeight()
         .fillMaxWidth()

@@ -20,7 +20,5 @@ data class User(
 
     val dailyReadGoal: Int = 0,
     val weeklyReadGoal: Int = 0,
-    val monthlyReadGoal: Int = 0,
-
-
+    val monthlyReadGoal: Int = 0
 )

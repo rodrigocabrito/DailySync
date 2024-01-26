@@ -1,6 +1,5 @@
 package com.example.dailysync.report
 
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -83,31 +82,11 @@ import java.util.Locale
 @Composable
 fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, selectedPeriodShow: Int, auth: FirebaseAuth) {
 
-    var reportPeriodDaily by remember { mutableStateOf(false) }
-    var reportPeriodWeekly by remember { mutableStateOf(false) }
-    var reportPeriodMonthly by remember { mutableStateOf(false) }
-
     val selectedExercise by remember { mutableIntStateOf(selectedExerciseShow) }            // 1 = Run, 2 = Walk, 3 = Cycle
     var selectedPeriod by remember { mutableIntStateOf(selectedPeriodShow) }                // 1 = Daily, 2 = Weekly, 3 = Monthly
 
     var editGoalPopUpVisible by remember { mutableStateOf(false) }
     var showConfirmationSavedPopUp by remember { mutableStateOf(false) }
-
-    if (selectedPeriod == 1) {
-        reportPeriodDaily = true
-        reportPeriodWeekly = false
-        reportPeriodMonthly = false
-
-    } else if (selectedPeriod == 2) {
-        reportPeriodDaily = false
-        reportPeriodWeekly = true
-        reportPeriodMonthly = false
-
-    } else {
-        reportPeriodDaily = false
-        reportPeriodWeekly = false
-        reportPeriodMonthly = true
-    }
 
     val titleChart = when (selectedExercise) {
         1 -> "Run"
@@ -188,7 +167,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black
@@ -219,13 +198,10 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = true
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = false
                         selectedPeriod = 1
                     }
                     .background(
-                        if (reportPeriodDaily) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 1) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -240,13 +216,10 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = true
-                        reportPeriodMonthly = false
                         selectedPeriod = 2
                     }
                     .background(
-                        if (reportPeriodWeekly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 2) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -261,13 +234,10 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = true
                         selectedPeriod = 3
                     }
                     .background(
-                        if (reportPeriodMonthly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 3) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -314,9 +284,6 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
         }
 
         // Goal & Average
-
-        selectedPeriod = if (reportPeriodDaily) 1 else if (reportPeriodWeekly) 2 else 3
-
         Row(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
@@ -326,7 +293,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
                 selectedExercise, selectedPeriod, auth)
         }
 
-        val period = if (reportPeriodDaily) "daily" else if (reportPeriodWeekly) "weekly" else "monthly"
+        val period = if (selectedPeriod == 1) "daily" else if (selectedPeriod == 2) "weekly" else "monthly"
 
         var textFieldValue by remember { mutableStateOf("") }
         val goalExercise = when (selectedExercise) {
@@ -408,7 +375,7 @@ fun ExerciseReport(navController: NavController, selectedExerciseShow: Int, sele
         val avg = if (getAverage(selectedExercise, auth) < 0 ) 0.0 else getAverage(selectedExercise, auth)
 
         if (goal != 0.0) {
-            if (goal > avg) {
+            if (avg >= goal) {
 
                 Text(
                     text = "You are above your goal",
@@ -1047,7 +1014,6 @@ fun barChartExercise(
         for (i in 0 until barChartListSize) {
             if (control < size) {
                 if (maxRange < sumDistances(splitByDay[i])) {
-                    Log.e("Max Range Daily", sumDistances(splitByDay[i]).toString())
                     maxRange = sumDistances(splitByDay[i]).toInt()
                 }
                 control++
@@ -1060,7 +1026,6 @@ fun barChartExercise(
         for (i in 0 until barChartListSize) {
             if (control < size) {
                 if (maxRange < sumDistances(splitByWeek[i])) {
-                    Log.e("Max Range Weekly", sumDistances(splitByWeek[i]).toString())
                     maxRange = sumDistances(splitByWeek[i]).toInt()
                 }
                 control++
@@ -1069,7 +1034,6 @@ fun barChartExercise(
     } else {
         for (i in 0 until barChartListSize) {
             if (maxRange < sumDistancesMonth(exerciseData, i)) {
-                Log.e("Max Range Monthly", sumDistancesMonth(exerciseData, i).toString())
                 maxRange = sumDistancesMonth(exerciseData, i).toInt()
             }
         }

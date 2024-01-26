@@ -27,8 +27,6 @@ import com.example.dailysync.R
 import com.example.dailysync.navigation.Screens
 import com.google.firebase.auth.FirebaseAuth
 
-// TODO ALL
-
 @Composable
 fun Notifications(navController: NavController, auth: FirebaseAuth) {
 
@@ -154,5 +152,4 @@ fun Notifications(navController: NavController, auth: FirebaseAuth) {
             }
         }
     }
-
 }

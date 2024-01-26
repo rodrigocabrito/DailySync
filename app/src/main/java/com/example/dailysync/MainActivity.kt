@@ -14,14 +14,12 @@ import com.example.dailysync.navigation.NavGraph
 import com.example.dailysync.ui.theme.DailySyncTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
 
     // Firebase instance variables
     private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseDatabase
     private lateinit var bookViewModel: BookViewModel
     private lateinit var exerciseViewModel: ExerciseViewModel
 
@@ -37,7 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             DailySyncTheme {
                 val navController = rememberNavController()
-                NavGraph(navController = navController, auth, bookViewModel, exerciseViewModel)           // TODO PASS 'db' AS ARG?
+                NavGraph(navController = navController, auth, bookViewModel, exerciseViewModel)
             }
         }
     }

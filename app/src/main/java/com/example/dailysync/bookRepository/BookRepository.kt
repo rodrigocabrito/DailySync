@@ -13,7 +13,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.skydoves.sandwich.ApiResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -31,11 +30,11 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
             userId = firebaseAuth.currentUser?.uid
 
             // Update the database reference if userId is not null
-            if (userId != null) {
-                database = FirebaseDatabase.getInstance().reference.child("users").child(userId!!).child("books")
+            database = if (userId != null) {
+                FirebaseDatabase.getInstance().reference.child("users").child(userId!!).child("books")
             } else {
                 // Handle the case where userId is null (user is not authenticated)
-                database = FirebaseDatabase.getInstance().reference
+                FirebaseDatabase.getInstance().reference
             }
         }
 
@@ -57,19 +56,6 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
         val newItemReference = database.push()
         val newItem = item.copy(id = newItemReference.key ?: "")
         newItemReference.setValue(newItem).await()
-    }
-
-    suspend fun getItems(callback: (List<Items>) -> Unit) {
-        database.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val items = snapshot.children.mapNotNull { it.getValue(Items::class.java) }
-                callback(items)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Handle error
-            }
-        })
     }
 
     suspend fun deleteAll() {
@@ -131,7 +117,7 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     }
 
     suspend fun insertReadingSession(item: Items, session: ReadingSession) {
-        userId?.let { uid ->
+        userId?.let {
             val sessionReference = database.child("readingSessions").push()
 
             // Set the item ID in the session
@@ -145,7 +131,6 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     }
 
     suspend fun getReadingSessionsForItem(item: Items): List<ReadingSession> {
-        val itemId = item.id
         val dataSnapshot = database.child("readingSessions")
             .orderByChild("itemId")
             .equalTo(item.id)
@@ -160,7 +145,7 @@ class BookRepository(private val bookApi: BookApi, auth: FirebaseAuth) {
     }
 
     suspend fun deleteReadingSessionsByItemId(itemId: String) {
-        userId?.let { uid ->
+        userId?.let {
             val dataSnapshot = database.child("readingSessions")
                 .orderByChild("itemId")
                 .equalTo(itemId)
