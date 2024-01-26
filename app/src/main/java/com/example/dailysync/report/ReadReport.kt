@@ -81,30 +81,11 @@ import java.util.Locale
 @RequiresApi(34)
 @Composable
 fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: FirebaseAuth) {
-    var reportPeriodDaily by remember { mutableStateOf(false) }
-    var reportPeriodWeekly by remember { mutableStateOf(false) }
-    var reportPeriodMonthly by remember { mutableStateOf(false) }
 
     var selectedPeriod by remember { mutableIntStateOf(selectedPeriodShow) }                // 1 = Daily, 2 = Weekly, 3 = Monthly
 
     var editGoalPopUpVisible by remember { mutableStateOf(false) }
     var showConfirmationSavedPopUp by remember { mutableStateOf(false) }
-
-    if (selectedPeriod == 1) {
-        reportPeriodDaily = true
-        reportPeriodWeekly = false
-        reportPeriodMonthly = false
-
-    } else if (selectedPeriod == 2) {
-        reportPeriodDaily = false
-        reportPeriodWeekly = true
-        reportPeriodMonthly = false
-
-    } else {
-        reportPeriodDaily = false
-        reportPeriodWeekly = false
-        reportPeriodMonthly = true
-    }
 
     // Press OK (Pop Up)
     val confirmEditAction: (String, String) -> Unit = { goalPath, textFieldValue ->
@@ -179,7 +160,7 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
 
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black
@@ -210,13 +191,10 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = true
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = false
                         selectedPeriod = 1
                     }
                     .background(
-                        if (reportPeriodDaily) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 1) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -231,13 +209,10 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = true
-                        reportPeriodMonthly = false
                         selectedPeriod = 2
                     }
                     .background(
-                        if (reportPeriodWeekly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 2) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -252,13 +227,10 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = true
                         selectedPeriod = 3
                     }
                     .background(
-                        if (reportPeriodMonthly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 3) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -304,9 +276,6 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
         }
 
         // Goal & Average
-
-        selectedPeriod = if (reportPeriodDaily) 1 else if (reportPeriodWeekly) 2 else 3
-
         Row(
             modifier = Modifier
                 .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
@@ -316,7 +285,7 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
                     selectedPeriod, auth)
         }
 
-        val period = if (reportPeriodDaily) "daily" else if (reportPeriodWeekly) "weekly" else "monthly"
+        val period = if (selectedPeriod == 1) "daily" else if (selectedPeriod == 2) "weekly" else "monthly"
         var textFieldValue by remember { mutableStateOf("") }
         val goalPeriod = when (selectedPeriod) {
             1 -> "daily"
@@ -392,7 +361,7 @@ fun ReadReport(navController: NavController, selectedPeriodShow: Int, auth: Fire
         val avg = getAverage(auth)
 
         if (target != 0) {
-            if (avg > target) {
+            if (avg >= target) {
 
                 Text(
                     text = "You are above your goal",
@@ -452,7 +421,7 @@ private fun loadTargetAverage(
         else -> "Monthly"
     }
 
-    val goalPath = period.toLowerCase(Locale.ROOT) + "ReadGoal"
+    val goalPath = period.lowercase(Locale.ROOT) + "ReadGoal"
 
     var goal by remember { mutableIntStateOf(0) }
     var showDefineGoalPopUpVisible by remember { mutableStateOf(false) }
@@ -771,7 +740,7 @@ private fun calculateAverageReadTime(reads: List<ReadingSession>): Int {
     if (reads.isEmpty()) {
         return 0
     }
-    return (reads.sumOf { it.durationMinutes}) / reads.size
+    return (reads.sumOf { it.pagesRead}) / reads.size
 }
 
 @Composable
@@ -932,7 +901,7 @@ fun barChartRead(
     var readData: List<ReadingSession> by remember { mutableStateOf(emptyList()) }
 
     val barChartListSize = if (selectedPeriod == 1) 7 else if (selectedPeriod == 2) 10 else 12
-    var yStepSize = 5
+    var yStepSize = 4
 
     val readPath = database.getReference("users/$userId/books/readingSessions")
 
