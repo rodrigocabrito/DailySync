@@ -28,17 +28,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -51,14 +48,10 @@ import com.google.firebase.auth.FirebaseAuth
 
 @RequiresApi(34)
 @Composable
-fun Reports(navController: NavController, selectedExerciseShow: Int, auth: FirebaseAuth) {
-
-    var reportPeriodDaily by remember { mutableStateOf(true) }
-    var reportPeriodWeekly by remember { mutableStateOf(false) }
-    var reportPeriodMonthly by remember { mutableStateOf(false) }
+fun Reports(navController: NavController, selectedExerciseShow: Int, selectedPeriodShow: Int, auth: FirebaseAuth) {
 
     var selectedExercise by remember { mutableIntStateOf(selectedExerciseShow)}            // 1 = Run, 2 = Walk, 3 = Cycle
-    var selectedPeriod by remember { mutableIntStateOf(1)}                           // 1 = Daily, 2 = Weekly, 3 = Monthly
+    var selectedPeriod by remember { mutableIntStateOf(selectedPeriodShow)}                // 1 = Daily, 2 = Weekly, 3 = Monthly
 
     val titleChart = when (selectedExercise) {
         1 -> "Run"
@@ -81,7 +74,7 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
         ) {
             IconButton(
                 onClick = {
-                    navController.navigate(Screens.Notifications.route)
+                    //navController.navigate(Screens.Notifications.route)
                 },
                 colors = IconButtonDefaults.iconButtonColors(
                     contentColor = Color.Black
@@ -95,7 +88,7 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
             }
         }
 
-        val title = if (reportPeriodDaily) "Daily" else if (reportPeriodWeekly) "Weekly" else "Monthly"
+        val title = if (selectedPeriod == 1) "Daily" else if (selectedPeriod == 2) "Weekly" else "Monthly"
         Text(text = "Your $title Report", fontSize = 30.sp, color = Color(0xFF11435C))
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -113,13 +106,10 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = true
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = false
                         selectedPeriod = 1
                     }
                     .background(
-                        if (reportPeriodDaily) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 1) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -134,13 +124,10 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = true
-                        reportPeriodMonthly = false
                         selectedPeriod = 2
                     }
                     .background(
-                        if (reportPeriodWeekly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 2) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -155,13 +142,10 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                     .height(40.dp)
                     .padding(end = 16.dp)
                     .clickable {
-                        reportPeriodDaily = false
-                        reportPeriodWeekly = false
-                        reportPeriodMonthly = true
                         selectedPeriod = 3
                     }
                     .background(
-                        if (reportPeriodMonthly) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
+                        if (selectedPeriod == 3) Color(0xFF2C8CBC) else Color(0xFFA2D6F0),
                         shape = RoundedCornerShape(8.dp)
                     )
                     .border(2.dp, Color(0xFF2C8CBC), shape = RoundedCornerShape(8.dp)),
@@ -189,6 +173,10 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                                     oldValue = "{selectedExercise}",
                                     newValue = "$selectedExercise"
                                 )
+                                .replace(
+                                    oldValue = "{selectedPeriod}",
+                                    newValue = "$selectedPeriod"
+                                )
                         )
                     }
                 },
@@ -215,11 +203,11 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                         Screens.ExerciseReport.route
                             .replace(
                                 oldValue = "{selectedExercise}",
-                                newValue = selectedExercise.toString()
+                                newValue = "$selectedExercise"
                             )
                             .replace(
                                 oldValue = "{selectedPeriod}",
-                                newValue = selectedPeriod.toString()
+                                newValue = "$selectedPeriod"
                             )
                     )
                 },
@@ -249,6 +237,10 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                                     oldValue = "{selectedExercise}",
                                     newValue = "$selectedExercise"
                                 )
+                                .replace(
+                                    oldValue = "{selectedPeriod}",
+                                    newValue = "$selectedPeriod"
+                                )
                         )
                     }
                 },
@@ -271,7 +263,7 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                 modifier = Modifier
                     .height(150.dp)
                     .border(2.dp, Color(0xFF1A8B47), shape = RoundedCornerShape(8.dp)),
-                barChartData = barChartExercise(selectedExercise, if (reportPeriodDaily) 1 else if (reportPeriodWeekly) 2 else 3, auth)
+                barChartData = barChartExercise(selectedExercise, if (selectedPeriod == 1) 1 else if (selectedPeriod == 2) 2 else 3, auth)
             )
         }
 
@@ -295,7 +287,7 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
                         Screens.SleepReport.route
                             .replace(
                                 oldValue = "{selectedPeriod}",
-                                newValue = selectedPeriod.toString()
+                                newValue = "$selectedPeriod"
                             )
                     )
                 },
@@ -322,7 +314,7 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
             BarChart(
                 modifier = Modifier
                     .height(150.dp),
-                barChartData = barChartSleep(if (reportPeriodDaily) 1 else if (reportPeriodWeekly) 2 else 3, auth))
+                barChartData = barChartSleep(if (selectedPeriod == 1) 1 else if (selectedPeriod == 2) 2 else 3, auth))
         }
 
 
@@ -372,7 +364,7 @@ fun Reports(navController: NavController, selectedExerciseShow: Int, auth: Fireb
             BarChart(
                 modifier = Modifier
                     .height(150.dp),
-                barChartData = barChartRead(if (reportPeriodDaily) 1 else if (reportPeriodWeekly) 2 else 3, auth))
+                barChartData = barChartRead(if (selectedPeriod == 1) 1 else if (selectedPeriod == 2) 2 else 3, auth))
         }
 
         //fix footer in the bottom
